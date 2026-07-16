@@ -8,6 +8,8 @@
 - Default Agent-facing search and recommendation to the authenticated central API. Require `--local` or `--library` before accessing an owner index.
 - Never return server filesystem paths to a remote Agent. Issue short-lived signed audio URLs only after token authentication.
 - Bind unauthenticated test servers only to localhost. Production deployment must use HTTPS and a secret manager.
+- Keep `/v1/health` public and free of library metadata so managed hosts can perform health checks without a token.
+- Keep Render deployment data under `/data`; never bake indexed tracks or audio files into the Docker image.
 - Never overwrite source audio or video files.
 - Treat music rights as unknown unless explicit metadata says otherwise.
 - Run `node --check bin/musiclib.mjs`, `npm test`, a packaged-install smoke test, the Skill validator, `npm audit --omit=dev`, and `npm pack --dry-run` before release.

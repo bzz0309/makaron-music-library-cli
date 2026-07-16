@@ -24,3 +24,9 @@ Implemented routes:
 - `GET /v1/tracks/:id/audio` with an expiring signature
 
 Remaining production work: choose hosting and storage, deploy behind HTTPS, replace the shared token with per-Agent issuance/revocation and audit logs, then add remote video upload and server-side mixing. Do not claim these remaining items are complete.
+
+## Render deployment preparation
+
+`Dockerfile`, `bin/server-entrypoint.sh`, `.dockerignore`, and `render.yaml` prepare a Singapore Render web service with a 10GB disk mounted at `/data`. The entrypoint initializes an empty catalog on first boot. `/v1/health` is intentionally public and contains no track data; all content routes remain protected.
+
+Deployment still requires explicit approval to push the repository and create a paid Render service. After deployment, transfer the 7.1GB local collection to `/data/source` using Render SSH/SCP and index it into `/data/library`. Then update the npm client default only after the final HTTPS URL exists.

@@ -381,8 +381,8 @@ function recommendLocal(root, options) {
 
 async function serveLibrary(root, options) {
   ensureLibrary(root);
-  const host = options.host || '127.0.0.1';
-  const port = Number(options.port || 8787);
+  const host = options.host || process.env.HOST || '127.0.0.1';
+  const port = Number(options.port || process.env.PORT || 8787);
   const allowUnauthenticated = Boolean(options['allow-unauthenticated']);
   const secret = process.env.MUSICLIB_SERVER_TOKEN;
   if (!allowUnauthenticated && !secret) fail('SERVER_TOKEN_REQUIRED', 'Set MUSICLIB_SERVER_TOKEN before starting the API server.');
@@ -401,8 +401,8 @@ async function serveLibrary(root, options) {
         response.writeHead(200, { 'content-type': 'application/octet-stream', 'content-length': stat.size, 'content-disposition': `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(track.path))}`, 'cache-control': 'private, max-age=60' });
         return fs.createReadStream(track.path).pipe(response);
       }
-      if (!bearerAuthorized(request, secret, allowUnauthenticated)) return sendJson(response, 401, { ok: false, error: { code: 'UNAUTHORIZED', message: 'A valid Agent token is required.' } });
       if (request.method === 'GET' && url.pathname === `/${API_VERSION}/health`) return sendJson(response, 200, { ok: true, service: PACKAGE, version: VERSION, api_version: API_VERSION });
+      if (!bearerAuthorized(request, secret, allowUnauthenticated)) return sendJson(response, 401, { ok: false, error: { code: 'UNAUTHORIZED', message: 'A valid Agent token is required.' } });
       if (request.method === 'GET' && url.pathname === `/${API_VERSION}/search`) {
         const query = url.searchParams.get('query') || '';
         if (!query) fail('MISSING_REQUIRED_OPTION', 'Missing query.');

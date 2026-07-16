@@ -28,3 +28,5 @@ Vendor only compiled runtime files and normal recommendation data. Preserve the 
 - Return safe track metadata without server filesystem paths.
 - Convert an authorized track into a short-lived HMAC-signed URL instead of exposing permanent storage URLs.
 - Keep local indexing and media assembly behind explicit owner mode.
+- For a first single-instance deployment, mount one encrypted persistent disk and transfer the owner's files over SSH/SFTP. Keep the catalog and audio under the mount, not in the container image.
+- Expose only a metadata-free health endpoint publicly. Protect every library operation with the Agent token.

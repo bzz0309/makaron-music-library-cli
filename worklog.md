@@ -21,3 +21,5 @@
 - Removed server paths from remote results and added bearer-token and signed-link validation.
 - Added a remote API smoke test. Both local CLI and authenticated HTTP tests pass.
 - Kept version `0.1.0` and did not publish to npm or GitHub.
+- Added a Docker/Render deployment kit with a 10GB persistent disk, public non-sensitive health check, environment-driven host/port, first-boot library initialization, and graceful shutdown.
+- Selected Render persistent disk as the first deployment target for the current 7.1GB collection. No cloud resource has been created and no paid plan has been authorized.

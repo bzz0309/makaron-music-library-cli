@@ -95,7 +95,36 @@ export MUSICLIB_SERVER_TOKEN=replace_with_a_long_random_agent_token
 musiclib serve --local --host 127.0.0.1 --port 8787
 ```
 
-For external Agents, deploy the same command behind HTTPS on an always-on server and set `--public-url` to its public origin. Do not expose the owner's Mac directly to the internet. Each production environment should use a secret manager and a reverse proxy with TLS. Version 0.1.0 uses one shared Agent token; per-Agent token issuance, revocation, audit logs, cloud video upload, and server-side video mixing remain the next server milestone.
+For external Agents, deploy the same command behind HTTPS on an always-on server. Do not expose the owner's Mac directly to the internet. Version 0.1.0 uses one shared Agent token; per-Agent token issuance, revocation, audit logs, cloud video upload, object storage, and server-side video mixing remain later server milestones.
+
+### Deploy on Render
+
+The repository includes `Dockerfile` and `render.yaml`. The Blueprint creates a Singapore-region Docker web service, a 10GB persistent disk at `/data`, and the public `/v1/health` check. Search, recommendation, and audio access remain token-protected.
+
+1. Push this repository to GitHub only after release approval.
+2. In Render, create a Blueprint from the repository.
+3. Enter a long random value for `MUSICLIB_SERVER_TOKEN` when Render prompts. Store the same value in a password manager; do not commit it.
+4. Wait for `/v1/health` to return `ok: true`.
+5. Add an SSH public key to Render and copy the local music folder to `/data/source` using the service-specific SCP command shown by Render.
+6. Open the service Shell and index the uploaded folder:
+
+```bash
+node /app/bin/musiclib.mjs index \
+  --library /data/library \
+  --source /data/source \
+  --source-name baidu-netdisk-upload
+```
+
+7. Configure an Agent with the HTTPS service URL and the shared token:
+
+```bash
+npx makaron-music-library-cli setup --api-url https://YOUR-SERVICE.onrender.com
+export MUSICLIB_API_TOKEN=YOUR_AGENT_TOKEN
+musiclib doctor --remote
+musiclib search --query "K-pop stage"
+```
+
+Render requires a paid service for SSH and a persistent disk. Its official documentation supports transferring disk files with SCP/SFTP. For a larger or multi-instance library, move audio to private object storage and issue provider-managed presigned URLs instead of increasing the service disk.
 
 To use local owner mode explicitly:
 

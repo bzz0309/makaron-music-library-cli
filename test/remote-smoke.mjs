@@ -44,6 +44,8 @@ try {
     await new Promise((resolve) => setTimeout(resolve, 50));
   }
   assert.equal(ready, true, `remote server did not become ready\n${serverErrors}`);
+  const publicHealth = await fetch(`${apiUrl}/v1/health`);
+  assert.equal(publicHealth.status, 200);
 
   const remoteEnv = { MUSICLIB_API_URL: apiUrl, MUSICLIB_API_TOKEN: token };
   const searched = call(['search', '--query', 'K-pop stage'], remoteEnv);
