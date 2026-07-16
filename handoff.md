@@ -11,3 +11,16 @@ The first scene profiles are `kpop-stage` and `ecommerce`. Recommendations now r
 The CLI now vendors the compiled runtime of `music-prompt-library` 0.8.1 from commit `2d19e7c`. `brief` exposes all 40 Profiles and four adapters; `recommend`, `generate`, and automatic `soundtrack` selection consume the same intelligence layer. The two old scene names remain aliases, not a separate source of truth.
 
 Before release, keep the vendor snapshot, `commander`, and `zod` in the npm package. Do not publish the full upstream development data or its test dependencies.
+## Remote-first update — 2026-07-16
+
+The CLI now defaults Agent-facing `search` and `recommend` to a central API. Owner operations remain local and should use `--local` or `--library`. The server command is `musiclib serve`; it requires `MUSICLIB_SERVER_TOKEN`, and clients require the same value through `MUSICLIB_API_TOKEN` for the current shared-token MVP.
+
+Implemented routes:
+
+- `GET /v1/health`
+- `GET /v1/search`
+- `POST /v1/recommend`
+- `POST /v1/tracks/:id/access`
+- `GET /v1/tracks/:id/audio` with an expiring signature
+
+Remaining production work: choose hosting and storage, deploy behind HTTPS, replace the shared token with per-Agent issuance/revocation and audit logs, then add remote video upload and server-side mixing. Do not claim these remaining items are complete.

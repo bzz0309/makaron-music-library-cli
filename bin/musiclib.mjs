@@ -2,6 +2,7 @@
 
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -10,6 +11,8 @@ import { spawnSync } from 'node:child_process';
 const VERSION = '0.1.0';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
+const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
+const API_VERSION = 'v1';
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.aiff', '.aif']);
 const CONCEPTS = {
   calm: ['calm', 'gentle', 'soft', 'peaceful', 'relax', '安静', '平静', '轻柔', '舒缓'],
@@ -78,6 +81,13 @@ function slug(value) { return String(value || '').normalize('NFKD').replace(/[^\
 function unique(values) { return [...new Set(values.filter(Boolean))]; }
 function splitList(value) { return unique(String(value || '').split(',').map((item) => item.trim().toLowerCase())); }
 function rootFor(options) { return path.resolve(options.library || process.env.MUSICLIB_LIBRARY || path.join(os.homedir(), '.musiclib')); }
+function loadConfig() { return fs.existsSync(CONFIG_FILE) ? readJson(CONFIG_FILE) : {}; }
+function apiUrlFor(options) {
+  const value = options['api-url'] || process.env.MUSICLIB_API_URL || loadConfig().api_url;
+  return value ? String(value).replace(/\/+$/, '') : null;
+}
+function apiToken() { return process.env.MUSICLIB_API_TOKEN || null; }
+function useLocal(options) { return Boolean(options.local || options.library || process.env.MUSICLIB_MODE === 'local'); }
 function manifestFile(root) { return path.join(root, 'library.json'); }
 function tracksFile(root) { return path.join(root, 'tracks.json'); }
 function ensureLibrary(root) { if (!fs.existsSync(manifestFile(root))) fail('NOT_A_LIBRARY', `Not a music library: ${root}; run init first`); }
@@ -87,7 +97,7 @@ function saveTracks(root, tracks) { writeJson(tracksFile(root), tracks.sort((a, 
 function parseArgs(argv) {
   const options = { _: [] };
   const repeatable = new Set(['tag', 'turn']);
-  const flags = new Set(['json', 'force', 'live', 'dry-run', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze']);
+  const flags = new Set(['json', 'force', 'live', 'dry-run', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze', 'local', 'remote', 'allow-unauthenticated']);
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (!token.startsWith('--')) { options._.push(token); continue; }
@@ -166,6 +176,68 @@ function intelligenceSearchText(result, request) {
   return unique([request, result?.profile_id, result?.reason, intelligencePrompt(result), ...flattened.map(String)]).join(' ');
 }
 function providerRun(args, timeout) { const command = providerCommand(); return run(command[0], [...command.slice(1), ...args], timeout); }
+async function apiRequest(options, endpoint, init = {}) {
+  const apiUrl = apiUrlFor(options);
+  if (!apiUrl) fail('REMOTE_NOT_CONFIGURED', 'No central music library is configured. Run setup --api-url https://your-service.example or use --local for the owner library.');
+  const token = apiToken();
+  if (!token) fail('REMOTE_AUTH_REQUIRED', 'Set MUSICLIB_API_TOKEN before calling the central music library.');
+  const headers = { accept: 'application/json', authorization: `Bearer ${token}`, ...(init.body ? { 'content-type': 'application/json' } : {}), ...init.headers };
+  let response;
+  try { response = await fetch(`${apiUrl}/${API_VERSION}${endpoint}`, { ...init, headers }); }
+  catch (error) { fail('REMOTE_UNREACHABLE', `Cannot reach central music library: ${error.message}`, true, { api_url: apiUrl }); }
+  const text = await response.text();
+  let payload = null;
+  try { payload = text ? JSON.parse(text) : {}; } catch {}
+  if (!response.ok) {
+    const remoteError = payload?.error || {};
+    fail(remoteError.code || 'REMOTE_REQUEST_FAILED', remoteError.message || `Central music library returned HTTP ${response.status}`, response.status >= 500, { status: response.status });
+  }
+  if (!payload) fail('REMOTE_INVALID_RESPONSE', 'Central music library returned invalid JSON', true);
+  return payload;
+}
+function publicTrack(track) {
+  const { path: ignoredPath, ...safe } = track;
+  return safe;
+}
+function requestBaseUrl(request, options) {
+  const configured = options['public-url'];
+  if (configured) return String(configured).replace(/\/+$/, '');
+  const forwarded = request.headers['x-forwarded-proto'];
+  return `${forwarded || 'http'}://${request.headers.host}`;
+}
+function signedTrackUrl(trackId, baseUrl, secret, ttlSeconds = 900) {
+  const expires = Math.floor(Date.now() / 1000) + Math.max(30, Math.min(Number(ttlSeconds) || 900, 3600));
+  const signature = crypto.createHmac('sha256', secret).update(`${trackId}:${expires}`).digest('hex');
+  return { url: `${baseUrl}/${API_VERSION}/tracks/${encodeURIComponent(trackId)}/audio?expires=${expires}&signature=${signature}`, expires_at: new Date(expires * 1000).toISOString() };
+}
+function validSignature(trackId, expires, signature, secret) {
+  if (!expires || Number(expires) < Math.floor(Date.now() / 1000) || !signature) return false;
+  const expected = crypto.createHmac('sha256', secret).update(`${trackId}:${expires}`).digest('hex');
+  const left = Buffer.from(String(signature)); const right = Buffer.from(expected);
+  return left.length === right.length && crypto.timingSafeEqual(left, right);
+}
+function sendJson(response, status, payload) {
+  response.writeHead(status, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' });
+  response.end(`${JSON.stringify(payload)}\n`);
+}
+async function requestJson(request, limit = 1024 * 1024) {
+  const chunks = []; let size = 0;
+  for await (const chunk of request) {
+    size += chunk.length;
+    if (size > limit) fail('REQUEST_TOO_LARGE', 'Request body is too large.');
+    chunks.push(chunk);
+  }
+  if (!chunks.length) return {};
+  try { return JSON.parse(Buffer.concat(chunks).toString('utf8')); }
+  catch { fail('INVALID_JSON', 'Request body must be valid JSON.'); }
+}
+function bearerAuthorized(request, secret, allowUnauthenticated) {
+  if (allowUnauthenticated) return true;
+  const header = request.headers.authorization || '';
+  const candidate = header.startsWith('Bearer ') ? header.slice(7) : '';
+  const left = Buffer.from(candidate); const right = Buffer.from(secret || '');
+  return left.length === right.length && left.length > 0 && crypto.timingSafeEqual(left, right);
+}
 function parseProviderJson(stdout) {
   const value = stdout.trim();
   if (!value) fail('EMPTY_PROVIDER_RESPONSE', 'Makaron CLI returned no output', true);
@@ -296,6 +368,82 @@ function recommendationDecision(track) {
   return { action: 'review-rights-or-generate-original', publish_ready: false, reason: 'The selected track has no verified commercial-use metadata.' };
 }
 
+function recommendLocal(root, options) {
+  const request = requestFrom(options, musicBrief(options));
+  const duration = Number(options.duration || 0);
+  const intelligence = intelligenceQuery(intelligenceInput(options, request, duration), options.adapter || 'generic');
+  const localQuery = intelligenceSearchText(intelligence, request);
+  const tracks = search(root, localQuery, { ...options, duration, limit: options.limit || 5 }).map(publicTrack);
+  const recommendation = tracks[0] || null;
+  const generation_prompt = [intelligencePrompt(intelligence), intelligence.arrangement_notes || intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
+  return { ok: true, profile_id: intelligence.profile_id, intelligence, request, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks };
+}
+
+async function serveLibrary(root, options) {
+  ensureLibrary(root);
+  const host = options.host || '127.0.0.1';
+  const port = Number(options.port || 8787);
+  const allowUnauthenticated = Boolean(options['allow-unauthenticated']);
+  const secret = process.env.MUSICLIB_SERVER_TOKEN;
+  if (!allowUnauthenticated && !secret) fail('SERVER_TOKEN_REQUIRED', 'Set MUSICLIB_SERVER_TOKEN before starting the API server.');
+  if (allowUnauthenticated && host !== '127.0.0.1' && host !== 'localhost') fail('UNSAFE_PUBLIC_SERVER', 'Unauthenticated mode may only bind to localhost.');
+  const signingSecret = secret || crypto.randomBytes(32).toString('hex');
+  const server = http.createServer(async (request, response) => {
+    try {
+      const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
+      const audioMatch = url.pathname.match(new RegExp(`^/${API_VERSION}/tracks/([^/]+)/audio$`));
+      if (audioMatch && request.method === 'GET') {
+        const trackId = decodeURIComponent(audioMatch[1]);
+        if (!validSignature(trackId, url.searchParams.get('expires'), url.searchParams.get('signature'), signingSecret)) return sendJson(response, 401, { ok: false, error: { code: 'INVALID_OR_EXPIRED_LINK', message: 'This audio link is invalid or expired.' } });
+        const track = findTrack(root, trackId);
+        if (!fs.existsSync(track.path)) return sendJson(response, 404, { ok: false, error: { code: 'TRACK_NOT_LOCAL', message: 'The audio file is unavailable on the server.' } });
+        const stat = fs.statSync(track.path);
+        response.writeHead(200, { 'content-type': 'application/octet-stream', 'content-length': stat.size, 'content-disposition': `attachment; filename*=UTF-8''${encodeURIComponent(path.basename(track.path))}`, 'cache-control': 'private, max-age=60' });
+        return fs.createReadStream(track.path).pipe(response);
+      }
+      if (!bearerAuthorized(request, secret, allowUnauthenticated)) return sendJson(response, 401, { ok: false, error: { code: 'UNAUTHORIZED', message: 'A valid Agent token is required.' } });
+      if (request.method === 'GET' && url.pathname === `/${API_VERSION}/health`) return sendJson(response, 200, { ok: true, service: PACKAGE, version: VERSION, api_version: API_VERSION });
+      if (request.method === 'GET' && url.pathname === `/${API_VERSION}/search`) {
+        const query = url.searchParams.get('query') || '';
+        if (!query) fail('MISSING_REQUIRED_OPTION', 'Missing query.');
+        const searchOptions = {
+          limit: url.searchParams.get('limit') || 10,
+          duration: url.searchParams.get('duration') || 0,
+          scene: url.searchParams.get('scene') || undefined,
+          'commercial-only': url.searchParams.get('commercial_only') === 'true',
+        };
+        const tracks = search(root, query, searchOptions).map(publicTrack);
+        return sendJson(response, 200, { ok: true, query, count: tracks.length, tracks });
+      }
+      if (request.method === 'POST' && url.pathname === `/${API_VERSION}/recommend`) {
+        const body = await requestJson(request);
+        if (body.video) fail('REMOTE_VIDEO_UPLOAD_NOT_IMPLEMENTED', 'Remote video upload is not available yet. Send --brief or --request, or analyze the video before calling recommend.');
+        return sendJson(response, 200, recommendLocal(root, body));
+      }
+      const accessMatch = url.pathname.match(new RegExp(`^/${API_VERSION}/tracks/([^/]+)/access$`));
+      if (accessMatch && request.method === 'POST') {
+        const trackId = decodeURIComponent(accessMatch[1]); const track = findTrack(root, trackId);
+        if (!fs.existsSync(track.path)) fail('TRACK_NOT_LOCAL', 'The audio file is unavailable on the server.');
+        const access = signedTrackUrl(track.id, requestBaseUrl(request, options), signingSecret, options['link-ttl']);
+        return sendJson(response, 200, { ok: true, track: publicTrack(track), ...access });
+      }
+      return sendJson(response, 404, { ok: false, error: { code: 'NOT_FOUND', message: 'API route not found.' } });
+    } catch (error) {
+      const known = error instanceof CliError;
+      return sendJson(response, known ? 400 : 500, { ok: false, error: { code: known ? error.code : 'UNEXPECTED_ERROR', message: error.message } });
+    }
+  });
+  await new Promise((resolve, reject) => {
+    server.once('error', reject);
+    server.listen(port, host, resolve);
+  });
+  process.stderr.write(`Central music library listening on http://${host}:${port}/${API_VERSION}\n`);
+  await new Promise((resolve) => {
+    const stop = () => { server.close(resolve); server.closeAllConnections?.(); };
+    process.once('SIGINT', stop); process.once('SIGTERM', stop);
+  });
+}
+
 function extractFrames(video, directory) {
   if (!executable('ffmpeg')) fail('FFMPEG_REQUIRED', 'ffmpeg is required for automatic video analysis');
   fs.mkdirSync(directory, { recursive: true });
@@ -363,15 +511,23 @@ function installSkill(options) {
   if (result.error || result.status !== 0) fail('SKILL_INSTALL_FAILED', 'Could not install Agent Skill', true, { exit_code: result.status });
   return { ok: true, installed: true, skill: 'makaron-music-library' };
 }
+function configure(options) {
+  const apiUrl = required(options, 'api-url').replace(/\/+$/, '');
+  if (!/^https?:\/\//i.test(apiUrl)) fail('INVALID_API_URL', 'The central API URL must begin with https:// or http://.');
+  const config = { ...loadConfig(), api_url: apiUrl, updated_at: now() };
+  if (!options['dry-run']) writeJson(CONFIG_FILE, config);
+  return { ok: true, dry_run: Boolean(options['dry-run']), config_file: CONFIG_FILE, api_url: apiUrl, token_source: 'MUSICLIB_API_TOKEN' };
+}
 function setup(options) {
   const installArgs = ['install', '-g', `${PACKAGE}@${VERSION}`];
-  if (options['dry-run']) return { ok: true, dry_run: true, global_install: ['npm', ...installArgs], skill_install: installSkill({ ...options, global: true, yes: true }) };
+  const remote_config = options['api-url'] ? configure(options) : { configured: false, note: 'Pass --api-url or set MUSICLIB_API_URL before remote search.' };
+  if (options['dry-run']) return { ok: true, dry_run: true, global_install: ['npm', ...installArgs], skill_install: installSkill({ ...options, global: true, yes: true }), remote_config };
   const result = spawnSync('npm', installArgs, { stdio: 'inherit' });
   if (result.error || result.status !== 0) fail('GLOBAL_INSTALL_FAILED', `Could not install ${PACKAGE} globally`, true, { exit_code: result.status });
-  return installSkill({ ...options, global: true, yes: true });
+  return { ...installSkill({ ...options, global: true, yes: true }), remote_config };
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  profiles    List all bundled music intelligence profiles\n  brief       Turn a natural-language request into an agent-ready music brief\n  search      Search the local library by title, artist, tags, or natural language\n  recommend   Use music intelligence, then rank matching local tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup --api-url <central-api-url> [--agent <agent>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  config      Save the central API URL (tokens remain environment-only)\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nPass --local (or --library) to search/recommend the owner's local index. All command results are JSON.`);
 }
 
 async function main() {
@@ -380,10 +536,13 @@ async function main() {
   if (command === '--version' || command === 'version') return console.log(VERSION);
   if (command === 'setup') return emit(setup(options));
   if (command === 'install-skill') return emit(installSkill(options));
+  if (command === 'config') return emit(configure(options));
+  if (command === 'serve') return serveLibrary(rootFor(options), options);
   if (command === 'doctor') {
     const authFile = fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json'));
     const profiles = intelligenceProfiles();
-    const result = { ok: true, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    const result = { ok: true, mode: useLocal(options) ? 'local' : 'remote', remote: { api_url: apiUrlFor(options), token_present: Boolean(apiToken()), configured: Boolean(apiUrlFor(options)) }, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    if (options.remote || (options.live && apiUrlFor(options))) result.remote.health = await apiRequest(options, '/health');
     if (options.live) { providerRun(['list'], 60000); result.live_check = true; }
     return emit(redact(result));
   }
@@ -416,10 +575,22 @@ async function main() {
     return emit({ ok: true, request, adapter: options.adapter || 'generic', intelligence });
   }
   if (command === 'search') {
-    const query = required(options, 'query'); const tracks = search(root, query, options);
-    return emit({ ok: true, query, count: tracks.length, tracks });
+    const query = required(options, 'query');
+    if (!useLocal(options)) {
+      const params = new URLSearchParams({ query, limit: String(options.limit || 10) });
+      if (options.duration) params.set('duration', options.duration);
+      if (options.scene) params.set('scene', options.scene);
+      if (options['commercial-only']) params.set('commercial_only', 'true');
+      return emit(await apiRequest(options, `/search?${params}`));
+    }
+    const tracks = search(root, query, options);
+    return emit({ ok: true, mode: 'local', query, count: tracks.length, tracks });
   }
   if (command === 'recommend') {
+    if (!useLocal(options)) {
+      const remoteOptions = { request: options.request, brief: options.brief, scene: options.scene, duration: options.duration, limit: options.limit, adapter: options.adapter, style: options.style, target: options.target, platform: options.platform, 'content-type': options['content-type'], 'commercial-only': Boolean(options['commercial-only']), video: options.video };
+      return emit(await apiRequest(options, '/recommend', { method: 'POST', body: JSON.stringify(remoteOptions) }));
+    }
     ensureLibrary(root); const video = options.video ? path.resolve(options.video) : null;
     if (video && !fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
     const analysis = video ? analyzeVideo(video, options) : musicBrief(options); const request = requestFrom(options, analysis);
@@ -429,6 +600,11 @@ async function main() {
     const tracks = search(root, localQuery, { ...options, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
     const generation_prompt = [intelligencePrompt(intelligence), intelligence.arrangement_notes || intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
     return emit({ ok: true, profile_id: intelligence.profile_id, intelligence, scene: analysis.profile || null, analysis, request, video, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks });
+  }
+  if (command === 'access') {
+    if (useLocal(options)) fail('REMOTE_ONLY_COMMAND', 'access creates a central-library URL and is only available in remote mode.');
+    const trackId = required(options, 'track');
+    return emit(await apiRequest(options, `/tracks/${encodeURIComponent(trackId)}/access`, { method: 'POST', body: '{}' }));
   }
   if (command === 'export') {
     const track = findTrack(root, required(options, 'track')); const output = copyTrack(track, required(options, 'output'));

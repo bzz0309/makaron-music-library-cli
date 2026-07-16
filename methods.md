@@ -21,3 +21,10 @@ Convert a video use case into a stable weighted music profile. Combine that prof
 Keep platform-neutral intent understanding separate from real audio assets. Let the vendored intelligence layer select and explain a Profile, then use its prompt and matched attributes to rank local tracks. Fall back to original generation when local relevance or rights are insufficient.
 
 Vendor only compiled runtime files and normal recommendation data. Preserve the upstream commit in `vendor/music-prompt-library/UPSTREAM.md`, audit production dependencies, and rerun both upstream and wrapper test suites before updating the snapshot.
+## Remote Agent music-library pattern
+
+- Separate installation from content access: any Agent may install the npm package, while the central collection requires an Agent token.
+- Store only the non-secret API URL in CLI config. Read client and server tokens from environment variables.
+- Return safe track metadata without server filesystem paths.
+- Convert an authorized track into a short-lived HMAC-signed URL instead of exposing permanent storage URLs.
+- Keep local indexing and media assembly behind explicit owner mode.
