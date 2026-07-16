@@ -12,5 +12,5 @@ bucket_name = "makaron-music-library"
 [[d1_databases]]
 binding = "DB"
 database_name = "makaron-music-library"
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "621ede7e-29a2-4b68-9d4b-2759b82e5e11"
 migrations_dir = "migrations"
