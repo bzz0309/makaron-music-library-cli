@@ -1,0 +1,357 @@
+#!/usr/bin/env node
+
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { spawnSync } from 'node:child_process';
+
+const VERSION = '0.1.0';
+const PACKAGE = 'makaron-music-library-cli';
+const MAKARON_VERSION = '0.13.0';
+const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.aiff', '.aif']);
+const CONCEPTS = {
+  calm: ['calm', 'gentle', 'soft', 'peaceful', 'relax', '安静', '平静', '轻柔', '舒缓'],
+  healing: ['healing', 'warm', 'cozy', '治愈', '温暖', '温馨'],
+  happy: ['happy', 'joy', 'bright', 'upbeat', '欢快', '开心', '明亮', '活泼'],
+  romantic: ['romantic', 'love', 'sweet', '浪漫', '爱情', '甜蜜'],
+  sad: ['sad', 'melancholy', 'emotional', '悲伤', '伤感', '催泪'],
+  tense: ['tense', 'suspense', 'thriller', '紧张', '悬疑', '惊悚'],
+  epic: ['epic', 'heroic', 'trailer', '史诗', '英雄', '预告片'],
+  energetic: ['energetic', 'dynamic', 'sports', '活力', '动感', '运动'],
+  cinematic: ['cinematic', 'film', 'score', '电影感', '影视', '配乐'],
+  japanese: ['japanese', 'japan', 'anime', '日系', '日本', '动漫'],
+  chinese: ['chinese', 'oriental', '古风', '国风', '中国风'],
+  piano: ['piano', '钢琴'],
+  guitar: ['guitar', '吉他'],
+  electronic: ['electronic', 'synth', 'edm', '电子', '合成器'],
+  orchestral: ['orchestral', 'strings', 'symphony', '管弦', '弦乐', '交响'],
+  rock: ['rock', '摇滚'],
+  ambient: ['ambient', 'atmosphere', '氛围', '环境'],
+  vlog: ['vlog', 'daily', 'lifestyle', '日常', '生活'],
+  commercial: ['commercial', 'corporate', 'business', '广告', '商务', '企业'],
+  no_vocals: ['instrumental', 'no vocals', '纯音乐', '无歌词', '无人声'],
+};
+
+class CliError extends Error {
+  constructor(code, message, retryable = false, details = {}) {
+    super(message); this.code = code; this.retryable = retryable; this.details = details;
+  }
+}
+
+function now() { return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'); }
+function emit(value) { process.stdout.write(`${JSON.stringify(value, null, 2)}\n`); }
+function fail(code, message, retryable = false, details = {}) { throw new CliError(code, message, retryable, details); }
+function readJson(file) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (error) { fail('INVALID_JSON', `Cannot read ${file}: ${error.message}`); } }
+function writeJson(file, value) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`); }
+function redact(value) {
+  if (typeof value === 'string') return value.replace(/mk_(?:live|test)?_?[A-Za-z0-9_-]{8,}/g, '[REDACTED_MAKARON_KEY]');
+  if (Array.isArray(value)) return value.map(redact);
+  if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, redact(item)]));
+  return value;
+}
+function slug(value) { return String(value || '').normalize('NFKD').replace(/[^\p{L}\p{N}]+/gu, '-').replace(/^-|-$/g, '').toLowerCase().slice(0, 64); }
+function unique(values) { return [...new Set(values.filter(Boolean))]; }
+function splitList(value) { return unique(String(value || '').split(',').map((item) => item.trim().toLowerCase())); }
+function rootFor(options) { return path.resolve(options.library || process.env.MUSICLIB_LIBRARY || path.join(os.homedir(), '.musiclib')); }
+function manifestFile(root) { return path.join(root, 'library.json'); }
+function tracksFile(root) { return path.join(root, 'tracks.json'); }
+function ensureLibrary(root) { if (!fs.existsSync(manifestFile(root))) fail('NOT_A_LIBRARY', `Not a music library: ${root}; run init first`); }
+function loadTracks(root) { ensureLibrary(root); return fs.existsSync(tracksFile(root)) ? readJson(tracksFile(root)) : []; }
+function saveTracks(root, tracks) { writeJson(tracksFile(root), tracks.sort((a, b) => a.id.localeCompare(b.id))); }
+
+function parseArgs(argv) {
+  const options = { _: [] };
+  const repeatable = new Set(['tag']);
+  const flags = new Set(['json', 'force', 'live', 'dry-run', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze']);
+  for (let index = 0; index < argv.length; index += 1) {
+    const token = argv[index];
+    if (!token.startsWith('--')) { options._.push(token); continue; }
+    const key = token.slice(2);
+    if (flags.has(key)) { options[key] = true; continue; }
+    const value = argv[index + 1];
+    if (value === undefined || value.startsWith('--')) fail('MISSING_OPTION_VALUE', `Missing value for --${key}`);
+    index += 1;
+    if (repeatable.has(key)) { options[key] ||= []; options[key].push(value); } else options[key] = value;
+  }
+  return options;
+}
+function required(options, key) { if (!options[key]) fail('MISSING_REQUIRED_OPTION', `Missing required option --${key}`); return options[key]; }
+
+function executable(name) { return spawnSync(name, ['-version'], { encoding: 'utf8' }).status === 0; }
+function run(command, args, timeout = 900000) {
+  const result = spawnSync(command, args, { encoding: 'utf8', env: { ...process.env, MAKARON_DISABLE_UPDATE_CHECK: '1' }, timeout, maxBuffer: 30 * 1024 * 1024 });
+  if (result.error) fail('COMMAND_EXEC_FAILED', result.error.message, true);
+  if (result.status !== 0) fail('COMMAND_FAILED', `${command} failed`, true, { exit_code: result.status, stderr_tail: redact((result.stderr || '').slice(-2000)) });
+  return result;
+}
+function providerCommand() {
+  if (process.env.MAKARON_CLI_COMMAND) return process.env.MAKARON_CLI_COMMAND.trim().split(/\s+/);
+  return ['npx', '-y', `makaron-cli@${process.env.MAKARON_CLI_VERSION || MAKARON_VERSION}`];
+}
+function providerRun(args, timeout) { const command = providerCommand(); return run(command[0], [...command.slice(1), ...args], timeout); }
+function parseProviderJson(stdout) {
+  const value = stdout.trim();
+  if (!value) fail('EMPTY_PROVIDER_RESPONSE', 'Makaron CLI returned no output', true);
+  try { return JSON.parse(value); } catch {}
+  for (const line of value.split(/\r?\n/).reverse()) { try { return JSON.parse(line); } catch {} }
+  fail('INVALID_PROVIDER_RESPONSE', 'Makaron CLI did not return machine-readable JSON', true, { stdout_tail: redact(value.slice(-1000)) });
+}
+function providerJson(args, timeout = 180000) { return parseProviderJson(providerRun(args, timeout).stdout); }
+function source(payload) { return payload?.result && typeof payload.result === 'object' ? payload.result : payload; }
+function getRunId(payload) { const body = source(payload) || {}; const id = body.runId || body.run_id || body.id; if (!id) fail('RUN_ID_MISSING', 'Makaron response did not include a run ID'); return id; }
+function mediaOutputs(payload) {
+  const body = source(payload) || {}; const found = [];
+  for (const item of Array.isArray(body.output) ? body.output : []) {
+    const url = item?.url || item?.audioUrl || item?.musicUrl;
+    if (url && ['audio', 'music', 'file'].includes(item?.type)) found.push({ id: item.id, type: 'audio', url, status: item.status || 'completed' });
+  }
+  for (const item of body.music || body.audio || body.audios || []) {
+    const url = item?.url || item?.audioUrl || item?.musicUrl;
+    if (url) found.push({ id: item.id, type: 'audio', url, status: item.status || 'completed' });
+  }
+  return [...new Map(found.map((item) => [item.url, item])).values()];
+}
+function waitFor(runId) {
+  try { providerRun(['responses', 'watch', runId, '--jsonl']); } catch (error) { if (!(error instanceof CliError)) throw error; }
+  const raw = providerJson(['responses', 'get', runId, '--json']);
+  const body = source(raw) || {};
+  if (['failed', 'aborted'].includes(body.status)) fail('MAKARON_RUN_FAILED', `Makaron run ended with ${body.status}`, body.status === 'failed', { response: redact(raw) });
+  return { status: body.status, project_id: body.projectId || body.project_id, project_url: body.projectUrl || body.project_url, outputs: mediaOutputs(raw), raw: redact(raw) };
+}
+
+function probe(file) {
+  if (!executable('ffprobe')) return null;
+  const result = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration:format_tags=title,artist,album,genre:stream=codec_type', '-of', 'json', file], { encoding: 'utf8', timeout: 30000 });
+  if (result.error || result.status !== 0) return null;
+  let data; try { data = JSON.parse(result.stdout || '{}'); } catch { return null; }
+  return {
+    duration_seconds: Number(data.format?.duration || 0) || null,
+    title: data.format?.tags?.title,
+    artist: data.format?.tags?.artist,
+    album: data.format?.tags?.album,
+    genre: data.format?.tags?.genre,
+    has_audio: (data.streams || []).some((item) => item.codec_type === 'audio'),
+    has_video: (data.streams || []).some((item) => item.codec_type === 'video'),
+  };
+}
+function walk(directory) {
+  const found = [];
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name.startsWith('.')) continue;
+    const file = path.join(directory, entry.name);
+    if (entry.isDirectory()) found.push(...walk(file));
+    else if (entry.isFile() && AUDIO_EXTENSIONS.has(path.extname(entry.name).toLowerCase())) found.push(file);
+  }
+  return found;
+}
+function conceptsFor(text) {
+  const haystack = String(text || '').toLowerCase(); const tags = [];
+  for (const [concept, words] of Object.entries(CONCEPTS)) if (words.some((word) => haystack.includes(word))) tags.push(concept);
+  return tags;
+}
+function sidecar(file) {
+  const candidates = [`${file}.music.json`, path.join(path.dirname(file), `${path.basename(file, path.extname(file))}.music.json`)];
+  const found = candidates.find(fs.existsSync); return found ? readJson(found) : {};
+}
+function trackFromFile(file, sourceName) {
+  const stat = fs.statSync(file); const meta = probe(file) || {}; const extra = sidecar(file);
+  const relativeHint = `${path.basename(file, path.extname(file))} ${path.dirname(file)}`;
+  const title = extra.title || meta.title || path.basename(file, path.extname(file));
+  const artist = extra.artist || meta.artist || null;
+  const tags = unique([...(extra.tags || []), ...splitList(meta.genre), ...conceptsFor(`${relativeHint} ${extra.description || ''}`)]);
+  const id = `trk_${crypto.createHash('sha256').update(path.resolve(file)).digest('hex').slice(0, 12)}`;
+  return {
+    schema_version: '1.0', id, title, artist, album: extra.album || meta.album || null,
+    path: path.resolve(file), source: sourceName, size_bytes: stat.size, modified_at: stat.mtime.toISOString(),
+    duration_seconds: extra.duration_seconds || meta.duration_seconds || null,
+    tags, description: extra.description || '', license: extra.license || 'unknown', commercial_use: extra.commercial_use ?? null,
+    indexed_at: now(),
+  };
+}
+function queryTerms(query) {
+  const raw = String(query || '').toLowerCase();
+  return unique([...raw.split(/[^\p{L}\p{N}]+/u).filter(Boolean), ...conceptsFor(raw)]);
+}
+function scoreTrack(track, query, wantedDuration) {
+  const terms = queryTerms(query); const text = `${track.title} ${track.artist || ''} ${track.album || ''} ${track.description || ''} ${(track.tags || []).join(' ')}`.toLowerCase();
+  let score = 0; const matched = [];
+  for (const term of terms) if (text.includes(term) || track.tags?.includes(term)) { score += track.tags?.includes(term) ? 4 : 2; matched.push(term); }
+  if (wantedDuration && track.duration_seconds) {
+    const ratio = Math.abs(track.duration_seconds - wantedDuration) / Math.max(wantedDuration, 1);
+    score += Math.max(0, 2 - ratio * 2);
+  }
+  return { score: Number(score.toFixed(3)), matched: unique(matched) };
+}
+function search(root, query, options = {}) {
+  const limit = Number(options.limit || 10); const duration = Number(options.duration || 0);
+  return loadTracks(root)
+    .filter((track) => !options['commercial-only'] || track.commercial_use === true)
+    .map((track) => ({ ...track, match: scoreTrack(track, query, duration) }))
+    .filter((track) => !query || track.match.score > 0)
+    .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
+    .slice(0, limit);
+}
+
+function extractFrames(video, directory) {
+  if (!executable('ffmpeg')) fail('FFMPEG_REQUIRED', 'ffmpeg is required for automatic video analysis');
+  fs.mkdirSync(directory, { recursive: true });
+  const info = probe(video); const duration = info?.duration_seconds || 12; const positions = [0.15, 0.5, 0.85].map((ratio) => Math.max(0, duration * ratio));
+  return positions.map((seconds, index) => {
+    const output = path.join(directory, `frame-${index + 1}.jpg`);
+    run('ffmpeg', ['-y', '-ss', String(seconds), '-i', video, '-frames:v', '1', '-vf', 'scale=960:-2', '-q:v', '3', output], 60000);
+    return output;
+  });
+}
+function analyzeVideo(video, options) {
+  if (options.brief) return { brief: options.brief, source: 'user' };
+  if (options['no-analyze']) return { brief: path.basename(video, path.extname(video)), source: 'filename', confidence: 'low' };
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'musiclib-frames-'));
+  try {
+    const frames = extractFrames(video, temp);
+    const args = ['chat', '--project', options.project || 'auto', '--json', '--background'];
+    for (const frame of frames) args.push('--image', frame);
+    args.push('Analyze these ordered frames from one video. Return only a concise music-search brief: mood, energy, genre, instruments, pacing, and whether vocals should be avoided. Do not create media.');
+    const submitted = providerJson(args); const runId = getRunId(submitted);
+    providerRun(['responses', 'watch', runId, '--jsonl']);
+    const text = providerRun(['responses', 'get', runId, '--pick', 'text']).stdout.trim().replace(/^"|"$/g, '');
+    if (!text) fail('EMPTY_ANALYSIS', 'Makaron returned no music brief', true);
+    return { brief: text, source: 'makaron-video-analysis', run_id: runId };
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
+}
+function submitGeneration(prompt, options) {
+  const request = `Create one original, production-ready music track for this brief: ${prompt}. Respect the requested mood, energy, instrumentation, duration, and vocal preference. Avoid copyrighted melodies and return the audio artifact.`;
+  const raw = providerJson(['chat', '--project', options.project || 'auto', '--json', '--background', request]);
+  const body = source(raw) || {};
+  return { run_id: getRunId(raw), project_id: body.projectId || body.project_id, project_url: body.projectUrl || body.project_url, raw: redact(raw) };
+}
+function findTrack(root, value) {
+  const tracks = loadTracks(root); const direct = tracks.find((item) => item.id === value);
+  if (direct) return direct;
+  const matches = tracks.filter((item) => item.title.toLowerCase() === String(value).toLowerCase());
+  if (matches.length !== 1) fail('TRACK_NOT_FOUND', `Track not found or title is ambiguous: ${value}`);
+  return matches[0];
+}
+function copyTrack(track, output) {
+  if (!fs.existsSync(track.path)) fail('TRACK_NOT_LOCAL', `Track must be downloaded locally first: ${track.path}`);
+  const destination = path.resolve(output); fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.copyFileSync(track.path, destination); return destination;
+}
+function addSoundtrack(video, music, output, options) {
+  if (!executable('ffmpeg')) fail('FFMPEG_REQUIRED', 'ffmpeg is required to add music to video');
+  const videoMeta = probe(video); const args = ['-y', '-i', video, '-stream_loop', '-1', '-i', music];
+  if (options['mix-original'] && videoMeta?.has_audio) {
+    const original = Number(options['original-volume'] || 0.2); const musicVolume = Number(options['music-volume'] || 0.8);
+    args.push('-filter_complex', `[0:a]volume=${original}[original];[1:a]volume=${musicVolume}[music];[original][music]amix=inputs=2:duration=first:dropout_transition=2[a]`, '-map', '0:v:0', '-map', '[a]');
+  } else {
+    args.push('-filter:a', `volume=${Number(options['music-volume'] || 0.8)}`, '-map', '0:v:0', '-map', '1:a:0');
+  }
+  args.push('-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', output);
+  run('ffmpeg', args, 1800000); return path.resolve(output);
+}
+
+function installSkill(options) {
+  const skillDir = fileURLToPath(new URL('../skills/makaron-music-library', import.meta.url));
+  const skillFile = path.join(skillDir, 'SKILL.md');
+  if (!fs.existsSync(skillFile)) fail('SKILL_MISSING', `Bundled Skill not found: ${skillFile}`);
+  const args = ['-y', 'skills', 'add', skillDir, '--skill', 'makaron-music-library', '--copy'];
+  if (options.global) args.push('--global'); if (options.agent) args.push('--agent', options.agent); if (options.yes) args.push('--yes');
+  if (options['dry-run']) return { ok: true, dry_run: true, command: ['npx', ...args], skill_file: skillFile };
+  const result = spawnSync('npx', args, { stdio: 'inherit' });
+  if (result.error || result.status !== 0) fail('SKILL_INSTALL_FAILED', 'Could not install Agent Skill', true, { exit_code: result.status });
+  return { ok: true, installed: true, skill: 'makaron-music-library' };
+}
+function setup(options) {
+  const installArgs = ['install', '-g', `${PACKAGE}@${VERSION}`];
+  if (options['dry-run']) return { ok: true, dry_run: true, global_install: ['npm', ...installArgs], skill_install: installSkill({ ...options, global: true, yes: true }) };
+  const result = spawnSync('npm', installArgs, { stdio: 'inherit' });
+  if (result.error || result.status !== 0) fail('GLOBAL_INSTALL_FAILED', `Could not install ${PACKAGE} globally`, true, { exit_code: result.status });
+  return installSkill({ ...options, global: true, yes: true });
+}
+function help() {
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  search      Search the library by natural language\n  recommend   Analyze a video or brief and recommend tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
+}
+
+async function main() {
+  const [command = 'help', ...rest] = process.argv.slice(2); const options = parseArgs(rest);
+  if (command === 'help' || command === '--help' || options.help) return help();
+  if (command === '--version' || command === 'version') return console.log(VERSION);
+  if (command === 'setup') return emit(setup(options));
+  if (command === 'install-skill') return emit(installSkill(options));
+  if (command === 'doctor') {
+    const authFile = fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json'));
+    const result = { ok: true, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    if (options.live) { providerRun(['list'], 60000); result.live_check = true; }
+    return emit(redact(result));
+  }
+
+  const root = rootFor(options);
+  if (command === 'init') {
+    if (fs.existsSync(manifestFile(root)) && !options.force) fail('LIBRARY_EXISTS', `Library already exists: ${root}`);
+    const manifest = { schema_version: '1.0', name: options.name || 'Music Library', created_at: now(), sources: [] };
+    writeJson(manifestFile(root), manifest); writeJson(tracksFile(root), []); return emit({ ok: true, library: root, manifest });
+  }
+  if (command === 'index') {
+    ensureLibrary(root); const source = path.resolve(required(options, 'source'));
+    if (!fs.existsSync(source) || !fs.statSync(source).isDirectory()) fail('SOURCE_NOT_FOUND', `Music source directory not found: ${source}`);
+    const sourceName = options['source-name'] || (source.toLowerCase().includes('baidu') ? 'baidu-netdisk-local' : path.basename(source));
+    const existing = loadTracks(root); const byPath = new Map(existing.map((track) => [track.path, track]));
+    const files = walk(source); for (const file of files) byPath.set(path.resolve(file), trackFromFile(file, sourceName));
+    const tracks = [...byPath.values()]; saveTracks(root, tracks);
+    const manifest = readJson(manifestFile(root)); manifest.sources = unique([...(manifest.sources || []), source]); manifest.updated_at = now(); writeJson(manifestFile(root), manifest);
+    return emit({ ok: true, source, source_name: sourceName, scanned: files.length, total: tracks.length, library: root });
+  }
+  if (command === 'list') return emit({ ok: true, count: loadTracks(root).length, tracks: loadTracks(root) });
+  if (command === 'search') {
+    const query = required(options, 'query'); const tracks = search(root, query, options);
+    return emit({ ok: true, query, count: tracks.length, tracks });
+  }
+  if (command === 'recommend') {
+    ensureLibrary(root); const video = options.video ? path.resolve(options.video) : null;
+    if (!video && !options.brief) fail('MISSING_INPUT', 'Provide --video or --brief');
+    if (video && !fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
+    const analysis = video ? analyzeVideo(video, options) : { brief: options.brief, source: 'user' };
+    const duration = video ? probe(video)?.duration_seconds : Number(options.duration || 0);
+    const tracks = search(root, analysis.brief, { ...options, duration, limit: options.limit || 5 });
+    return emit({ ok: true, analysis, video, duration_seconds: duration || null, count: tracks.length, recommendation: tracks[0] || null, tracks });
+  }
+  if (command === 'export') {
+    const track = findTrack(root, required(options, 'track')); const output = copyTrack(track, required(options, 'output'));
+    return emit({ ok: true, track, output });
+  }
+  if (command === 'generate') {
+    const prompt = required(options, 'prompt');
+    if (options['dry-run']) return emit({ ok: true, dry_run: true, prompt, provider: 'makaron' });
+    const submitted = submitGeneration(prompt, options);
+    if (options['no-wait']) return emit({ ok: true, status: 'submitted', ...submitted });
+    const completed = waitFor(submitted.run_id); return emit({ ok: completed.outputs.length > 0, ...submitted, ...completed });
+  }
+  if (command === 'wait') {
+    const runId = required(options, 'run-id'); const completed = waitFor(runId); return emit({ ok: completed.outputs.length > 0, run_id: runId, ...completed });
+  }
+  if (command === 'soundtrack') {
+    ensureLibrary(root); const video = path.resolve(required(options, 'video')); const output = path.resolve(required(options, 'output'));
+    if (!fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
+    let track; let analysis = null;
+    if (options.track) track = findTrack(root, options.track);
+    else {
+      analysis = analyzeVideo(video, options); const duration = probe(video)?.duration_seconds; const candidates = search(root, analysis.brief, { ...options, duration, limit: 5 });
+      track = candidates[0]; if (!track) fail('NO_MATCHING_TRACK', 'No matching library track found; run generate or broaden the brief', false, { brief: analysis.brief });
+    }
+    if (!fs.existsSync(track.path)) fail('TRACK_NOT_LOCAL', `Download this Baidu Netdisk track locally before mixing: ${track.path}`);
+    const plan = { video, music: track.path, track_id: track.id, output, analysis, mix_original: Boolean(options['mix-original']), music_volume: Number(options['music-volume'] || 0.8), original_volume: Number(options['original-volume'] || 0.2) };
+    if (options['dry-run']) return emit({ ok: true, dry_run: true, plan });
+    const created = addSoundtrack(video, track.path, output, options); return emit({ ok: true, output: created, track, analysis });
+  }
+  if (command === 'validate') {
+    const tracks = loadTracks(root); const missing = tracks.filter((track) => !fs.existsSync(track.path)).map((track) => track.id);
+    const unknownRights = tracks.filter((track) => track.license === 'unknown' || track.commercial_use === null).map((track) => track.id);
+    return emit({ ok: missing.length === 0, count: tracks.length, missing_files: missing, unknown_rights: unknownRights, note: 'Unknown rights do not block personal search, but must be reviewed before commercial use.' });
+  }
+  fail('UNKNOWN_COMMAND', `Unknown command: ${command}`);
+}
+
+main().catch((error) => {
+  const payload = error instanceof CliError ? { ok: false, error: { code: error.code, message: error.message, retryable: error.retryable, details: redact(error.details) } } : { ok: false, error: { code: 'UNEXPECTED_ERROR', message: error.message, retryable: false } };
+  process.stderr.write(`${JSON.stringify(payload, null, 2)}\n`); process.exitCode = 1;
+});

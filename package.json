@@ -1,0 +1,33 @@
+{
+  "name": "makaron-music-library-cli",
+  "version": "0.1.0",
+  "description": "Portable music library, video soundtrack, and Makaron music CLI for AI agents",
+  "type": "module",
+  "bin": {
+    "musiclib": "bin/musiclib.mjs",
+    "makaron-music-library-cli": "bin/musiclib.mjs"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs",
+    "pack:check": "npm pack --dry-run"
+  },
+  "files": [
+    "bin/",
+    "skills/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "makaron",
+    "music-library",
+    "soundtrack",
+    "video",
+    "ai-agent",
+    "baidu-netdisk",
+    "skill"
+  ],
+  "license": "MIT"
+}
