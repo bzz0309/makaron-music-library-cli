@@ -19,6 +19,7 @@ Read central-library access only from `MUSICLIB_API_URL` and `MUSICLIB_API_TOKEN
 6. Use `musiclib generate` when no suitable result exists, rights are unclear, or the user asks for original music.
 7. Use `--local` only when operating the owner's filesystem. Before commercial delivery, verify license and `commercial_use`; never infer rights from possession.
 8. Use local `musiclib soundtrack` to produce a new video file. Never overwrite the source video.
+9. When the owner explicitly asks to publish an indexed library, run `musiclib cloud-sync --dry-run` first. Upload only after the owner confirms the reported track and byte counts.
 
 ## Commands
 
@@ -83,6 +84,15 @@ $MUSICLIB init --local --name "My Music Library"
 $MUSICLIB index --local --source "/path/to/BaiduNetdisk/Music" --source-name baidu-netdisk-local
 $MUSICLIB soundtrack --local --video input.mp4 --track TRACK_ID --output output.mp4
 ```
+
+Owner-only Cloudflare synchronization:
+
+```bash
+$MUSICLIB cloud-sync --library "/path/to/index" --dry-run
+$MUSICLIB cloud-sync --library "/path/to/index" --concurrency 3
+```
+
+Read Cloudflare upload credentials only from the environment. Never start the non-dry-run command without explicit owner approval.
 
 Use `--dry-run` on `generate` or `soundtrack` before spending credits or writing final media. For cloud-only Baidu Netdisk files, ask the user or sync client to download them locally before export or mixing.
 

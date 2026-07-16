@@ -2,24 +2,20 @@
 
 ## 2026-07-16
 
-- Created the independent npm CLI project at version 0.1.0.
-- Added local/Baidu Netdisk-synced folder indexing and natural-language search.
-- Added video-frame music analysis, Makaron music generation, export, and ffmpeg soundtrack assembly.
-- Added a portable single-file Agent Skill and smoke-test scaffold.
-- Passed Node syntax, smoke, Skill validation, and npm dry-pack checks.
-- The current Mac does not have `ffmpeg`; the real media-assembly test is pending installation, while the CLI correctly reports the missing dependency.
-- Direct Baidu cloud API integration remains open pending an approved OAuth/API route.
-- Added scene-aware `kpop-stage` and `ecommerce` profiles, rights-aware recommendation decisions, generation fallback prompts, richer folder-name tagging, and macOS `afinfo` duration fallback.
-- Re-indexed the real 934-track collection: all files received durations, K-pop results were constrained to the Korean chart collection, and e-commerce results prioritized the BGM collection. Beat, vocal, and climax analysis remains future work.
-- Integrated `music-prompt-library` 0.8.1 at upstream commit `2d19e7c`: 40 Profiles, intent parsing, explainable confidence, multi-turn refinement, and four Agent adapters now ship inside the single CLI.
-- Upstream 185 tests and all benchmark/workflow/adapter/confusion suites passed. Production dependency audit reported zero known vulnerabilities; reported upstream vulnerabilities were limited to development dependencies.
-## Remote-first update — 2026-07-16
+- Created the independent npm CLI at version 0.1.0.
+- Added local/Baidu Netdisk-synced indexing, title/artist/tag/natural-language search, Makaron generation, and local ffmpeg soundtrack assembly.
+- Added scene-aware `kpop-stage` and `ecommerce` matching plus rights-aware decisions and generation fallback prompts.
+- Re-indexed the real 934-track, roughly 7.1GB collection; macOS `afinfo` supplied duration fallback.
+- Integrated `music-prompt-library` 0.8.1 at upstream commit `2d19e7c`, including 40 Profiles and four Agent adapters.
+- Added remote-default CLI routing, Bearer authentication, signed audio links, and a single-file Agent Skill.
+- Published the existing baseline repository at `bzz0309/makaron-music-library-cli`; npm publication was not performed in this Cloudflare iteration.
 
-- Reframed the product as remote-first for Makaron and all external Agents.
-- Added an authenticated central-library HTTP API with health, search, recommendation, and short-lived audio-access routes.
-- Added remote-default CLI routing, `config`, `serve`, and `access`; retained explicit `--local` owner mode.
-- Removed server paths from remote results and added bearer-token and signed-link validation.
-- Added a remote API smoke test. Both local CLI and authenticated HTTP tests pass.
-- Kept version `0.1.0` and did not publish to npm or GitHub.
-- Added a Docker/Render deployment kit with a 10GB persistent disk, public non-sensitive health check, environment-driven host/port, first-boot library initialization, and graceful shutdown.
-- Selected Render persistent disk as the first deployment target for the current 7.1GB collection. No cloud resource has been created and no paid plan has been authorized.
+## Cloudflare R2 update — 2026-07-16
+
+- Replaced the planned Render persistent-disk deployment with Cloudflare Workers + private R2 + D1.
+- Added the Worker API for health, search, recommendation, signed access, and audio delivery.
+- Added HTTP Range support for media playback and resumable clients.
+- Added D1 schema/migration and a native Node R2/D1 synchronization command.
+- Added dry-run synchronization and Worker smoke tests with fake D1/R2 bindings.
+- Removed Render/Docker deployment artifacts and rewrote deployment documentation.
+- No Cloudflare resource has been created, no billing has been authorized, and these changes have not yet been pushed.

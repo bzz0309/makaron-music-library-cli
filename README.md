@@ -1,144 +1,135 @@
 # Makaron Music Library CLI
 
-An npm CLI and authenticated central-library API for Makaron and any external AI agent. Agents can understand a music request, search an authorized collection, request a short-lived audio URL, create original music through Makaron, and use local owner tools when needed.
+一个供 Makaron 和所有外部 AI Agent 使用的通用音乐库 CLI。Agent 可以按歌名、歌手、标签或自然语言搜索曲库，为 K-pop 舞台、电商营销等视频匹配 BGM，获取限时音频链接，或在没有合适/可商用曲目时调用 Makaron 生成原创音乐。
 
-The product has three layers:
+## 架构
 
-- A bundled, platform-neutral music intelligence layer with 40 reviewed Profiles, Chinese/English intent parsing, explainable ranking, multi-turn refinement, and adapters for Makaron, video editors, and short-video agents.
-- A remote Agent client. `search` and `recommend` connect to the central API by default, so the Agent never needs access to the owner's Mac or Baidu Netdisk path.
-- An owner/server layer for indexing real audio files, protecting them with Agent tokens, issuing short-lived links, and performing local soundtrack assembly.
+- npm CLI + 单文件 Agent Skill：安装到任意 Agent 所在电脑。
+- Cloudflare Worker：提供鉴权搜索、推荐和限时音频访问。
+- D1：保存可检索曲目元数据，不保存本地路径。
+- 私有 R2 Bucket：保存真实音频，外部 Agent 看不到对象地址。
+- 本地 Owner 工具：索引百度网盘同步目录、同步 R2/D1、为本地视频混音。
 
-## Install for any Agent
+外部 Agent 不需要和曲库主人在同一台电脑，也不需要访问百度网盘或 Mac 路径。
+
+## Agent 安装和使用
 
 ```bash
-npx makaron-music-library-cli setup --api-url https://music.example.com
-export MUSICLIB_API_TOKEN=agent_token_from_library_owner
+npx makaron-music-library-cli setup \
+  --api-url https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev
+
+export MUSICLIB_API_TOKEN=由曲库管理员分配的Agent令牌
+musiclib doctor --remote
 ```
 
-`setup` installs the `musiclib` command, saves the non-secret API URL, and installs the bundled single-file Agent Skill. Tokens are read only from `MUSICLIB_API_TOKEN`; they are never accepted as CLI arguments or written into the Skill.
+`setup` 会安装 `musiclib` 命令和仅含一个 `SKILL.md` 的 Agent Skill。API URL 可以保存在本机配置中；令牌只从环境变量读取，不接受命令参数，也不会写进 Skill。
 
-## Quick start
+常用命令：
 
 ```bash
-musiclib search --query "日系治愈、轻快、纯音乐"
-musiclib brief --request "20秒K-pop女团舞台，强节拍、副歌高潮" --duration 20 --adapter makaron
-musiclib recommend --scene kpop-stage --duration 20
+musiclib search --query "Taylor Swift Love Story" --limit 5
+musiclib search --query "日系、治愈、轻快、纯音乐" --limit 5
+musiclib recommend --scene kpop-stage --duration 20 \
+  --brief "五人女团舞台，强节拍、灯光切换、副歌高潮"
+musiclib recommend --scene ecommerce --duration 15 \
+  --brief "高端美妆产品，干净现代、抓人、尽量无人声"
 musiclib access --track TRACK_ID
 ```
 
-Search results never expose server filesystem paths. `access` returns a short-lived audio URL that an authorized Agent can pass to Makaron or download before expiry.
+`access` 返回带过期时间和签名的音频 URL。音频接口支持 Range 分段读取，可用于播放器、下载器和支持 URL 输入的生成工具。结果不会泄露本地文件路径或 R2 object key。
 
-Scene-aware matching lets another Agent or video Skill state the purpose directly:
+## 音乐理解与原创生成
 
-```bash
-musiclib recommend --scene kpop-stage --duration 20 \
-  --brief "五人女团舞台，强节拍、灯光切换、副歌高潮"
-
-musiclib recommend --scene ecommerce --duration 15 \
-  --brief "高端美妆产品，干净现代、抓人、尽量无人声"
-```
-
-The result includes the selected intelligence Profile, interpreted intent, confidence, ranked local tracks, matching reasons, a rights-aware decision, and an original-generation fallback prompt. `kpop-stage` and `ecommerce` remain convenient aliases, while natural-language `--request` can access all 40 bundled Profiles.
-
-## Music intelligence
-
-Generate an agent-ready brief without searching local files:
+CLI 内置 40 个音乐 Profile、中文/英文意图解析、可解释排序，以及 `generic`、`makaron`、`video_editor`、`short_video_agent` 四种适配器。
 
 ```bash
 musiclib brief \
   --request "15秒高端美妆精华电商视频，干净现代、抓人、无人声" \
   --duration 15 \
   --adapter makaron
+
+musiclib generate \
+  --prompt "30 seconds, warm piano and strings, cinematic, no vocals"
 ```
 
-Adapters:
+当曲库没有合适结果或版权信息不明确时，读取返回值中的 `decision` 和 `generation_prompt`，再选择核验版权或通过 Makaron 生成原创音乐。
 
-- `generic`: professional generation brief
-- `makaron`: Seed Audio prompt fields
-- `video_editor`: structure, edit points, role, and loop behavior
-- `short_video_agent`: hook, energy, beat-sync, and short-form loop behavior
+## 部署 Cloudflare
 
-Use `--turn` more than once for stateless multi-turn refinement:
+部署前需要 Cloudflare 账号和 Node.js 18+。下面的资源创建和部署命令会修改你的 Cloudflare 账号；先本地检查，确认后再执行。
+
+1. 安装并登录 Wrangler：
 
 ```bash
-musiclib brief \
-  --turn "8秒手机发布会开场音乐" \
-  --turn "更年轻一点" \
-  --turn "不要太商业，更电影感" \
-  --adapter makaron
+npx wrangler login
 ```
 
-The bundled intelligence snapshot comes from [`bzz0309/bzz`, branch `codex/music-prompt-library`](https://github.com/bzz0309/bzz/tree/codex/music-prompt-library/music-prompt-library). The wrapper ships only its compiled runtime and normal recommendation data.
-
-Use an explicit brief when you do not want video frames analyzed through Makaron:
+2. 创建私有 R2 Bucket 和 D1 数据库：
 
 ```bash
-musiclib soundtrack --video input.mp4 \
-  --brief "温暖治愈的生活 vlog，轻快木吉他，无人声" \
-  --output output.mp4
+npx wrangler r2 bucket create makaron-music-library
+npx wrangler d1 create makaron-music-library
 ```
 
-Generate original music when the collection has no suitable result:
+3. 把 D1 命令返回的 `database_id` 填进 `wrangler.toml`，然后创建两项 Worker Secret：
 
 ```bash
-musiclib generate --prompt "30 seconds, warm piano and strings, cinematic, no vocals"
+npx wrangler secret put AGENT_TOKENS
+npx wrangler secret put SIGNING_SECRET
 ```
 
-## Run the central library
+`AGENT_TOKENS` 是一个或多个逗号分隔的随机 Agent 令牌。`SIGNING_SECRET` 是另一条独立的长随机值，只用于生成限时音频签名。不要提交它们。
 
-The owner indexes a Baidu Netdisk-synced folder and starts the authenticated API:
+4. 建表并部署：
 
 ```bash
-musiclib init --local --name "My Music"
-musiclib index --local --source "/path/to/BaiduNetdisk/Music" --source-name baidu-netdisk-local
-export MUSICLIB_SERVER_TOKEN=replace_with_a_long_random_agent_token
-musiclib serve --local --host 127.0.0.1 --port 8787
+npx wrangler d1 migrations apply makaron-music-library --remote
+npx wrangler deploy
 ```
 
-For external Agents, deploy the same command behind HTTPS on an always-on server. Do not expose the owner's Mac directly to the internet. Version 0.1.0 uses one shared Agent token; per-Agent token issuance, revocation, audit logs, cloud video upload, object storage, and server-side video mixing remain later server milestones.
+5. 在 Cloudflare 控制台创建：
 
-### Deploy on Render
+- 一个可写入目标 R2 Bucket 的 R2 S3 API 凭证；
+- 一个可查询目标 D1 数据库的 Cloudflare API Token。
 
-The repository includes `Dockerfile` and `render.yaml`. The Blueprint creates a Singapore-region Docker web service, a 10GB persistent disk at `/data`, and the public `/v1/health` check. Search, recommendation, and audio access remain token-protected.
-
-1. Push this repository to GitHub only after release approval.
-2. In Render, create a Blueprint from the repository.
-3. Enter a long random value for `MUSICLIB_SERVER_TOKEN` when Render prompts. Store the same value in a password manager; do not commit it.
-4. Wait for `/v1/health` to return `ok: true`.
-5. Add an SSH public key to Render and copy the local music folder to `/data/source` using the service-specific SCP command shown by Render.
-6. Open the service Shell and index the uploaded folder:
+把凭证仅放进当前终端环境：
 
 ```bash
-node /app/bin/musiclib.mjs index \
-  --library /data/library \
-  --source /data/source \
-  --source-name baidu-netdisk-upload
+export CLOUDFLARE_ACCOUNT_ID=...
+export CLOUDFLARE_D1_DATABASE_ID=...
+export CLOUDFLARE_R2_BUCKET=makaron-music-library
+export CLOUDFLARE_API_TOKEN=...
+export R2_ACCESS_KEY_ID=...
+export R2_SECRET_ACCESS_KEY=...
 ```
 
-7. Configure an Agent with the HTTPS service URL and the shared token:
+## 索引并上传曲库
+
+百度网盘里的歌曲需先通过桌面客户端下载/同步成当前电脑可见的文件：
 
 ```bash
-npx makaron-music-library-cli setup --api-url https://YOUR-SERVICE.onrender.com
-export MUSICLIB_API_TOKEN=YOUR_AGENT_TOKEN
-musiclib doctor --remote
-musiclib search --query "K-pop stage"
+musiclib init --library ~/.musiclib --name "My Music"
+musiclib index \
+  --library ~/.musiclib \
+  --source "/path/to/BaiduNetdisk/Music" \
+  --source-name baidu-netdisk-local
 ```
 
-Render requires a paid service for SSH and a persistent disk. Its official documentation supports transferring disk files with SCP/SFTP. For a larger or multi-instance library, move audio to private object storage and issue provider-managed presigned URLs instead of increasing the service disk.
-
-To use local owner mode explicitly:
+先进行零写入预检：
 
 ```bash
-musiclib search --local --query "Taylor Swift Love Story"
-musiclib recommend --local --scene ecommerce --duration 15
-musiclib soundtrack --local --video input.mp4 --output output.mp4
+musiclib cloud-sync --library ~/.musiclib --dry-run
 ```
 
-## Baidu Netdisk
+确认曲目数和总字节数后上传：
 
-Version 0.1.0 indexes folders that the Baidu Netdisk desktop client has made visible on the server or owner filesystem. Remote Agents query the central index rather than Baidu directly. A cloud-only file must be downloaded on the central server before it can issue an audio link.
+```bash
+musiclib cloud-sync --library ~/.musiclib --concurrency 3
+```
 
-Example sidecar `song.mp3.music.json`:
+音频会写入私有 R2，安全元数据会写入 D1；本地路径不会进入 D1。重复执行会按曲目 ID 更新索引和覆盖对应对象。
+
+可用 `<歌曲文件>.music.json` 补充标签和版权：
 
 ```json
 {
@@ -151,18 +142,26 @@ Example sidecar `song.mp3.music.json`:
 }
 ```
 
-Direct Baidu cloud-account search is intentionally left behind a future data-source adapter because it requires a supported Baidu authorization flow. The CLI never asks an Agent to expose a Netdisk password.
+## 本地 Owner 模式
 
-## Requirements
+```bash
+musiclib search --local --query "歌名或歌手"
+musiclib recommend --local --scene ecommerce --duration 15
+musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.mp4
+```
 
-- Node.js 18+
-- `ffprobe` for full media metadata; macOS `afinfo` is used as an audio-duration fallback
-- `ffmpeg` for frame sampling and soundtrack assembly
-- `makaron-cli` authentication for video analysis and original music generation
-- Runtime dependencies `commander` and `zod`, installed automatically by npm
+需要 `ffprobe` 读取完整媒体元数据，`ffmpeg` 分析视频和混音；macOS 可用 `afinfo` 作为音频时长后备。Makaron 生成需要 `MAKARON_API_KEY` 或 makaron-cli 已保存的认证。
 
-Set `MUSICLIB_API_URL` and `MUSICLIB_API_TOKEN` for Agent access. Set `MUSICLIB_LIBRARY` to change the owner library location (`~/.musiclib`). Run `musiclib doctor --remote` to verify the central API, or `musiclib doctor --local --live` to verify the owner toolchain and Makaron.
+## API
 
-## Rights
+- `GET /v1/health`：公开、无曲库内容。
+- `GET /v1/search?query=...`：Bearer 鉴权。
+- `POST /v1/recommend`：Bearer 鉴权。
+- `POST /v1/tracks/:id/access`：Bearer 鉴权，生成限时 URL。
+- `GET /v1/tracks/:id/audio?...`：HMAC 签名和过期校验，支持 Range。
 
-Possessing a music file does not prove permission to publish it. Search is allowed with unknown metadata, but `--commercial-only` only returns tracks explicitly marked `commercial_use: true`.
+版本 0.1.0 使用共享令牌列表。每 Agent 签发/吊销、审计日志、远程视频上传和服务端视频混音属于后续版本。
+
+## 版权
+
+拥有歌曲文件不等于拥有发布许可。版权未知的歌曲可以被搜索，但不会被标记为可直接商用；`--commercial-only` 只返回明确标记 `commercial_use: true` 的曲目。

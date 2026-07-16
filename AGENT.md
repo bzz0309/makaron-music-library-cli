@@ -1,15 +1,14 @@
 # Agent instructions
 
-- Keep the wrapper compatible with Node.js 18+ and limit runtime dependencies to the vendored intelligence layer's audited requirements.
-- Treat `vendor/music-prompt-library` as an upstream snapshot. Record its source commit and rerun both upstream and wrapper tests before updating it.
-- Keep the bundled Agent Skill at `skills/makaron-music-library/SKILL.md`; do not add files inside that Skill folder.
-- Emit machine-readable JSON on stdout and errors on stderr.
-- Never log credentials or accept API keys as command arguments.
-- Default Agent-facing search and recommendation to the authenticated central API. Require `--local` or `--library` before accessing an owner index.
-- Never return server filesystem paths to a remote Agent. Issue short-lived signed audio URLs only after token authentication.
-- Bind unauthenticated test servers only to localhost. Production deployment must use HTTPS and a secret manager.
-- Keep `/v1/health` public and free of library metadata so managed hosts can perform health checks without a token.
-- Keep Render deployment data under `/data`; never bake indexed tracks or audio files into the Docker image.
-- Never overwrite source audio or video files.
-- Treat music rights as unknown unless explicit metadata says otherwise.
-- Run `node --check bin/musiclib.mjs`, `npm test`, a packaged-install smoke test, the Skill validator, `npm audit --omit=dev`, and `npm pack --dry-run` before release.
+- Keep the CLI compatible with Node.js 18+ and keep stdout machine-readable.
+- Keep `skills/makaron-music-library/` limited to one `SKILL.md`.
+- Treat `vendor/music-prompt-library` as an upstream snapshot and record its source commit.
+- Default Agent search/recommendation to the authenticated Worker API; require `--local` or `--library` for owner filesystem access.
+- Never log or accept credentials as command arguments. Read secrets only from environment variables or Cloudflare Worker Secrets.
+- Never return local paths or R2 object keys to remote Agents.
+- Keep the R2 bucket private. Issue only short-lived HMAC-signed audio links after Bearer authentication.
+- Keep `/v1/health` public and free of catalog metadata.
+- Preserve HTTP Range support on signed audio responses.
+- Never overwrite source media. Treat music rights as unknown unless explicit metadata proves otherwise.
+- Do not create paid Cloudflare resources, publish npm, or push release changes without explicit user approval.
+- Before release run syntax checks, `npm test`, Skill validation, a packaged-install smoke test, `npm audit --omit=dev`, and `npm pack --dry-run`.

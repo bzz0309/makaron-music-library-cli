@@ -527,7 +527,7 @@ function setup(options) {
   return { ...installSkill({ ...options, global: true, yes: true }), remote_config };
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup --api-url <central-api-url> [--agent <agent>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  config      Save the central API URL (tokens remain environment-only)\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nPass --local (or --library) to search/recommend the owner's local index. All command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup --api-url <central-api-url> [--agent <agent>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  cloud-sync  Upload an indexed owner library to private R2 and D1\n  config      Save the central API URL (tokens remain environment-only)\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nPass --local (or --library) to search/recommend the owner's local index. All command results are JSON.`);
 }
 
 async function main() {
@@ -536,6 +536,14 @@ async function main() {
   if (command === '--version' || command === 'version') return console.log(VERSION);
   if (command === 'setup') return emit(setup(options));
   if (command === 'install-skill') return emit(installSkill(options));
+  if (command === 'cloud-sync') {
+    const { syncCloudflare } = await import('./cloudflare-sync.mjs');
+    const result = await syncCloudflare({
+      library: rootFor(options), accountId: options['account-id'], databaseId: options['database-id'],
+      bucket: options.bucket, concurrency: options.concurrency, limit: options.limit, dryRun: Boolean(options['dry-run']),
+    });
+    return emit(result);
+  }
   if (command === 'config') return emit(configure(options));
   if (command === 'serve') return serveLibrary(rootFor(options), options);
   if (command === 'doctor') {

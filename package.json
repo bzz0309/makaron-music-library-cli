@@ -8,7 +8,7 @@
     "makaron-music-library-cli": "bin/musiclib.mjs"
   },
   "scripts": {
-    "test": "node test/smoke.mjs && node test/remote-smoke.mjs",
+    "test": "node test/smoke.mjs && node test/remote-smoke.mjs && node test/worker-smoke.mjs && node test/cloudflare-sync-smoke.mjs",
     "pack:check": "npm pack --dry-run"
   },
   "dependencies": {
@@ -17,6 +17,9 @@
   },
   "files": [
     "bin/",
+    "worker/",
+    "migrations/",
+    "wrangler.toml",
     "skills/",
     "vendor/music-prompt-library/UPSTREAM.md",
     "vendor/music-prompt-library/data/music_profiles.json",

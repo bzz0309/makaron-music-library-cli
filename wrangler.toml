@@ -1,0 +1,16 @@
+name = "makaron-music-library-api"
+main = "worker/index.js"
+compatibility_date = "2026-07-01"
+
+[vars]
+LINK_TTL_SECONDS = "900"
+
+[[r2_buckets]]
+binding = "MUSIC"
+bucket_name = "makaron-music-library"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "makaron-music-library"
+database_id = "00000000-0000-0000-0000-000000000000"
+migrations_dir = "migrations"
