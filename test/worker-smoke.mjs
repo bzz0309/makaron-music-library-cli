@@ -31,7 +31,11 @@ class FakeStatement {
   async all() {
     const terms = this.params.map((value) => String(value).replaceAll('%', '').toLowerCase());
     const commercialOnly = this.sql.includes('commercial_use = 1');
-    return { results: rows.filter((row) => (!commercialOnly || row.commercial_use === 1) && terms.some((term) => row.search_text.includes(term))) };
+    const tagQuery = this.sql.includes('tags_json LIKE');
+    return { results: rows.filter((row) => (!commercialOnly || row.commercial_use === 1) && terms.some((term) => {
+      const normalized = term.replaceAll('"', '');
+      return tagQuery ? JSON.parse(row.tags_json).includes(normalized) : row.search_text.includes(normalized);
+    })) };
   }
   async first() { return rows.find((row) => row.id === this.params[0]) || null; }
 }

@@ -85,7 +85,19 @@ async function searchTracks(env, query, options = {}) {
   if (options.commercial_only) filters.push('commercial_use = 1');
   const statement = env.DB.prepare(`SELECT * FROM tracks WHERE ${filters.join(' AND ')} LIMIT 250`).bind(...params);
   const result = await statement.all();
-  return (result.results || [])
+  let rows = result.results || [];
+  const weights = SCENE_WEIGHTS[options.scene] || {};
+  const preferredTags = Object.entries(weights).filter(([, weight]) => weight > 0);
+  if (preferredTags.length) {
+    const preferredConditions = preferredTags.map(() => 'tags_json LIKE ?').join(' OR ');
+    const preferredFilters = [`(${preferredConditions})`];
+    if (options.commercial_only) preferredFilters.push('commercial_use = 1');
+    const order = preferredTags.map(([, weight]) => `(CASE WHEN tags_json LIKE ? THEN ${Number(weight)} ELSE 0 END)`).join(' + ');
+    const tagParams = preferredTags.map(([tag]) => `%"${tag}"%`);
+    const preferred = await env.DB.prepare(`SELECT * FROM tracks WHERE ${preferredFilters.join(' AND ')} ORDER BY ${order} DESC LIMIT 250`).bind(...tagParams, ...tagParams).all();
+    rows = [...new Map([...(preferred.results || []), ...rows].map((row) => [row.id, row])).values()];
+  }
+  return rows
     .map((row) => ({ ...safeTrack(row), match: score(row, terms, options.scene) }))
     .filter((track) => track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
