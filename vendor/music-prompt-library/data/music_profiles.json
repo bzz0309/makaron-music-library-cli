@@ -1,0 +1,6933 @@
+[
+  {
+    "metadata": {
+      "id": "kpop_performance_001",
+      "title": "High Energy K-pop Performance",
+      "description": "A polished K-pop dance capability built around hook-first momentum, precise rhythmic accents, and confident performance energy.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "kpop_stage_001"
+      ],
+      "aliases": [
+        "kpop_stage",
+        "idol_stage",
+        "dance_reveal"
+      ],
+      "semantic_keywords": [
+        "k-pop",
+        "idol pop",
+        "dance performance",
+        "舞台表演",
+        "偶像音乐",
+        "高能舞曲",
+        "performance pop",
+        "hook driven",
+        "glossy synth",
+        "卡点音乐",
+        "confident pop",
+        "festival energy"
+      ],
+      "tags": [
+        "performance",
+        "entertainment",
+        "brand_experience",
+        "opening",
+        "climax",
+        "character_reveal",
+        "energetic",
+        "bright",
+        "confident",
+        "glamorous"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "kpop",
+        "edm",
+        "dance_pop"
+      ],
+      "sub_genre": [
+        "edm",
+        "dance_pop"
+      ],
+      "mood": [
+        "energetic",
+        "bright",
+        "confident",
+        "glamorous"
+      ],
+      "energy_level": 5,
+      "bpm_range": [
+        124,
+        132
+      ],
+      "tempo_feel": "fast_paced",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "synth_bass",
+        "electronic_drums",
+        "sidechain_pads",
+        "clap_stacks",
+        "riser_synth"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "hook_intro",
+        "build",
+        "drop",
+        "impact_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "drop"
+    },
+    "audio_character": {
+      "texture": [
+        "glossy",
+        "neon",
+        "club_ready"
+      ],
+      "timbre": [
+        "bright_synth",
+        "punchy_drums",
+        "polished_pop"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "neutral",
+      "punch": "hard",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "rhythmic_driver",
+      "secondary_roles": [
+        "intro",
+        "climax_support"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "energetic",
+        "bright",
+        "confident"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "performance",
+        "entertainment",
+        "brand_experience"
+      ],
+      "usage_context": [
+        "opening",
+        "performance",
+        "climax",
+        "character_reveal"
+      ],
+      "content_types": [
+        "dance_content",
+        "live_event",
+        "pop_culture"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "High-energy K-pop dance instrumental, 128 BPM feel, bright synth bass, punchy electronic drums, immediate melodic hook, confident glossy production, clean impact accents, no lead vocals.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Prioritize a recognizable two-bar hook and strong transient placement while preserving enough midrange space for dialogue or crowd sound.",
+      "arrangement_notes": "Intro: immediate hook in bar 1. Build: layered claps and riser. Drop: full drums and bass by bar 3. Ending: clean impact tail; loop back to the opening downbeat. Structure: hook_intro -> build -> drop -> impact_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "jpop_bright_opening_001",
+      "title": "Bright J-pop Spark",
+      "description": "An optimistic J-pop capability combining melodic lift, youthful rhythm, and sparkling acoustic-electronic color.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "jpop_opening_001"
+      ],
+      "aliases": [
+        "jpop_opening",
+        "youth_intro",
+        "cute_reveal"
+      ],
+      "semantic_keywords": [
+        "j-pop",
+        "青春音乐",
+        "日系流行",
+        "明亮青春",
+        "校园故事",
+        "日系少女",
+        "明亮开场",
+        "youthful pop",
+        "sparkling guitar",
+        "optimistic",
+        "可爱清新",
+        "melodic lift",
+        "anime pop",
+        "happy intro",
+        "校园感"
+      ],
+      "tags": [
+        "entertainment",
+        "lifestyle",
+        "youth_content",
+        "opening",
+        "introduction",
+        "positive_montage",
+        "background",
+        "bright",
+        "optimistic",
+        "playful",
+        "youthful"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "jpop",
+        "pop_rock",
+        "anime_pop"
+      ],
+      "sub_genre": [
+        "pop_rock",
+        "anime_pop"
+      ],
+      "mood": [
+        "bright",
+        "optimistic",
+        "playful",
+        "youthful"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        116,
+        126
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "clean_guitar",
+        "live_drums",
+        "piano",
+        "sparkle_bells",
+        "warm_bass"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "melodic_intro",
+        "lift",
+        "chorus_hook",
+        "button_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "sparkling",
+        "airy",
+        "youthful"
+      ],
+      "timbre": [
+        "clean_guitar",
+        "bright_piano",
+        "crisp_drums"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "intro",
+      "secondary_roles": [
+        "background",
+        "rhythmic_driver"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "create_expectation"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "bright",
+        "optimistic",
+        "playful"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "entertainment",
+        "lifestyle",
+        "youth_content"
+      ],
+      "usage_context": [
+        "opening",
+        "introduction",
+        "positive_montage",
+        "background"
+      ],
+      "content_types": [
+        "youth_story",
+        "character_content",
+        "light_entertainment"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Bright J-pop instrumental with clean guitar, lively drums, piano sparkle and a memorable ascending melody, youthful and optimistic, polished but natural, no lead vocal.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep the melody singable and concise; balance live-band warmth with crisp modern pop transients.",
+      "arrangement_notes": "Intro: guitar-piano motif. Build: drums and bass enter progressively. Hook: full melodic lift at the midpoint. Ending: bright button chord with a loop-safe alternate tail. Structure: melodic_intro -> lift -> chorus_hook -> button_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "anime_opening_lift_001",
+      "title": "Anime Emotional Lift",
+      "description": "A cinematic anime-pop capability that turns emotional anticipation into an uplifting melodic release.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "anime_op_001"
+      ],
+      "aliases": [
+        "anime_op",
+        "magical_girl",
+        "character_team_reveal"
+      ],
+      "semantic_keywords": [
+        "anime music",
+        "动画音乐",
+        "情绪升华",
+        "heroic pop",
+        "magical",
+        "orchestral pop",
+        "角色成长",
+        "emotional lift",
+        "hopeful chorus",
+        "日系配乐",
+        "team spirit",
+        "adventure"
+      ],
+      "tags": [
+        "storytelling",
+        "entertainment",
+        "character_content",
+        "opening",
+        "emotional_lift",
+        "hero_moment",
+        "climax",
+        "hopeful",
+        "emotional",
+        "heroic",
+        "uplifting"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "anime_pop",
+        "orchestral_pop",
+        "jpop"
+      ],
+      "sub_genre": [
+        "orchestral_pop",
+        "jpop"
+      ],
+      "mood": [
+        "hopeful",
+        "emotional",
+        "heroic",
+        "uplifting"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        120,
+        138
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "strings",
+        "electric_guitar",
+        "live_drums",
+        "piano",
+        "brass_accents"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "emotional_intro",
+        "accelerating_build",
+        "heroic_hook",
+        "resolved_ending"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "cinematic",
+        "melodic",
+        "expansive"
+      ],
+      "timbre": [
+        "soaring_strings",
+        "bright_guitar",
+        "full_drums"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "hard",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "climax_support",
+        "intro"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "hopeful",
+        "emotional",
+        "heroic"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "entertainment",
+        "character_content"
+      ],
+      "usage_context": [
+        "opening",
+        "emotional_lift",
+        "hero_moment",
+        "climax"
+      ],
+      "content_types": [
+        "character_arc",
+        "fantasy",
+        "adventure"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Uplifting anime-inspired orchestral pop instrumental, driving live drums, soaring strings, bright electric guitar and piano, emotional build into a heroic melodic hook.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Let harmony carry the emotion; avoid overcrowding the main melody with constant orchestral hits.",
+      "arrangement_notes": "Intro: intimate piano and strings. Build: drums and guitar enter in layers. Climax: soaring full-ensemble hook. Ending: resolved cadence with a shortened loopable release. Structure: emotional_intro -> accelerating_build -> heroic_hook -> resolved_ending. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "urban_ad_electronic_001",
+      "title": "Urban Electronic Pulse",
+      "description": "A modern urban-electronic capability with sleek pulse, digital motion, and controlled metropolitan tension.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "subway_billboard_001"
+      ],
+      "aliases": [
+        "subway_billboard",
+        "urban_ad",
+        "screen_comes_alive"
+      ],
+      "semantic_keywords": [
+        "urban electronic",
+        "都市电子",
+        "城市脉冲",
+        "城市大屏",
+        "科技广告",
+        "都市科技",
+        "数字屏幕",
+        "地铁屏幕",
+        "digital motion",
+        "future bass",
+        "现代广告音乐",
+        "sleek rhythm",
+        "night city",
+        "科技感",
+        "electronic pulse",
+        "screen culture",
+        "cool energy"
+      ],
+      "tags": [
+        "urban_culture",
+        "technology",
+        "advertising",
+        "background",
+        "product_showcase",
+        "transition",
+        "brand_expression",
+        "cool",
+        "modern",
+        "confident",
+        "driving"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "electronic",
+        "future_bass",
+        "urban"
+      ],
+      "sub_genre": [
+        "future_bass",
+        "urban"
+      ],
+      "mood": [
+        "cool",
+        "modern",
+        "confident",
+        "driving"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        112,
+        124
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "sub_bass",
+        "tight_kick",
+        "granular_synth",
+        "digital_percussion",
+        "vocal_chop_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "pulse_intro",
+        "layered_build",
+        "bass_hook",
+        "digital_tail"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "sleek",
+        "digital",
+        "kinetic"
+      ],
+      "timbre": [
+        "deep_bass",
+        "glass_synth",
+        "tight_percussion"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "cold",
+      "punch": "hard",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "rhythmic_driver",
+      "secondary_roles": [
+        "transition",
+        "brand_signature"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "cool",
+        "modern",
+        "confident"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "urban_culture",
+        "technology",
+        "advertising"
+      ],
+      "usage_context": [
+        "background",
+        "product_showcase",
+        "transition",
+        "brand_expression"
+      ],
+      "content_types": [
+        "city_lifestyle",
+        "technology_content",
+        "modern_brand"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Sleek urban electronic instrumental with deep controlled sub bass, tight kick, glassy synth pulses and precise digital percussion, modern and confident without aggression.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Use negative space between pulses and keep the low end compact so the cue feels premium rather than club-heavy.",
+      "arrangement_notes": "Intro: isolated digital pulse. Build: percussion and bass layers enter every two bars. Drop: restrained bass hook. Ending: filtered digital tail designed to reconnect to the intro. Structure: pulse_intro -> layered_build -> bass_hook -> digital_tail. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "comedy_bumper_001",
+      "title": "Playful Comedy Bumper",
+      "description": "A compact comedy-music capability using playful timing, bright timbres, and clear punctuation without relying on a fixed gag format.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "variety_show_001"
+      ],
+      "aliases": [
+        "variety_show",
+        "reaction_cut",
+        "funny_intro"
+      ],
+      "semantic_keywords": [
+        "comedy music",
+        "喜剧音乐",
+        "搞笑反应",
+        "反应音乐",
+        "综艺感",
+        "俏皮节奏",
+        "playful bumper",
+        "reaction cue",
+        "funny accent",
+        "轻松幽默",
+        "pizzicato",
+        "comic timing",
+        "quirky pop",
+        "短促点题"
+      ],
+      "tags": [
+        "entertainment",
+        "comedy",
+        "social_content",
+        "transition",
+        "reaction",
+        "opening",
+        "light_background",
+        "playful",
+        "funny",
+        "bright",
+        "surprising"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "comedy_pop",
+        "quirky_pop",
+        "variety"
+      ],
+      "sub_genre": [
+        "quirky_pop",
+        "variety"
+      ],
+      "mood": [
+        "playful",
+        "funny",
+        "bright",
+        "surprising"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        118,
+        132
+      ],
+      "tempo_feel": "fast_paced",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "pizzicato_strings",
+        "marimba",
+        "claps",
+        "comic_brass",
+        "electronic_drums"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "setup",
+        "rhythmic_bounce",
+        "comic_hit",
+        "button_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "bouncy",
+        "quirky",
+        "colorful"
+      ],
+      "timbre": [
+        "pizzicato",
+        "wooden_mallets",
+        "bright_brass"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "transition",
+      "secondary_roles": [
+        "intro",
+        "rhythmic_driver"
+      ],
+      "narrative_function": [
+        "signal_change",
+        "create_momentum"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "playful",
+        "funny",
+        "bright"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "entertainment",
+        "comedy",
+        "social_content"
+      ],
+      "usage_context": [
+        "transition",
+        "reaction",
+        "opening",
+        "light_background"
+      ],
+      "content_types": [
+        "humor",
+        "conversation",
+        "playful_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        3,
+        5,
+        8,
+        10,
+        15
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Playful comedy-pop instrumental with pizzicato strings, marimba, crisp claps and light comic brass, quick rhythmic setup and a clean humorous punctuation hit.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Make the joke land through timing and contrast rather than excessive novelty sound effects.",
+      "arrangement_notes": "Intro: one-bar setup. Build: two bars of bouncy motif. Drop: brief comic accent. Ending: dry button hit; optional pickup allows seamless repetition. Structure: setup -> rhythmic_bounce -> comic_hit -> button_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "fashion_luxury_groove_001",
+      "title": "Luxury Fashion Groove",
+      "description": "A fashion-forward electronic capability defined by restrained groove, tactile low end, and polished editorial confidence.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "fashion_ad_001"
+      ],
+      "aliases": [
+        "fashion_ad",
+        "runway",
+        "beauty_product",
+        "outfit_transition"
+      ],
+      "semantic_keywords": [
+        "luxury fashion",
+        "高级时尚",
+        "runway groove",
+        "秀场音乐",
+        "editorial electronic",
+        "minimal house",
+        "premium texture",
+        "冷感时尚",
+        "model walk",
+        "精致节奏",
+        "fashion campaign",
+        "sleek bass"
+      ],
+      "tags": [
+        "fashion",
+        "luxury",
+        "beauty",
+        "brand_expression",
+        "runway",
+        "product_showcase",
+        "background",
+        "premium",
+        "confident",
+        "cool",
+        "seductive"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "deep_house",
+        "minimal_electronic",
+        "fashion"
+      ],
+      "sub_genre": [
+        "minimal_electronic",
+        "fashion"
+      ],
+      "mood": [
+        "premium",
+        "confident",
+        "cool",
+        "seductive"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        112,
+        120
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "deep_bass",
+        "minimal_kick",
+        "finger_snap",
+        "filtered_synth",
+        "textural_percussion"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "minimal_intro",
+        "groove_build",
+        "signature_hook",
+        "clean_outro"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "silky",
+        "minimal",
+        "tactile"
+      ],
+      "timbre": [
+        "deep_bass",
+        "muted_synth",
+        "dry_snap"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "background",
+        "rhythmic_driver"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "premium",
+        "confident",
+        "cool"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "fashion",
+        "luxury",
+        "beauty"
+      ],
+      "usage_context": [
+        "brand_expression",
+        "runway",
+        "product_showcase",
+        "background"
+      ],
+      "content_types": [
+        "editorial",
+        "premium_brand",
+        "style_content"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Minimal luxury electronic instrumental, deep controlled bass, dry snaps, muted synth motifs and tactile percussion, poised editorial groove with premium spacious production.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Resist filling every beat; the sense of luxury should come from restraint, detail and confident low-frequency control.",
+      "arrangement_notes": "Intro: isolated signature motif. Build: bass and dry percussion establish the walk. Main: restrained groove with one evolving texture. Ending: filtered resolve that loops to the opening motif. Structure: minimal_intro -> groove_build -> signature_hook -> clean_outro. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "cinematic_travel_memory_001",
+      "title": "Cinematic Travel Memory",
+      "description": "A warm cinematic capability for memory, place, and human-scale discovery, balancing acoustic intimacy with gradual emotional lift.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "cinematic_travel_001"
+      ],
+      "aliases": [
+        "cinematic_travel",
+        "travel_vlog",
+        "sunset_memory"
+      ],
+      "semantic_keywords": [
+        "cinematic travel",
+        "旅行回忆",
+        "治愈系旅途",
+        "钢琴和吉他",
+        "温暖配乐",
+        "memory music",
+        "sunset feeling",
+        "旅途故事",
+        "acoustic cinematic",
+        "nostalgic journey",
+        "人文旅行",
+        "emotional landscape",
+        "gentle build",
+        "discovery"
+      ],
+      "tags": [
+        "travel",
+        "storytelling",
+        "lifestyle",
+        "memory",
+        "journey",
+        "background",
+        "emotional_lift",
+        "warm",
+        "nostalgic",
+        "hopeful",
+        "emotional"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic",
+        "ambient_pop",
+        "acoustic"
+      ],
+      "sub_genre": [
+        "ambient_pop",
+        "acoustic"
+      ],
+      "mood": [
+        "warm",
+        "nostalgic",
+        "hopeful",
+        "emotional"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        82,
+        100
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "acoustic_guitar",
+        "felt_piano",
+        "warm_strings",
+        "soft_percussion",
+        "ambient_pad"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "intimate_intro",
+        "gentle_build",
+        "emotional_lift",
+        "soft_resolution"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "organic",
+        "nostalgic",
+        "open"
+      ],
+      "timbre": [
+        "felt_piano",
+        "warm_strings",
+        "soft_guitar"
+      ],
+      "density": "medium",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "background",
+        "ending"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "warm",
+        "nostalgic",
+        "hopeful"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "travel",
+        "storytelling",
+        "lifestyle"
+      ],
+      "usage_context": [
+        "memory",
+        "journey",
+        "background",
+        "emotional_lift"
+      ],
+      "content_types": [
+        "human_story",
+        "destination",
+        "personal_reflection"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Warm cinematic travel instrumental with felt piano, acoustic guitar, soft percussion and gently expanding strings, nostalgic but hopeful, spacious and human.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep the acoustic details close and believable; let the orchestral lift arrive gradually rather than announcing itself early.",
+      "arrangement_notes": "Intro: solo felt piano or guitar. Build: soft pulse and pad enter. Lift: strings open the harmony. Ending: gentle resolved chord with an ambient tail and loopable reduced version. Structure: intimate_intro -> gentle_build -> emotional_lift -> soft_resolution. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "cute_pet_bounce_001",
+      "title": "Cute Playful Bounce",
+      "description": "A light playful-pop capability with compact melodic gestures, buoyant rhythm, and friendly tactile sound.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "cute_pet_001"
+      ],
+      "aliases": [
+        "cute_pet",
+        "pet_cut",
+        "toy_reveal",
+        "snack_moment"
+      ],
+      "semantic_keywords": [
+        "cute music",
+        "可爱音乐",
+        "狗狗",
+        "小狗",
+        "小猫",
+        "新玩具",
+        "萌趣",
+        "playful bounce",
+        "宠物内容",
+        "toy pop",
+        "轻快节奏",
+        "friendly melody",
+        "whistle pop",
+        "ukulele",
+        "bouncy beat",
+        "轻松日常"
+      ],
+      "tags": [
+        "lifestyle",
+        "family",
+        "light_entertainment",
+        "background",
+        "playful_moment",
+        "character_content",
+        "transition",
+        "cute",
+        "playful",
+        "happy",
+        "friendly"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cute_pop",
+        "ukulele_pop",
+        "electro_swing"
+      ],
+      "sub_genre": [
+        "ukulele_pop",
+        "electro_swing"
+      ],
+      "mood": [
+        "cute",
+        "playful",
+        "happy",
+        "friendly"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        110,
+        126
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "ukulele",
+        "whistle",
+        "handclaps",
+        "upright_bass",
+        "toy_percussion"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "motif_intro",
+        "bounce_loop",
+        "playful_variation",
+        "button_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "bouncy",
+        "soft_edged",
+        "friendly"
+      ],
+      "timbre": [
+        "ukulele",
+        "whistle",
+        "wooden_percussion"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "transition"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "cute",
+        "playful",
+        "happy"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "lifestyle",
+        "family",
+        "light_entertainment"
+      ],
+      "usage_context": [
+        "background",
+        "playful_moment",
+        "character_content",
+        "transition"
+      ],
+      "content_types": [
+        "pets",
+        "hobbies",
+        "friendly_products"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Cute playful instrumental with ukulele, whistle motif, handclaps, upright bass and small toy percussion, bouncy and friendly without becoming childish or chaotic.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Use a simple motif with tiny rhythmic variations; keep upper frequencies soft enough for repeated listening.",
+      "arrangement_notes": "Intro: whistle or ukulele motif. Main loop: bass and claps enter. Variation: one playful percussion answer. Ending: short button chord aligned for a seamless loop. Structure: motif_intro -> bounce_loop -> playful_variation -> button_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "emotional_story_piano_001",
+      "title": "Emotional Memory Piano",
+      "description": "An intimate narrative-piano capability for reflection, vulnerability, and restrained emotional resolution.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "sad_story_001"
+      ],
+      "aliases": [
+        "sad_story",
+        "memory_flashback",
+        "emotional_ending"
+      ],
+      "semantic_keywords": [
+        "emotional piano",
+        "情感钢琴",
+        "钢琴片尾",
+        "反思过去",
+        "有情绪",
+        "回忆配乐",
+        "内心独白",
+        "felt piano",
+        "sad memory",
+        "温情故事",
+        "reflective score",
+        "克制悲伤",
+        "cinematic intimacy",
+        "emotional ending",
+        "human story"
+      ],
+      "tags": [
+        "storytelling",
+        "documentary",
+        "human_interest",
+        "reflection",
+        "memory",
+        "emotional_support",
+        "ending",
+        "emotional",
+        "reflective",
+        "tender",
+        "melancholic"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic_piano",
+        "ambient",
+        "story_score"
+      ],
+      "sub_genre": [
+        "ambient",
+        "story_score"
+      ],
+      "mood": [
+        "emotional",
+        "reflective",
+        "tender",
+        "melancholic"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        60,
+        78
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spacious_pulse",
+        "gentle_downbeat"
+      ],
+      "instrumentation": [
+        "felt_piano",
+        "soft_strings",
+        "ambient_pad",
+        "subtle_cello",
+        "room_tone"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "solo_intro",
+        "harmonic_deepening",
+        "emotional_peak",
+        "quiet_resolution"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "intimate",
+        "fragile",
+        "breathing"
+      ],
+      "timbre": [
+        "felt_piano",
+        "soft_cello",
+        "warm_pad"
+      ],
+      "density": "sparse",
+      "brightness": "dark",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "background",
+        "ending"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "emotional",
+        "reflective",
+        "tender"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "documentary",
+        "human_interest"
+      ],
+      "usage_context": [
+        "reflection",
+        "memory",
+        "emotional_support",
+        "ending"
+      ],
+      "content_types": [
+        "personal_story",
+        "interview",
+        "dramatic_narrative"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "slow",
+        "continuous"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Intimate felt-piano instrumental with sparse warm strings and subtle room ambience, reflective and tender, restrained dynamics, emotionally clear without melodrama.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Preserve silence and natural piano decay; the emotional peak should come from harmony and register rather than volume.",
+      "arrangement_notes": "Intro: exposed felt piano. Build: low string support enters after the first phrase. Peak: wider harmony without heavy drums. Ending: unresolved-to-resolved piano cadence with a long natural tail. Structure: solo_intro -> harmonic_deepening -> emotional_peak -> quiet_resolution. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "product_launch_motion_001",
+      "title": "Clean Product Launch Motion",
+      "description": "A clean commercial-electronic capability for presenting product value through precision, clarity, and controlled forward motion.",
+      "version": "1.2",
+      "status": "active",
+      "legacy_ids": [
+        "product_ad_001"
+      ],
+      "aliases": [
+        "product_ad",
+        "ecommerce_motion",
+        "tech_product",
+        "package_reveal"
+      ],
+      "semantic_keywords": [
+        "product launch",
+        "产品发布",
+        "科技产品",
+        "产品功能",
+        "功能展示",
+        "逐项出现",
+        "clean electronic",
+        "commercial music",
+        "产品展示",
+        "precision rhythm",
+        "modern brand",
+        "发布会音乐",
+        "feature reveal",
+        "polished motion",
+        "innovation"
+      ],
+      "tags": [
+        "product_showcase",
+        "technology",
+        "advertising",
+        "opening",
+        "feature_reveal",
+        "brand_signature",
+        "background",
+        "clean",
+        "modern",
+        "confident",
+        "premium"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "commercial_electronic",
+        "minimal_tech",
+        "product_music"
+      ],
+      "sub_genre": [
+        "minimal_tech",
+        "product_music"
+      ],
+      "mood": [
+        "clean",
+        "modern",
+        "confident",
+        "premium"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        104,
+        118
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "plucked_synth",
+        "tight_kick",
+        "sub_bass",
+        "digital_clicks",
+        "warm_pad"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "identity_intro",
+        "feature_build",
+        "reveal_hook",
+        "logo_resolve"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "clean",
+        "precise",
+        "modular"
+      ],
+      "timbre": [
+        "plucked_synth",
+        "tight_kick",
+        "soft_digital_click"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "neutral",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "intro",
+        "background"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "clean",
+        "modern",
+        "confident"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "product_showcase",
+        "technology",
+        "advertising"
+      ],
+      "usage_context": [
+        "opening",
+        "feature_reveal",
+        "brand_signature",
+        "background"
+      ],
+      "content_types": [
+        "product_story",
+        "innovation",
+        "commercial_content"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Clean modern product-launch instrumental with precise plucked synth, controlled sub bass, tight electronic percussion and a concise innovation motif, premium and forward-looking.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Create clearly separated musical events for feature emphasis while keeping the central motif consistent enough to function as brand memory.",
+      "arrangement_notes": "Intro: two-note identity motif. Build: clicks and pulse reveal layers. Drop: full but controlled product hook. Ending: short logo resolve; alternate tail loops into the motif. Structure: identity_intro -> feature_build -> reveal_hook -> logo_resolve. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "dance_competition_peak_001",
+      "title": "Dance Competition Peak",
+      "description": "A performance-music capability for technical movement, competitive tension, and decisive peak moments.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "dance_battle",
+        "competition_peak",
+        "choreography_music"
+      ],
+      "semantic_keywords": [
+        "dance competition",
+        "舞蹈比赛",
+        "街舞比赛",
+        "dance battle",
+        "battle",
+        "高能卡点",
+        "编舞音乐",
+        "竞技感",
+        "hard groove",
+        "performance peak",
+        "卡点节奏",
+        "street dance",
+        "powerful beat",
+        "movement accents",
+        "battle energy"
+      ],
+      "tags": [
+        "performance",
+        "competition",
+        "entertainment",
+        "climax",
+        "battle",
+        "movement_sync",
+        "intense",
+        "powerful",
+        "competitive",
+        "bold"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "bass_music",
+        "hip_hop_electronic",
+        "dance"
+      ],
+      "sub_genre": [
+        "hip_hop_electronic",
+        "dance"
+      ],
+      "mood": [
+        "intense",
+        "powerful",
+        "competitive",
+        "bold"
+      ],
+      "energy_level": 5,
+      "bpm_range": [
+        126,
+        142
+      ],
+      "tempo_feel": "fast_paced",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "distorted_bass",
+        "hard_kick",
+        "snare_stack",
+        "brass_stab",
+        "glitch_percussion"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "tension_intro",
+        "rhythmic_build",
+        "battle_drop",
+        "hard_stop"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "drop"
+    },
+    "audio_character": {
+      "texture": [
+        "aggressive",
+        "angular",
+        "kinetic"
+      ],
+      "timbre": [
+        "hard_bass",
+        "sharp_snare",
+        "brass_stab"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "cold",
+      "punch": "hard",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "climax_support",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "transition"
+      ],
+      "narrative_function": [
+        "amplify_peak",
+        "reward_build_up"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "intense",
+        "powerful",
+        "competitive"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "performance",
+        "competition",
+        "entertainment"
+      ],
+      "usage_context": [
+        "performance",
+        "climax",
+        "battle",
+        "movement_sync"
+      ],
+      "content_types": [
+        "dance",
+        "sports_entertainment",
+        "talent_showcase"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "High-impact dance competition instrumental with hard bass, crisp snare stacks, brass stabs and syncopated glitch percussion, technical accents and a decisive drop.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Build readable eight-count phrases and leave micro-gaps before major accents so movement can own the impact.",
+      "arrangement_notes": "Intro: tense count-in texture. Build: percussion density rises across two eight-counts. Drop: full bass and accent grid. Ending: decisive hard stop or four-beat loop pickup. Structure: tension_intro -> rhythmic_build -> battle_drop -> hard_stop. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "stage_opening_impact_001",
+      "title": "Stage Opening Impact",
+      "description": "A large-scale opening capability that establishes anticipation, authority, and immediate event presence.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "show_opening",
+        "event_intro",
+        "opening_stinger"
+      ],
+      "semantic_keywords": [
+        "stage opening",
+        "舞台开场",
+        "event intro",
+        "盛大开幕",
+        "颁奖典礼",
+        "隆重开场",
+        "大揭晓",
+        "开幕式",
+        "opening impact",
+        "show music",
+        "dramatic reveal",
+        "仪式感",
+        "big entrance",
+        "brass impact",
+        "anticipation",
+        "live event"
+      ],
+      "tags": [
+        "live_event",
+        "entertainment",
+        "brand_experience",
+        "opening",
+        "entrance",
+        "announcement",
+        "brand_moment",
+        "dramatic",
+        "grand",
+        "anticipatory",
+        "powerful"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic_electronic",
+        "event_music",
+        "hybrid_orchestral"
+      ],
+      "sub_genre": [
+        "event_music",
+        "hybrid_orchestral"
+      ],
+      "mood": [
+        "dramatic",
+        "grand",
+        "anticipatory",
+        "powerful"
+      ],
+      "energy_level": 5,
+      "bpm_range": [
+        100,
+        128
+      ],
+      "tempo_feel": "variable",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "cinematic_brass",
+        "taiko",
+        "synth_pulse",
+        "orchestral_riser",
+        "impact_drum"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "suspense_intro",
+        "accelerating_build",
+        "opening_impact",
+        "title_tail"
+      ],
+      "loopability": "low",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "massive",
+        "cinematic",
+        "high_contrast"
+      ],
+      "timbre": [
+        "bold_brass",
+        "deep_drum",
+        "rising_synth"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "hard",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "intro",
+      "secondary_roles": [
+        "climax_support",
+        "brand_signature"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "create_expectation"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "dramatic",
+        "grand",
+        "anticipatory"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "live_event",
+        "entertainment",
+        "brand_experience"
+      ],
+      "usage_context": [
+        "opening",
+        "entrance",
+        "announcement",
+        "brand_moment"
+      ],
+      "content_types": [
+        "event",
+        "ceremony",
+        "showcase"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Grand hybrid opening cue with cinematic brass, deep taiko, accelerating synth pulse and a powerful reveal impact, authoritative and polished with a clear final statement.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Shape one unmistakable arrival point; all preceding material should increase expectation without spending the peak early.",
+      "arrangement_notes": "Intro: low suspense drone and pulse. Build: brass and drums accelerate. Drop: single full-spectrum opening impact. Ending: short dignified tail for announcement or identity. Structure: suspense_intro -> accelerating_build -> opening_impact -> title_tail. Loop: low loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "live_band_anthem_001",
+      "title": "Live Band Anthem",
+      "description": "An organic anthem capability driven by live-band energy, collective lift, and memorable chord movement.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "band_anthem",
+        "festival_band",
+        "crowd_anthem"
+      ],
+      "semantic_keywords": [
+        "live band",
+        "现场乐队",
+        "乐队现场",
+        "全场合唱",
+        "anthem",
+        "摇滚流行",
+        "festival energy",
+        "群体共鸣",
+        "big chorus",
+        "live drums",
+        "electric guitar",
+        "uplifting band",
+        "concert feel",
+        "青春热血"
+      ],
+      "tags": [
+        "performance",
+        "community",
+        "storytelling",
+        "celebration",
+        "achievement",
+        "climax",
+        "group_moment",
+        "uplifting",
+        "energetic",
+        "warm",
+        "triumphant"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "pop_rock",
+        "indie_rock",
+        "anthemic_pop"
+      ],
+      "sub_genre": [
+        "indie_rock",
+        "anthemic_pop"
+      ],
+      "mood": [
+        "uplifting",
+        "energetic",
+        "warm",
+        "triumphant"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        112,
+        130
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "electric_guitar",
+        "live_drums",
+        "electric_bass",
+        "piano",
+        "handclaps"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "guitar_intro",
+        "verse_build",
+        "anthem_hook",
+        "ringout_ending"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "organic",
+        "anthemic",
+        "live"
+      ],
+      "timbre": [
+        "open_guitar",
+        "live_drums",
+        "warm_bass"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "hard",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "climax_support",
+      "secondary_roles": [
+        "emotional_support",
+        "background"
+      ],
+      "narrative_function": [
+        "amplify_peak",
+        "reward_build_up"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "uplifting",
+        "energetic",
+        "warm"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "performance",
+        "community",
+        "storytelling"
+      ],
+      "usage_context": [
+        "celebration",
+        "achievement",
+        "climax",
+        "group_moment"
+      ],
+      "content_types": [
+        "live_music",
+        "team_story",
+        "youth_culture"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Uplifting live-band instrumental with open electric guitars, driving acoustic drums, warm bass and anthem-sized chord movement, energetic, communal and authentic.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep timing human and drums alive; the hook should be memorable through chord rhythm rather than an overproduced synth layer.",
+      "arrangement_notes": "Intro: recognizable guitar figure. Build: bass and drums widen. Drop: full anthem chords and claps. Ending: ringing band chord with an optional loop pickup. Structure: guitar_intro -> verse_build -> anthem_hook -> ringout_ending. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "luxury_minimal_electronic_001",
+      "title": "Luxury Minimal Electronic",
+      "description": "A highly restrained luxury capability built from micro-detail, silence, and immaculate tonal balance.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "minimal_luxury",
+        "high_end_minimal",
+        "premium_electronic"
+      ],
+      "semantic_keywords": [
+        "luxury minimal",
+        "极简高级",
+        "极简",
+        "极简留白",
+        "高端科技设计品牌",
+        "珠宝广告",
+        "高端设计品牌",
+        "高级珠宝",
+        "高端电子",
+        "premium sound",
+        "微妙质感",
+        "architectural music",
+        "restrained groove",
+        "精致留白",
+        "sonic luxury",
+        "design brand",
+        "minimal pulse",
+        "elegant technology"
+      ],
+      "tags": [
+        "luxury",
+        "design",
+        "technology",
+        "brand_signature",
+        "background",
+        "product_showcase",
+        "identity",
+        "premium",
+        "calm",
+        "precise",
+        "elegant"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "minimal_electronic",
+        "ambient_tech",
+        "luxury"
+      ],
+      "sub_genre": [
+        "ambient_tech",
+        "luxury"
+      ],
+      "mood": [
+        "premium",
+        "calm",
+        "precise",
+        "elegant"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        82,
+        104
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spacious_pulse",
+        "gentle_downbeat"
+      ],
+      "instrumentation": [
+        "soft_sub",
+        "glass_pluck",
+        "muted_click",
+        "air_pad",
+        "granular_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "sonic_mark",
+        "spacious_pulse",
+        "subtle_evolution",
+        "soft_resolve"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "minimal",
+        "silky",
+        "architectural"
+      ],
+      "timbre": [
+        "glass_pluck",
+        "soft_sub",
+        "air_texture"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "cold",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "background",
+        "intro"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "premium",
+        "calm",
+        "precise"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "luxury",
+        "design",
+        "technology"
+      ],
+      "usage_context": [
+        "brand_signature",
+        "background",
+        "product_showcase",
+        "identity"
+      ],
+      "content_types": [
+        "premium_brand",
+        "design_story",
+        "high_end_product"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "slow",
+        "continuous"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Ultra-minimal luxury electronic instrumental with soft sub bass, glass plucks, muted micro-percussion and spacious granular air, elegant, precise and quietly premium.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Every event must justify its place; use silence and decay as compositional elements and avoid obvious trend-driven gestures.",
+      "arrangement_notes": "Intro: single sonic mark. Build: sparse pulse appears after open space. Main: subtle timbral evolution without a conventional drop. Ending: soft tonal resolve that can loop invisibly. Structure: sonic_mark -> spacious_pulse -> subtle_evolution -> soft_resolve. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "premium_brand_signature_001",
+      "title": "Premium Brand Signature",
+      "description": "A compact sonic-identity capability centered on memorable interval design and adaptable premium instrumentation.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "sonic_logo",
+        "brand_identity_music",
+        "premium_signature"
+      ],
+      "semantic_keywords": [
+        "sonic logo",
+        "声音 logo",
+        "声音标识",
+        "品牌升级",
+        "品牌声音",
+        "声音标志",
+        "brand signature",
+        "品牌识别",
+        "premium identity",
+        "audio branding",
+        "记忆音型",
+        "sonic mnemonic",
+        "高端品牌",
+        "logo sound",
+        "brand recall"
+      ],
+      "tags": [
+        "branding",
+        "advertising",
+        "corporate_identity",
+        "brand_signature",
+        "opening",
+        "ending",
+        "identity",
+        "premium",
+        "distinctive",
+        "confident",
+        "timeless"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "sonic_branding",
+        "minimal_orchestral",
+        "electronic"
+      ],
+      "sub_genre": [
+        "minimal_orchestral",
+        "electronic"
+      ],
+      "mood": [
+        "premium",
+        "distinctive",
+        "confident",
+        "timeless"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        80,
+        112
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "signature_chime",
+        "warm_synth",
+        "soft_brass",
+        "subtle_strings",
+        "impact_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "mnemonic_intro",
+        "identity_development",
+        "signature_resolve"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "iconic",
+        "clean",
+        "timeless"
+      ],
+      "timbre": [
+        "signature_chime",
+        "warm_synth",
+        "soft_brass"
+      ],
+      "density": "sparse",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "intro",
+        "ending"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "premium",
+        "distinctive",
+        "confident"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "branding",
+        "advertising",
+        "corporate_identity"
+      ],
+      "usage_context": [
+        "brand_signature",
+        "opening",
+        "ending",
+        "identity"
+      ],
+      "content_types": [
+        "brand_system",
+        "campaign",
+        "product_family"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        3,
+        5,
+        8,
+        10,
+        15
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Premium sonic-branding cue built around a distinctive three-to-five-note mnemonic, refined chime, warm synth and subtle orchestral support, memorable without sounding promotional.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Test the mnemonic in isolation and at low volume; it should remain identifiable across simplified and expanded arrangements.",
+      "arrangement_notes": "Intro: exposed mnemonic. Build: harmonic support and one texture layer. Peak: complete brand statement. Ending: clean signature resolve; provide short sting and loopable extended variants. Structure: mnemonic_intro -> identity_development -> signature_resolve. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "beauty_editorial_ambient_001",
+      "title": "Beauty Editorial Ambient",
+      "description": "A tactile ambient capability for beauty and sensory detail, combining softness, luminosity, and contemporary polish.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "beauty_ambient",
+        "skincare_editorial",
+        "soft_luxury"
+      ],
+      "semantic_keywords": [
+        "beauty ambient",
+        "beauty editorial",
+        "dreamy ambient",
+        "美妆音乐",
+        "护肤质感",
+        "soft luxury",
+        "editorial beauty",
+        "光泽感",
+        "sensory music",
+        "柔和高级",
+        "skincare",
+        "fragrance mood",
+        "luminous ambient",
+        "delicate texture"
+      ],
+      "tags": [
+        "beauty",
+        "wellness",
+        "luxury",
+        "background",
+        "product_showcase",
+        "sensory_detail",
+        "brand_expression",
+        "dreamy",
+        "premium",
+        "calm",
+        "sensual"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "ambient_pop",
+        "minimal_electronic",
+        "beauty"
+      ],
+      "sub_genre": [
+        "minimal_electronic",
+        "beauty"
+      ],
+      "mood": [
+        "dreamy",
+        "premium",
+        "calm",
+        "sensual"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        72,
+        96
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spacious_pulse",
+        "gentle_downbeat"
+      ],
+      "instrumentation": [
+        "breathy_pad",
+        "soft_pluck",
+        "sub_bass",
+        "finger_snap",
+        "shimmer_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "air_intro",
+        "gentle_pulse",
+        "shimmer_lift",
+        "soft_fade"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "luminous",
+        "silky",
+        "weightless"
+      ],
+      "timbre": [
+        "breathy_pad",
+        "soft_pluck",
+        "shimmer"
+      ],
+      "density": "sparse",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "brand_signature",
+        "emotional_support"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "dreamy",
+        "premium",
+        "calm"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "beauty",
+        "wellness",
+        "luxury"
+      ],
+      "usage_context": [
+        "background",
+        "product_showcase",
+        "sensory_detail",
+        "brand_expression"
+      ],
+      "content_types": [
+        "skincare",
+        "cosmetics",
+        "fragrance"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "slow",
+        "continuous"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Luminous beauty ambient instrumental with breathy pads, soft plucks, delicate shimmer and a barely-there pulse, sensual, clean and modern with generous space.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep transients rounded and avoid dramatic harmonic movement; sound should support close sensory attention.",
+      "arrangement_notes": "Intro: breath and shimmer. Build: soft pulse emerges. Main: one luminous motif with gradual texture changes. Ending: long polished fade that reconnects naturally to the opening air. Structure: air_intro -> gentle_pulse -> shimmer_lift -> soft_fade. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "tech_product_reveal_001",
+      "title": "Tech Product Reveal",
+      "description": "A technology-reveal capability that communicates precision, innovation, and controlled anticipation.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "technology_reveal",
+        "device_launch",
+        "innovation_intro"
+      ],
+      "semantic_keywords": [
+        "tech product reveal",
+        "科技产品发布",
+        "手机发布会",
+        "平板电脑",
+        "新品发布会",
+        "智能设备",
+        "device launch",
+        "innovation music",
+        "未来科技",
+        "precision electronic",
+        "高级开场",
+        "产品揭晓",
+        "futuristic pulse",
+        "clean technology",
+        "8秒发布音乐"
+      ],
+      "tags": [
+        "product_showcase",
+        "technology",
+        "brand_experience",
+        "opening",
+        "product_reveal",
+        "feature_highlight",
+        "brand_signature",
+        "premium",
+        "innovative",
+        "anticipatory",
+        "clean"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "future_electronic",
+        "minimal_tech",
+        "commercial"
+      ],
+      "sub_genre": [
+        "minimal_tech",
+        "commercial"
+      ],
+      "mood": [
+        "premium",
+        "innovative",
+        "anticipatory",
+        "clean"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        100,
+        116
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "modular_pulse",
+        "glass_pluck",
+        "deep_sub",
+        "digital_click",
+        "wide_pad"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "precision_intro",
+        "feature_build",
+        "reveal_drop",
+        "identity_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "futuristic",
+        "precise",
+        "polished"
+      ],
+      "timbre": [
+        "glass_pluck",
+        "modular_pulse",
+        "deep_sub"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "cold",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "intro",
+      "secondary_roles": [
+        "brand_signature",
+        "climax_support"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "create_expectation"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "premium",
+        "innovative",
+        "anticipatory"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "product_showcase",
+        "technology",
+        "brand_experience"
+      ],
+      "usage_context": [
+        "opening",
+        "product_reveal",
+        "feature_highlight",
+        "brand_signature"
+      ],
+      "content_types": [
+        "consumer_technology",
+        "innovation",
+        "device_family"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Premium technology reveal instrumental with precise modular pulses, glass plucks, deep controlled sub and a clean futuristic rise into a concise product statement, instrumental only.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Make the reveal feel inevitable through increasing harmonic clarity, not just volume; retain a distinctive identity motif.",
+      "arrangement_notes": "Intro: sparse precision pulse. Build: glass motif and sub enter in layers. Drop: compact reveal chord at the two-thirds point. Ending: clean identity tone with an exact loop pickup. Structure: precision_intro -> feature_build -> reveal_drop -> identity_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "beauty_commercial_glow_001",
+      "title": "Beauty Commercial Glow",
+      "description": "A radiant beauty-pop capability with soft confidence, clean rhythmic lift, and polished warmth.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "beauty_glow",
+        "cosmetic_pop",
+        "radiant_beauty"
+      ],
+      "semantic_keywords": [
+        "beauty commercial",
+        "美妆广告",
+        "彩妆新品",
+        "清透明亮",
+        "radiant glow",
+        "光彩音乐",
+        "cosmetic pop",
+        "护肤品牌",
+        "soft confidence",
+        "清透高级",
+        "beauty campaign",
+        "fresh luxury",
+        "gentle groove",
+        "明亮质感"
+      ],
+      "tags": [
+        "beauty",
+        "advertising",
+        "wellness",
+        "product_showcase",
+        "brand_expression",
+        "opening",
+        "background",
+        "radiant",
+        "premium",
+        "fresh",
+        "confident"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "ambient_pop",
+        "soft_house",
+        "commercial_pop"
+      ],
+      "sub_genre": [
+        "soft_house",
+        "commercial_pop"
+      ],
+      "mood": [
+        "radiant",
+        "premium",
+        "fresh",
+        "confident"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        96,
+        112
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "warm_pluck",
+        "soft_kick",
+        "airy_pad",
+        "finger_snap",
+        "shimmer_bell"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "glow_intro",
+        "gentle_build",
+        "radiant_hook",
+        "soft_logo_tail"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "radiant",
+        "clean",
+        "soft_focus"
+      ],
+      "timbre": [
+        "warm_pluck",
+        "airy_pad",
+        "shimmer_bell"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "background",
+        "intro"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "radiant",
+        "premium",
+        "fresh"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "beauty",
+        "advertising",
+        "wellness"
+      ],
+      "usage_context": [
+        "product_showcase",
+        "brand_expression",
+        "opening",
+        "background"
+      ],
+      "content_types": [
+        "cosmetics",
+        "skincare",
+        "personal_care"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Radiant beauty-pop instrumental with warm plucks, airy pads, soft kick, finger snaps and subtle shimmer, fresh and premium with gentle forward motion.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep the groove elegant and skin-close; avoid hard club transients or overly sweet melodic clichés.",
+      "arrangement_notes": "Intro: shimmer and warm motif. Build: soft kick and snap establish movement. Hook: bright harmonic bloom. Ending: delicate logo tail with a loop-safe pad continuation. Structure: glow_intro -> gentle_build -> radiant_hook -> soft_logo_tail. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "automotive_premium_drive_001",
+      "title": "Automotive Premium Drive",
+      "description": "A premium automotive capability balancing mechanical precision, low-end authority, and open-road momentum.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "premium_car",
+        "automotive_reveal",
+        "luxury_drive"
+      ],
+      "semantic_keywords": [
+        "automotive music",
+        "汽车广告",
+        "公路驾驶",
+        "驾驶镜头",
+        "低频稳健",
+        "premium drive",
+        "豪华汽车",
+        "car reveal",
+        "机械质感",
+        "driving electronic",
+        "open road",
+        "低频力量",
+        "luxury mobility",
+        "engineered sound",
+        "modern motion"
+      ],
+      "tags": [
+        "automotive",
+        "luxury",
+        "mobility",
+        "product_reveal",
+        "driving",
+        "brand_expression",
+        "climax",
+        "powerful",
+        "premium",
+        "controlled",
+        "expansive"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic_electronic",
+        "progressive_house",
+        "automotive"
+      ],
+      "sub_genre": [
+        "progressive_house",
+        "automotive"
+      ],
+      "mood": [
+        "powerful",
+        "premium",
+        "controlled",
+        "expansive"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        108,
+        122
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "deep_synth_bass",
+        "hybrid_drums",
+        "arpeggiator",
+        "metallic_texture",
+        "wide_strings"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "engineered_intro",
+        "acceleration_build",
+        "open_road_drop",
+        "confident_resolve"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "engineered",
+        "sleek",
+        "expansive"
+      ],
+      "timbre": [
+        "deep_bass",
+        "metallic_pulse",
+        "wide_strings"
+      ],
+      "density": "dense",
+      "brightness": "neutral",
+      "warmth": "cold",
+      "punch": "hard",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "rhythmic_driver",
+      "secondary_roles": [
+        "brand_signature",
+        "climax_support"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "powerful",
+        "premium",
+        "controlled"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "automotive",
+        "luxury",
+        "mobility"
+      ],
+      "usage_context": [
+        "product_reveal",
+        "driving",
+        "brand_expression",
+        "climax"
+      ],
+      "content_types": [
+        "vehicle",
+        "engineering",
+        "mobility_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        8,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Premium automotive electronic instrumental with deep authoritative bass, hybrid drums, precise arpeggiation, subtle metallic texture and wide cinematic harmony.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Balance propulsion with composure; the low end should imply engineered power without becoming distorted or aggressive.",
+      "arrangement_notes": "Intro: mechanical pulse and low motif. Build: arpeggio accelerates with layered drums. Drop: broad driving groove. Ending: confident harmonic brake with an optional road-loop continuation. Structure: engineered_intro -> acceleration_build -> open_road_drop -> confident_resolve. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "food_refreshing_pop_001",
+      "title": "Refreshing Food and Beverage Pop",
+      "description": "A fresh commercial-pop capability that conveys appetite, crispness, sociability, and immediate positive reward.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "food_pop",
+        "beverage_refresh",
+        "fresh_commercial"
+      ],
+      "semantic_keywords": [
+        "food music",
+        "食品广告",
+        "零食广告",
+        "食欲",
+        "爽脆",
+        "饮料音乐",
+        "refreshing pop",
+        "清爽节奏",
+        "appetite appeal",
+        "美食内容",
+        "crisp percussion",
+        "fresh commercial",
+        "社交聚餐",
+        "beverage brand",
+        "bright groove"
+      ],
+      "tags": [
+        "food",
+        "beverage",
+        "lifestyle",
+        "product_showcase",
+        "background",
+        "brand_expression",
+        "social_moment",
+        "fresh",
+        "happy",
+        "social",
+        "bright"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "commercial_pop",
+        "funk_pop",
+        "light_electronic"
+      ],
+      "sub_genre": [
+        "funk_pop",
+        "light_electronic"
+      ],
+      "mood": [
+        "fresh",
+        "happy",
+        "social",
+        "bright"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        106,
+        122
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "muted_guitar",
+        "funk_bass",
+        "handclaps",
+        "crisp_drums",
+        "marimba"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "fresh_intro",
+        "groove_build",
+        "reward_hook",
+        "crisp_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "crisp",
+        "juicy",
+        "colorful"
+      ],
+      "timbre": [
+        "muted_guitar",
+        "funk_bass",
+        "bright_mallet"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "brand_signature",
+        "rhythmic_driver"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "fresh",
+        "happy",
+        "social"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "food",
+        "beverage",
+        "lifestyle"
+      ],
+      "usage_context": [
+        "product_showcase",
+        "background",
+        "brand_expression",
+        "social_moment"
+      ],
+      "content_types": [
+        "food_product",
+        "dining",
+        "refreshment"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Refreshing commercial-pop instrumental with muted guitar, buoyant funk bass, crisp drums, handclaps and bright mallet accents, appetizing, social and clean.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Use crisp articulation and short decay to imply freshness; avoid cartoonish food sound clichés.",
+      "arrangement_notes": "Intro: bright mallet pickup. Build: guitar and bass establish groove. Hook: claps and melodic reward arrive quickly. Ending: crisp brand button that reconnects to the pickup. Structure: fresh_intro -> groove_build -> reward_hook -> crisp_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "cinematic_emotional_arc_001",
+      "title": "Cinematic Emotional Arc",
+      "description": "A broad cinematic capability for developing emotion from intimacy through complexity to meaningful release.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "emotional_arc",
+        "cinematic_drama",
+        "human_story_score"
+      ],
+      "semantic_keywords": [
+        "cinematic emotional",
+        "电影情感",
+        "电影叙事",
+        "脆弱到和解",
+        "情绪弧线",
+        "普通人",
+        "人生故事",
+        "human drama",
+        "orchestral story",
+        "感人配乐",
+        "emotional journey",
+        "深度叙事",
+        "cinematic build",
+        "meaningful release",
+        "弦乐钢琴",
+        "story score"
+      ],
+      "tags": [
+        "storytelling",
+        "documentary",
+        "drama",
+        "emotional_arc",
+        "human_story",
+        "climax",
+        "resolution",
+        "emotional",
+        "profound",
+        "tender",
+        "hopeful"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic",
+        "modern_classical",
+        "drama_score"
+      ],
+      "sub_genre": [
+        "modern_classical",
+        "drama_score"
+      ],
+      "mood": [
+        "emotional",
+        "profound",
+        "tender",
+        "hopeful"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        64,
+        92
+      ],
+      "tempo_feel": "variable",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "piano",
+        "strings",
+        "cello",
+        "soft_percussion",
+        "ambient_orchestra"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "intimate_intro",
+        "thematic_build",
+        "emotional_climax",
+        "meaningful_resolution"
+      ],
+      "loopability": "low",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "organic",
+        "deep",
+        "evolving"
+      ],
+      "timbre": [
+        "piano",
+        "warm_strings",
+        "resonant_cello"
+      ],
+      "density": "medium",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "climax_support",
+        "ending"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "emotional",
+        "profound",
+        "tender"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "documentary",
+        "drama"
+      ],
+      "usage_context": [
+        "emotional_arc",
+        "human_story",
+        "climax",
+        "resolution"
+      ],
+      "content_types": [
+        "narrative",
+        "social_impact",
+        "personal_journey"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Modern cinematic emotional score with intimate piano, warm strings, resonant cello and restrained percussion, evolving from vulnerability to a meaningful hopeful release.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Develop one theme through orchestration and harmony; avoid generic trailer escalation or manipulative sentimentality.",
+      "arrangement_notes": "Intro: exposed theme on piano. Build: cello and inner strings deepen harmony. Climax: full strings with restrained percussion. Ending: transformed theme resolves softly with room for narrative closure. Structure: intimate_intro -> thematic_build -> emotional_climax -> meaningful_resolution. Loop: low loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "inspirational_journey_build_001",
+      "title": "Inspirational Journey Build",
+      "description": "A progressive inspirational capability for growth, effort, and earned achievement without corporate cliché.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "inspirational_build",
+        "achievement_music",
+        "growth_journey"
+      ],
+      "semantic_keywords": [
+        "inspirational music",
+        "励志音乐",
+        "成长旅程",
+        "achievement",
+        "uplifting build",
+        "希望感",
+        "progress story",
+        "earned success",
+        "鼓舞配乐",
+        "forward motion",
+        "positive transformation",
+        "journey music"
+      ],
+      "tags": [
+        "storytelling",
+        "education",
+        "corporate",
+        "journey",
+        "achievement",
+        "growth",
+        "climax",
+        "inspirational",
+        "hopeful",
+        "determined",
+        "uplifting"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "inspirational_pop",
+        "cinematic_pop",
+        "post_rock"
+      ],
+      "sub_genre": [
+        "cinematic_pop",
+        "post_rock"
+      ],
+      "mood": [
+        "inspirational",
+        "hopeful",
+        "determined",
+        "uplifting"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        96,
+        116
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "piano",
+        "muted_guitar",
+        "live_drums",
+        "strings",
+        "warm_synth"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "seed_motif",
+        "steady_build",
+        "achievement_peak",
+        "forward_ending"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "progressive",
+        "organic",
+        "open"
+      ],
+      "timbre": [
+        "clear_piano",
+        "warm_guitar",
+        "live_drums"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "cinematic",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "climax_support",
+        "background"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "inspirational",
+        "hopeful",
+        "determined"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "education",
+        "corporate"
+      ],
+      "usage_context": [
+        "journey",
+        "achievement",
+        "growth",
+        "climax"
+      ],
+      "content_types": [
+        "progress_story",
+        "teamwork",
+        "personal_development"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Inspirational cinematic-pop instrumental with clear piano motif, muted guitar, live drums, warm synth and gradually opening strings, determined and hopeful with an earned peak.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Build through added musical responsibility, not just louder layers; preserve sincerity by keeping harmony specific and performances human.",
+      "arrangement_notes": "Intro: simple seed motif. Build: pulse, guitar and drums enter one at a time. Peak: strings widen the motif. Ending: forward-looking cadence with a reduced loop variant. Structure: seed_motif -> steady_build -> achievement_peak -> forward_ending. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "documentary_reflective_001",
+      "title": "Documentary Reflective Underscore",
+      "description": "A neutral-human documentary capability that supports thought, testimony, and observation without dictating emotion.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "documentary_music",
+        "interview_underscore",
+        "reflective_background"
+      ],
+      "semantic_keywords": [
+        "documentary music",
+        "纪录片配乐",
+        "访谈背景",
+        "reflective underscore",
+        "人文纪实",
+        "thoughtful music",
+        "克制情绪",
+        "observational score",
+        "interview support",
+        "真实故事",
+        "subtle piano",
+        "neutral warmth"
+      ],
+      "tags": [
+        "documentary",
+        "journalism",
+        "education",
+        "interview",
+        "background",
+        "reflection",
+        "observation",
+        "reflective",
+        "calm",
+        "thoughtful",
+        "human"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "documentary",
+        "ambient_acoustic",
+        "minimal_score"
+      ],
+      "sub_genre": [
+        "ambient_acoustic",
+        "minimal_score"
+      ],
+      "mood": [
+        "reflective",
+        "calm",
+        "thoughtful",
+        "human"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        60,
+        84
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spacious_pulse",
+        "gentle_downbeat"
+      ],
+      "instrumentation": [
+        "soft_piano",
+        "acoustic_texture",
+        "low_strings",
+        "subtle_pulse",
+        "room_ambience"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "open_intro",
+        "subtle_continuation",
+        "gentle_development",
+        "unforced_end"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "observational",
+        "natural",
+        "restrained"
+      ],
+      "timbre": [
+        "soft_piano",
+        "low_strings",
+        "organic_texture"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "emotional_support",
+        "ending"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "reflective",
+        "calm",
+        "thoughtful"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "documentary",
+        "journalism",
+        "education"
+      ],
+      "usage_context": [
+        "interview",
+        "background",
+        "reflection",
+        "observation"
+      ],
+      "content_types": [
+        "human_interest",
+        "social_issue",
+        "knowledge"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        30,
+        60,
+        90,
+        120
+      ],
+      "pacing_fit": [
+        "slow",
+        "continuous"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Restrained documentary underscore with soft piano, low strings, organic room texture and an almost invisible pulse, thoughtful and human without directing the listener's conclusion.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Protect speech intelligibility and emotional neutrality; avoid strong cadences beneath unresolved testimony.",
+      "arrangement_notes": "Intro: open piano fragments. Main: subtle sustained texture and low pulse. Development: one gentle harmonic shift. Ending: unforced decay; long-form loop avoids obvious restart points. Structure: open_intro -> subtle_continuation -> gentle_development -> unforced_end. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "suspense_tension_build_001",
+      "title": "Suspense Tension Build",
+      "description": "A controlled suspense capability that increases uncertainty through pulse, texture, and harmonic pressure rather than jump-scare excess.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "tension_music",
+        "thriller_build",
+        "mystery_score"
+      ],
+      "semantic_keywords": [
+        "suspense music",
+        "悬疑配乐",
+        "紧张推进",
+        "thriller score",
+        "mystery tension",
+        "危机感",
+        "dark pulse",
+        "心理压力",
+        "tension builder",
+        "uncertainty",
+        "cinematic suspense",
+        "low drone"
+      ],
+      "tags": [
+        "storytelling",
+        "drama",
+        "mystery",
+        "tension",
+        "investigation",
+        "background",
+        "pre_climax",
+        "suspenseful",
+        "tense",
+        "mysterious",
+        "uneasy"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "thriller_score",
+        "dark_ambient",
+        "hybrid_cinematic"
+      ],
+      "sub_genre": [
+        "dark_ambient",
+        "hybrid_cinematic"
+      ],
+      "mood": [
+        "suspenseful",
+        "tense",
+        "mysterious",
+        "uneasy"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        70,
+        110
+      ],
+      "tempo_feel": "variable",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "low_drone",
+        "ticking_percussion",
+        "processed_strings",
+        "sub_pulse",
+        "metallic_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "uneasy_intro",
+        "pulse_build",
+        "pressure_peak",
+        "unresolved_cut"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "dark",
+        "granular",
+        "pressurized"
+      ],
+      "timbre": [
+        "low_drone",
+        "processed_strings",
+        "metallic_tick"
+      ],
+      "density": "medium",
+      "brightness": "dark",
+      "warmth": "cold",
+      "punch": "medium",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "tension_builder",
+      "secondary_roles": [
+        "background",
+        "transition"
+      ],
+      "narrative_function": [
+        "increase_uncertainty",
+        "prepare_turning_point"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "suspenseful",
+        "tense",
+        "mysterious"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "drama",
+        "mystery"
+      ],
+      "usage_context": [
+        "tension",
+        "investigation",
+        "background",
+        "pre_climax"
+      ],
+      "content_types": [
+        "thriller",
+        "mystery",
+        "conflict"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Controlled cinematic suspense instrumental with low drone, ticking percussion, processed strings, sub pulse and sparse metallic texture, steadily increasing pressure without jump scares.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Use asymmetry and harmonic ambiguity; reserve the strongest low-frequency event for the actual narrative turn.",
+      "arrangement_notes": "Intro: unstable drone. Build: irregular tick and sub pulse tighten gradually. Peak: processed string pressure without full resolution. Ending: unresolved cut or seamless return to the drone. Structure: uneasy_intro -> pulse_build -> pressure_peak -> unresolved_cut. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "viral_short_hook_001",
+      "title": "Viral Short Hook",
+      "description": "A hook-optimized pop capability designed for immediate recognition, rhythmic clarity, and compact repeat value.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "viral_hook",
+        "instant_hook",
+        "short_form_music"
+      ],
+      "semantic_keywords": [
+        "viral hook",
+        "短内容音乐",
+        "第一秒",
+        "抓人的",
+        "抓人",
+        "即时抓耳",
+        "抓耳",
+        "热门循环",
+        "循环音乐",
+        "反复循环",
+        "catchy loop",
+        "社交热点",
+        "short form",
+        "记忆点",
+        "hook first",
+        "trend music",
+        "卡点循环",
+        "repeatable motif",
+        "快速进入"
+      ],
+      "tags": [
+        "social_media",
+        "entertainment",
+        "creator_content",
+        "opening",
+        "hook",
+        "transition",
+        "loop",
+        "catchy",
+        "energetic",
+        "playful",
+        "bold"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "electro_pop",
+        "dance_pop",
+        "social_pop"
+      ],
+      "sub_genre": [
+        "dance_pop",
+        "social_pop"
+      ],
+      "mood": [
+        "catchy",
+        "energetic",
+        "playful",
+        "bold"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        112,
+        130
+      ],
+      "tempo_feel": "fast_paced",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "signature_synth",
+        "punchy_kick",
+        "clap",
+        "bass_hook",
+        "vocal_chop_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "instant_hook",
+        "micro_build",
+        "repeat_drop",
+        "loop_turnaround"
+      ],
+      "loopability": "high",
+      "intensity_curve": "drop"
+    },
+    "audio_character": {
+      "texture": [
+        "immediate",
+        "colorful",
+        "compressed"
+      ],
+      "timbre": [
+        "signature_synth",
+        "punchy_kick",
+        "bass_hook"
+      ],
+      "density": "dense",
+      "brightness": "bright",
+      "warmth": "neutral",
+      "punch": "hard",
+      "space": "wide",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "rhythmic_driver",
+      "secondary_roles": [
+        "intro",
+        "transition"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "catchy",
+        "energetic",
+        "playful"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "social_media",
+        "entertainment",
+        "creator_content"
+      ],
+      "usage_context": [
+        "opening",
+        "hook",
+        "transition",
+        "loop"
+      ],
+      "content_types": [
+        "short_content",
+        "trend",
+        "creator_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Instantly catchy electro-pop instrumental with a distinctive one-bar synth hook, punchy kick, compact bass motif and clear rhythmic accents, optimized for short repeat listening.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Put the identifying sound inside the first second and vary the repeat just enough to prevent fatigue.",
+      "arrangement_notes": "Intro: hook begins immediately. Build: one added percussion layer. Drop: compact full-groove repeat. Ending: turnaround note lands directly back on the first beat. Structure: instant_hook -> micro_build -> repeat_drop -> loop_turnaround. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "playful_trend_001",
+      "title": "Playful Trend Pop",
+      "description": "A flexible playful-pop capability with quirky timbral identity and approachable rhythmic energy.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "trend_pop",
+        "playful_social",
+        "quirky_trend"
+      ],
+      "semantic_keywords": [
+        "playful trend",
+        "潮流音乐",
+        "生活记录",
+        "弹性十足",
+        "俏皮流行",
+        "quirky pop",
+        "轻松热点",
+        "social trend",
+        "fun beat",
+        "可爱但不幼稚",
+        "bouncy synth",
+        "creator music",
+        "meme friendly",
+        "friendly hook"
+      ],
+      "tags": [
+        "social_media",
+        "lifestyle",
+        "entertainment",
+        "background",
+        "trend",
+        "playful_moment",
+        "hook",
+        "playful",
+        "fun",
+        "bright",
+        "cheeky"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "quirky_pop",
+        "electro_pop",
+        "funk_pop"
+      ],
+      "sub_genre": [
+        "electro_pop",
+        "funk_pop"
+      ],
+      "mood": [
+        "playful",
+        "fun",
+        "bright",
+        "cheeky"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        108,
+        124
+      ],
+      "tempo_feel": "fast",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "bouncy_synth",
+        "funk_bass",
+        "claps",
+        "toy_keyboard",
+        "crisp_drums"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "quirky_hook",
+        "bounce_build",
+        "playful_drop",
+        "loop_button"
+      ],
+      "loopability": "high",
+      "intensity_curve": "drop"
+    },
+    "audio_character": {
+      "texture": [
+        "quirky",
+        "bouncy",
+        "friendly"
+      ],
+      "timbre": [
+        "rubbery_synth",
+        "funk_bass",
+        "crisp_clap"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "transition"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "playful",
+        "fun",
+        "bright"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "social_media",
+        "lifestyle",
+        "entertainment"
+      ],
+      "usage_context": [
+        "background",
+        "trend",
+        "playful_moment",
+        "hook"
+      ],
+      "content_types": [
+        "creator_content",
+        "humor",
+        "daily_life"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Playful trend-pop instrumental with bouncy synth, warm funk bass, crisp drums and a quirky but tasteful melodic hook, friendly, modern and highly loopable.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Give the cue one unusual signature timbre, but keep harmony and rhythm simple enough to remain reusable.",
+      "arrangement_notes": "Intro: quirky hook in the first bar. Build: bass and claps enter. Drop: full bouncy groove. Ending: short melodic button that doubles as the loop pickup. Structure: quirky_hook -> bounce_build -> playful_drop -> loop_button. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "transition_snap_001",
+      "title": "Transition Snap",
+      "description": "A modular transition capability built from concise momentum, clear directional motion, and edit-friendly resolution.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "transition_music",
+        "snap_transition",
+        "edit_stinger"
+      ],
+      "semantic_keywords": [
+        "transition music",
+        "转场音乐",
+        "snap transition",
+        "章节中间",
+        "声音转场",
+        "章节切换",
+        "章节之间",
+        "电子过渡",
+        "快速电子过渡",
+        "过渡音效音乐",
+        "edit stinger",
+        "whoosh rhythm",
+        "切换节奏",
+        "短促推进",
+        "motion cue",
+        "impact transition",
+        "modular sting",
+        "卡点转场"
+      ],
+      "tags": [
+        "motion_design",
+        "editing",
+        "digital_content",
+        "transition",
+        "section_change",
+        "reveal",
+        "punctuation",
+        "dynamic",
+        "clean",
+        "modern",
+        "surprising"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "motion_design",
+        "electronic_stinger",
+        "percussive"
+      ],
+      "sub_genre": [
+        "electronic_stinger",
+        "percussive"
+      ],
+      "mood": [
+        "dynamic",
+        "clean",
+        "modern",
+        "surprising"
+      ],
+      "energy_level": 4,
+      "bpm_range": [
+        110,
+        140
+      ],
+      "tempo_feel": "fast_paced",
+      "rhythm": [
+        "driving_pulse",
+        "syncopated_accents"
+      ],
+      "instrumentation": [
+        "percussive_click",
+        "reverse_synth",
+        "sub_impact",
+        "short_bass",
+        "noise_sweep"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "pickup",
+        "acceleration",
+        "snap_impact",
+        "micro_tail"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "compact",
+        "directional",
+        "sharp"
+      ],
+      "timbre": [
+        "click",
+        "reverse_synth",
+        "sub_impact"
+      ],
+      "density": "sparse",
+      "brightness": "bright",
+      "warmth": "cold",
+      "punch": "hard",
+      "space": "wide",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "transition",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "intro"
+      ],
+      "narrative_function": [
+        "signal_change",
+        "create_momentum"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "dynamic",
+        "clean",
+        "modern"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "motion_design",
+        "editing",
+        "digital_content"
+      ],
+      "usage_context": [
+        "transition",
+        "section_change",
+        "reveal",
+        "punctuation"
+      ],
+      "content_types": [
+        "modular_content",
+        "presentation",
+        "creator_content"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        2,
+        3,
+        5,
+        8
+      ],
+      "pacing_fit": [
+        "fast",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "high_motion",
+        "high_contrast"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Compact electronic transition cue with reverse synth pickup, accelerating clicks, short bass motion and a precise sub impact, modern, directional and clean.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep the impact frequency-balanced and provide a clear pre-impact pickup so editors can align the transition intuitively.",
+      "arrangement_notes": "Intro: immediate reverse pickup. Build: clicks accelerate over one or two bars. Drop: precise snap impact. Ending: micro-tail under one beat; optional pickup-tail pair forms a loop. Structure: pickup -> acceleration -> snap_impact -> micro_tail. Loop: medium loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "cafe_lifestyle_001",
+      "title": "Cafe Lifestyle Warmth",
+      "description": "A warm lifestyle capability for relaxed social space, everyday ritual, and understated taste.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "cafe_music",
+        "coffee_lifestyle",
+        "cozy_background"
+      ],
+      "semantic_keywords": [
+        "cafe music",
+        "咖啡馆音乐",
+        "生活方式",
+        "cozy jazz",
+        "轻松背景",
+        "coffee lifestyle",
+        "warm groove",
+        "日常松弛",
+        "lofi acoustic",
+        "brunch mood",
+        "舒适空间",
+        "understated taste"
+      ],
+      "tags": [
+        "lifestyle",
+        "hospitality",
+        "food",
+        "background",
+        "daily_ritual",
+        "conversation",
+        "relaxation",
+        "calm",
+        "warm",
+        "cozy",
+        "friendly"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "lofi_jazz",
+        "acoustic_pop",
+        "chillhop"
+      ],
+      "sub_genre": [
+        "acoustic_pop",
+        "chillhop"
+      ],
+      "mood": [
+        "calm",
+        "warm",
+        "cozy",
+        "friendly"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        72,
+        92
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spacious_pulse",
+        "gentle_downbeat"
+      ],
+      "instrumentation": [
+        "rhodes",
+        "upright_bass",
+        "brush_drums",
+        "nylon_guitar",
+        "vinyl_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "warm_intro",
+        "steady_groove",
+        "small_variation",
+        "soft_loop"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "cozy",
+        "organic",
+        "soft"
+      ],
+      "timbre": [
+        "rhodes",
+        "upright_bass",
+        "brush_drums"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "emotional_support",
+        "ending"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "calm",
+        "warm",
+        "cozy"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "lifestyle",
+        "hospitality",
+        "food"
+      ],
+      "usage_context": [
+        "background",
+        "daily_ritual",
+        "conversation",
+        "relaxation"
+      ],
+      "content_types": [
+        "cafe",
+        "home_life",
+        "slow_living"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90,
+        120
+      ],
+      "pacing_fit": [
+        "slow",
+        "continuous"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Warm cafe lifestyle instrumental with Rhodes, upright bass, brush drums, nylon guitar and subtle room texture, relaxed, tasteful and unobtrusive.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Keep the groove human and low-pressure; avoid excessive vinyl noise or sleepy harmonic clichés.",
+      "arrangement_notes": "Intro: Rhodes motif alone. Main: bass and brushes settle into a steady pocket. Variation: nylon guitar answers lightly. Ending: soft turnaround designed for an invisible long-form loop. Structure: warm_intro -> steady_groove -> small_variation -> soft_loop. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "travel_vlog_breeze_001",
+      "title": "Travel Breeze",
+      "description": "A breezy travel capability for curiosity, movement, and light discovery with natural acoustic color.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "travel_breeze",
+        "light_travel",
+        "discovery_pop"
+      ],
+      "semantic_keywords": [
+        "travel music",
+        "旅行音乐",
+        "旅行节目开头",
+        "轻快旅拍",
+        "discovery pop",
+        "旅途轻风",
+        "acoustic travel",
+        "自由感",
+        "destination mood",
+        "阳光旅行",
+        "breezy groove",
+        "exploration",
+        "轻松发现"
+      ],
+      "tags": [
+        "travel",
+        "lifestyle",
+        "tourism",
+        "opening",
+        "journey",
+        "discovery",
+        "background",
+        "destination",
+        "bright",
+        "free",
+        "curious",
+        "relaxed"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "acoustic_pop",
+        "indie_folk",
+        "tropical_light"
+      ],
+      "sub_genre": [
+        "indie_folk",
+        "tropical_light"
+      ],
+      "mood": [
+        "bright",
+        "free",
+        "curious",
+        "relaxed"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        94,
+        112
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "acoustic_guitar",
+        "light_percussion",
+        "marimba",
+        "warm_bass",
+        "whistle_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "travel_motif",
+        "gentle_motion",
+        "discovery_hook",
+        "open_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "breezy",
+        "organic",
+        "sunlit"
+      ],
+      "timbre": [
+        "acoustic_guitar",
+        "marimba",
+        "light_shaker"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "emotional_support",
+        "rhythmic_driver",
+        "intro"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "bright",
+        "free",
+        "curious"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "travel",
+        "lifestyle",
+        "tourism"
+      ],
+      "usage_context": [
+        "opening",
+        "journey",
+        "discovery",
+        "background",
+        "destination"
+      ],
+      "content_types": [
+        "travel_story",
+        "outdoor",
+        "local_culture"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Breezy acoustic travel instrumental with rhythmic guitar, light percussion, warm bass and small marimba accents, curious, sunlit and naturally optimistic.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Favor genuine acoustic motion over tropical stock gestures; keep the motif adaptable across different places and cultures.",
+      "arrangement_notes": "Intro: acoustic travel motif. Build: shaker and bass add movement. Hook: marimba answers the guitar. Ending: open suspended cadence with a clean loop turnaround. Structure: travel_motif -> gentle_motion -> discovery_hook -> open_ending. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "urban_night_drive_001",
+      "title": "Urban Night Drive",
+      "description": "A nocturnal urban capability combining smooth propulsion, reflective atmosphere, and sophisticated electronic color.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "night_drive",
+        "city_night",
+        "neon_cruise"
+      ],
+      "semantic_keywords": [
+        "urban night",
+        "都市夜景",
+        "夜晚在",
+        "城市穿行",
+        "霓虹",
+        "night drive",
+        "夜间驾驶",
+        "neon city",
+        "synthwave modern",
+        "城市氛围",
+        "smooth electronic",
+        "late night",
+        "reflective groove",
+        "夜色音乐",
+        "metropolitan cool"
+      ],
+      "tags": [
+        "urban_culture",
+        "lifestyle",
+        "automotive",
+        "background",
+        "night_drive",
+        "reflection",
+        "city_exploration",
+        "cool",
+        "reflective",
+        "smooth",
+        "nocturnal"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "synthwave",
+        "deep_electronic",
+        "chill_house"
+      ],
+      "sub_genre": [
+        "deep_electronic",
+        "chill_house"
+      ],
+      "mood": [
+        "cool",
+        "reflective",
+        "smooth",
+        "nocturnal"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        92,
+        112
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "analog_synth",
+        "deep_bass",
+        "electronic_drums",
+        "electric_piano",
+        "night_pad"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "night_intro",
+        "cruising_groove",
+        "neon_lift",
+        "fade_loop"
+      ],
+      "loopability": "high",
+      "intensity_curve": "flat"
+    },
+    "audio_character": {
+      "texture": [
+        "neon",
+        "smooth",
+        "atmospheric"
+      ],
+      "timbre": [
+        "analog_synth",
+        "deep_bass",
+        "electric_piano"
+      ],
+      "density": "medium",
+      "brightness": "dark",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "emotional_support"
+      ],
+      "narrative_function": [
+        "support_content",
+        "maintain_continuity"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "cool",
+        "reflective",
+        "smooth"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "urban_culture",
+        "lifestyle",
+        "automotive"
+      ],
+      "usage_context": [
+        "background",
+        "night_drive",
+        "reflection",
+        "city_exploration"
+      ],
+      "content_types": [
+        "city_life",
+        "mobility",
+        "night_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Smooth urban night-drive instrumental with analog synth, deep rounded bass, restrained electronic drums, electric piano and wide nocturnal pads, cool and reflective.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, no generic stock-music ending.",
+      "producer_notes": "Maintain propulsion without urgency; keep neon character sophisticated by avoiding exaggerated retro clichés.",
+      "arrangement_notes": "Intro: distant pad and analog motif. Main: bass and restrained drums establish cruise. Lift: electric piano opens harmony. Ending: filtered fade loops into the original night pad. Structure: night_intro -> cruising_groove -> neon_lift -> fade_loop. Loop: high loopability with a musically clean return or alternate tail."
+    }
+  },
+  {
+    "metadata": {
+      "id": "corporate_innovation_001",
+      "title": "Corporate Innovation Pulse",
+      "description": "A long-form corporate innovation capability for organizational progress, transformation, knowledge sharing, and confident forward motion without product-reveal theatrics.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "corporate_innovation",
+        "innovation_culture",
+        "organizational_progress"
+      ],
+      "semantic_keywords": [
+        "corporate innovation",
+        "innovation culture",
+        "organizational transformation",
+        "corporate progress",
+        "企业创新",
+        "企业创新文化",
+        "组织成长",
+        "组织升级",
+        "创新叙事",
+        "长期发展",
+        "transformation story",
+        "knowledge organization",
+        "future of work",
+        "business evolution",
+        "institutional confidence",
+        "progress background",
+        "not product reveal"
+      ],
+      "tags": [
+        "specialized_capability",
+        "corporate",
+        "technology",
+        "education",
+        "growth",
+        "background",
+        "achievement",
+        "brand_expression",
+        "innovative",
+        "confident",
+        "precise",
+        "optimistic"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "commercial_electronic",
+        "minimal_tech",
+        "inspirational_pop"
+      ],
+      "sub_genre": [
+        "minimal_tech",
+        "inspirational_pop"
+      ],
+      "mood": [
+        "innovative",
+        "confident",
+        "precise",
+        "optimistic"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        100,
+        116
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_pulse",
+        "controlled_syncopation"
+      ],
+      "instrumentation": [
+        "modular_synth",
+        "soft_piano",
+        "tight_percussion",
+        "warm_pad",
+        "sub_bass"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "identity_intro",
+        "steady_development",
+        "progress_peak",
+        "resolved_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "clean",
+        "modular",
+        "progressive"
+      ],
+      "timbre": [
+        "soft_pulse",
+        "clear_piano",
+        "warm_synth"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "neutral",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "brand_signature"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "support_content"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "innovative",
+        "confident",
+        "optimistic"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "corporate",
+        "technology",
+        "education"
+      ],
+      "usage_context": [
+        "growth",
+        "background",
+        "achievement",
+        "brand_expression"
+      ],
+      "content_types": [
+        "innovation",
+        "presentation",
+        "team_story",
+        "knowledge"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Clean corporate innovation instrumental with modular synth pulse, precise soft percussion, restrained piano and warm harmonic layers, expressing organizational progress and confident transformation without a product-reveal drop.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Keep the motif consistent across long-form narration, reserve the midrange for speech, and express progress through evolving layers rather than cinematic impact.",
+      "arrangement_notes": "Intro: establish a concise institutional motif over open space. Development: add modular pulse and restrained percussion in reusable layers. Peak: widen harmony for a measured progress statement without a reveal drop. Ending: resolve with calm confidence. Loop: provide a clean return to the opening pulse."
+    }
+  },
+  {
+    "metadata": {
+      "id": "sustainable_brand_001",
+      "title": "Sustainable Brand Organic",
+      "description": "An organic brand-identity capability expressing responsibility, natural materials, transparency, and long-term trust through tactile acoustic-electronic production.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "sustainable_brand",
+        "ethical_brand",
+        "organic_brand_identity"
+      ],
+      "semantic_keywords": [
+        "sustainable brand",
+        "ethical brand",
+        "organic brand identity",
+        "natural materials",
+        "responsible business",
+        "环保品牌",
+        "可持续品牌",
+        "自然品牌",
+        "品牌责任",
+        "透明可信",
+        "organic warmth",
+        "environmental responsibility",
+        "purpose driven brand",
+        "tactile acoustic",
+        "long term trust",
+        "not luxury",
+        "natural identity"
+      ],
+      "tags": [
+        "specialized_capability",
+        "branding",
+        "wellness",
+        "lifestyle",
+        "brand_expression",
+        "identity",
+        "background",
+        "daily_ritual",
+        "warm",
+        "thoughtful",
+        "hopeful",
+        "calm"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "acoustic_pop",
+        "ambient_pop",
+        "minimal_electronic"
+      ],
+      "sub_genre": [
+        "ambient_pop",
+        "minimal_electronic"
+      ],
+      "mood": [
+        "warm",
+        "thoughtful",
+        "hopeful",
+        "calm"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        76,
+        96
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "organic_pulse",
+        "gentle_syncopation"
+      ],
+      "instrumentation": [
+        "soft_guitar",
+        "wood_percussion",
+        "felt_piano",
+        "warm_pad",
+        "subtle_synth"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "organic_mark",
+        "natural_development",
+        "trust_statement",
+        "soft_resolution"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "organic",
+        "tactile",
+        "natural"
+      ],
+      "timbre": [
+        "soft_guitar",
+        "wood_percussion",
+        "warm_pad"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "background",
+        "emotional_support"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "build_recognition"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "warm",
+        "thoughtful",
+        "hopeful"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "branding",
+        "wellness",
+        "lifestyle"
+      ],
+      "usage_context": [
+        "brand_expression",
+        "identity",
+        "background",
+        "daily_ritual"
+      ],
+      "content_types": [
+        "social_impact",
+        "brand_system",
+        "design_story",
+        "slow_living"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "slow",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Warm sustainable-brand instrumental blending tactile acoustic guitar, wood percussion, felt piano and restrained electronic air, communicating natural materials, transparency and long-term trust without luxury-tech polish.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Let physical textures remain audible and human, avoid sentimental folk clichés, and keep the central organic motif simple enough to support brand memory.",
+      "arrangement_notes": "Intro: introduce one tactile acoustic identity mark. Development: grow wood percussion and warm harmonic layers naturally. Peak: present a modest trust statement with no oversized climax. Ending: allow an honest acoustic decay. Loop: reconnect the tail to the opening material texture."
+    }
+  },
+  {
+    "metadata": {
+      "id": "fintech_trust_001",
+      "title": "Fintech Trust Signal",
+      "description": "A precise financial-technology identity capability balancing security, operational clarity, calm confidence, and modern digital movement without launch spectacle.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "fintech_trust",
+        "secure_finance",
+        "payment_platform_music"
+      ],
+      "semantic_keywords": [
+        "fintech trust",
+        "financial technology",
+        "secure platform",
+        "payment security",
+        "digital finance",
+        "金融科技",
+        "支付安全",
+        "支付安全产品",
+        "可信平台",
+        "可信声音标志",
+        "金融系统",
+        "安全稳定",
+        "calm technology",
+        "operational clarity",
+        "secure identity",
+        "trust signal",
+        "stable pulse",
+        "not product launch",
+        "digital confidence"
+      ],
+      "tags": [
+        "specialized_capability",
+        "technology",
+        "corporate",
+        "product_showcase",
+        "identity",
+        "background",
+        "feature_highlight",
+        "brand_signature",
+        "clean",
+        "precise",
+        "calm",
+        "confident"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "minimal_tech",
+        "ambient_tech",
+        "commercial_electronic"
+      ],
+      "sub_genre": [
+        "ambient_tech",
+        "commercial_electronic"
+      ],
+      "mood": [
+        "clean",
+        "precise",
+        "calm",
+        "confident"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        88,
+        104
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "stable_pulse",
+        "precise_clicks"
+      ],
+      "instrumentation": [
+        "glass_pluck",
+        "soft_sub",
+        "muted_synth",
+        "digital_clicks",
+        "calm_pad"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "trust_motif",
+        "stable_development",
+        "confirmation_peak",
+        "secure_resolve"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "clean",
+        "stable",
+        "precise"
+      ],
+      "timbre": [
+        "glass_pluck",
+        "soft_sub",
+        "muted_synth"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "cold",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "background",
+        "intro"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "build_recognition"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "clean",
+        "precise",
+        "confident"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "technology",
+        "corporate",
+        "product_showcase"
+      ],
+      "usage_context": [
+        "identity",
+        "background",
+        "feature_highlight",
+        "brand_signature"
+      ],
+      "content_types": [
+        "financial_service",
+        "security_system",
+        "consumer_technology",
+        "presentation"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30,
+        60
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Calm fintech identity instrumental with a stable modular pulse, precise glass motif, controlled soft sub and muted digital textures, conveying payment security, operational clarity and dependable modern confidence.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Prioritize tonal stability and repeated confirmation cues, keep transients reassuring rather than sharp, and avoid futuristic launch risers or luxury mystery.",
+      "arrangement_notes": "Intro: state a stable two-note trust motif. Development: introduce precise clicks and a calm modular pulse. Peak: complete a short confirmation phrase with controlled width. Ending: close on a secure tonal resolve. Loop: return seamlessly to the stable opening pulse."
+    }
+  },
+  {
+    "metadata": {
+      "id": "retail_momentum_001",
+      "title": "Retail Momentum",
+      "description": "A flexible retail music capability sustaining accessible product variety, positive purchasing momentum, and modular commercial pacing across categories.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "retail_momentum",
+        "shopping_groove",
+        "store_campaign_music"
+      ],
+      "semantic_keywords": [
+        "retail momentum",
+        "retail campaign",
+        "shopping groove",
+        "multi product",
+        "store collection",
+        "零售音乐",
+        "购物节奏",
+        "多产品陈列",
+        "商店活动",
+        "商品系列",
+        "accessible commercial",
+        "merchandising music",
+        "purchase momentum",
+        "modular retail",
+        "friendly conversion",
+        "not food specific",
+        "cross category retail"
+      ],
+      "tags": [
+        "specialized_capability",
+        "advertising",
+        "product_showcase",
+        "lifestyle",
+        "product_showcase",
+        "background",
+        "brand_expression",
+        "social_moment",
+        "bright",
+        "friendly",
+        "optimistic",
+        "modern"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "commercial_pop",
+        "funk_pop",
+        "light_electronic"
+      ],
+      "sub_genre": [
+        "funk_pop",
+        "light_electronic"
+      ],
+      "mood": [
+        "bright",
+        "friendly",
+        "optimistic",
+        "modern"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        104,
+        120
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "steady_groove",
+        "light_funk_syncopation"
+      ],
+      "instrumentation": [
+        "muted_guitar",
+        "funk_bass",
+        "crisp_clap",
+        "bright_mallet",
+        "soft_synth"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "retail_pickup",
+        "modular_development",
+        "collection_peak",
+        "turnaround_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "crisp",
+        "friendly",
+        "modular"
+      ],
+      "timbre": [
+        "muted_guitar",
+        "funk_bass",
+        "crisp_clap"
+      ],
+      "density": "medium",
+      "brightness": "bright",
+      "warmth": "warm",
+      "punch": "medium",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "rhythmic_driver",
+        "brand_signature"
+      ],
+      "narrative_function": [
+        "maintain_continuity",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "bright",
+        "friendly",
+        "optimistic"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "advertising",
+        "product_showcase",
+        "lifestyle"
+      ],
+      "usage_context": [
+        "product_showcase",
+        "background",
+        "brand_expression",
+        "social_moment"
+      ],
+      "content_types": [
+        "product_family",
+        "campaign",
+        "commercial_content",
+        "modular_content"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        10,
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "high_motion"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Accessible retail campaign instrumental with muted guitar, buoyant funk bass, crisp claps, bright mallet details and a clean modular groove that supports many products without sounding food-specific or overly urban.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Build interchangeable four- and eight-bar sections for changing product groups, preserve a friendly midrange, and avoid category-specific sound effects or aggressive sales energy.",
+      "arrangement_notes": "Intro: open with a concise retail pickup. Development: establish a modular groove with replaceable product sections. Peak: add bright accents for a collection-wide lift. Ending: land on a clean commercial turnaround. Loop: reconnect directly to the opening pickup."
+    }
+  },
+  {
+    "metadata": {
+      "id": "architectural_real_estate_001",
+      "title": "Architectural Real Estate",
+      "description": "A spacious architectural music capability expressing material, proportion, place, and long-term value through slow structural development rather than a logo sting.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "architectural_real_estate",
+        "property_showcase_music",
+        "architecture_identity"
+      ],
+      "semantic_keywords": [
+        "architectural real estate",
+        "architecture film",
+        "property showcase",
+        "spatial design",
+        "material value",
+        "建筑和地产项目",
+        "建筑空间",
+        "地产展示",
+        "建筑设计",
+        "空间材质尺度",
+        "空间与材质",
+        "长期价值",
+        "panoramic space",
+        "structural music",
+        "premium property",
+        "place identity",
+        "slow reveal",
+        "not logo sting",
+        "built environment"
+      ],
+      "tags": [
+        "specialized_capability",
+        "design",
+        "luxury",
+        "brand_experience",
+        "product_showcase",
+        "brand_expression",
+        "identity",
+        "background",
+        "expansive",
+        "premium",
+        "calm",
+        "precise"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "minimal_electronic",
+        "ambient_tech",
+        "modern_classical"
+      ],
+      "sub_genre": [
+        "ambient_tech",
+        "modern_classical"
+      ],
+      "mood": [
+        "expansive",
+        "premium",
+        "calm",
+        "precise"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        68,
+        88
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "slow_pulse",
+        "architectural_spacing"
+      ],
+      "instrumentation": [
+        "low_strings",
+        "glass_pluck",
+        "soft_sub",
+        "resonant_piano",
+        "air_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "open_space_intro",
+        "structural_development",
+        "panoramic_peak",
+        "long_resolution"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "architectural",
+        "expansive",
+        "tactile"
+      ],
+      "timbre": [
+        "low_strings",
+        "glass_pluck",
+        "resonant_piano"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "cold",
+      "punch": "soft",
+      "space": "cinematic",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "emotional_support"
+      ],
+      "narrative_function": [
+        "establish_identity",
+        "shape_emotional_context"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "expansive",
+        "premium",
+        "calm"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "design",
+        "luxury",
+        "brand_experience"
+      ],
+      "usage_context": [
+        "product_showcase",
+        "brand_expression",
+        "identity",
+        "background"
+      ],
+      "content_types": [
+        "architecture",
+        "property_showcase",
+        "design_story",
+        "high_end_product"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "slow",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Spacious architectural instrumental combining low strings, resonant piano, restrained glass tones, soft sub and wide air, expressing material detail, proportion, place identity and long-term property value.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Shape depth through register and silence, let the harmony reveal scale gradually, and avoid short logo mnemonics, fashion groove, or sentimental cinematic storytelling.",
+      "arrangement_notes": "Intro: open with resonant space and one material motif. Development: add structural low strings and a measured pulse in clear layers. Peak: widen into a panoramic statement of scale. Ending: allow a long architectural resolution. Loop: provide a reduced ambient return for extended presentation."
+    }
+  },
+  {
+    "metadata": {
+      "id": "couture_orchestral_001",
+      "title": "Couture Orchestral Poise",
+      "description": "A sculpted orchestral fashion capability using controlled asymmetry, refined string movement, and editorial tension without house groove or cinematic sentimentality.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "couture_orchestral",
+        "orchestral_runway",
+        "editorial_strings"
+      ],
+      "semantic_keywords": [
+        "couture orchestral",
+        "couture runway",
+        "editorial orchestra",
+        "orchestral fashion",
+        "sculpted strings",
+        "高定时装",
+        "高级定制",
+        "管弦走秀",
+        "管弦音乐",
+        "时装编辑",
+        "时装内容",
+        "优雅步态",
+        "asymmetric movement",
+        "fashion poise",
+        "controlled drama",
+        "tailored rhythm",
+        "not deep house",
+        "not cinematic emotion",
+        "runway strings"
+      ],
+      "tags": [
+        "specialized_capability",
+        "fashion",
+        "luxury",
+        "beauty",
+        "runway",
+        "brand_expression",
+        "performance",
+        "background",
+        "elegant",
+        "controlled",
+        "dramatic",
+        "premium"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "modern_classical",
+        "minimal_orchestral",
+        "cinematic"
+      ],
+      "sub_genre": [
+        "minimal_orchestral",
+        "cinematic"
+      ],
+      "mood": [
+        "elegant",
+        "controlled",
+        "dramatic",
+        "premium"
+      ],
+      "energy_level": 3,
+      "bpm_range": [
+        92,
+        110
+      ],
+      "tempo_feel": "medium",
+      "rhythm": [
+        "asymmetric_pulse",
+        "measured_walk"
+      ],
+      "instrumentation": [
+        "short_strings",
+        "low_strings",
+        "pizzicato",
+        "dry_percussion",
+        "soft_brass"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "poised_intro",
+        "editorial_development",
+        "couture_peak",
+        "tailored_ending"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "sculpted",
+        "tailored",
+        "high_contrast"
+      ],
+      "timbre": [
+        "short_strings",
+        "pizzicato",
+        "dry_percussion"
+      ],
+      "density": "medium",
+      "brightness": "neutral",
+      "warmth": "cold",
+      "punch": "medium",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "rhythmic_driver",
+      "secondary_roles": [
+        "brand_signature",
+        "background"
+      ],
+      "narrative_function": [
+        "express_brand_character",
+        "organize_timing"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "elegant",
+        "controlled",
+        "dramatic"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "fashion",
+        "luxury",
+        "beauty"
+      ],
+      "usage_context": [
+        "runway",
+        "brand_expression",
+        "performance",
+        "background"
+      ],
+      "content_types": [
+        "editorial",
+        "style_content",
+        "campaign",
+        "design_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "medium",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "balanced_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Refined couture orchestral instrumental with sculpted short strings, low-string weight, restrained pizzicato, dry editorial percussion and controlled asymmetrical movement, elegant without house groove or sentimental film scoring.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Keep attacks tailored and precise, use silence as part of the fashion rhythm, and avoid lush emotional swells, dance-floor bass, or generic luxury ambience.",
+      "arrangement_notes": "Intro: state a poised string gesture in open space. Development: establish an asymmetrical walk with dry accents. Peak: form a brief sculpted couture statement without emotional excess. Ending: close with a tailored string cadence. Loop: offer a measured pickup into the opening gesture."
+    }
+  },
+  {
+    "metadata": {
+      "id": "organic_skincare_minimal_001",
+      "title": "Organic Skincare Minimal",
+      "description": "A close tactile skincare capability supporting natural care rituals, ingredient detail, and quiet wellbeing through sparse organic micro-textures.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "organic_skincare_minimal",
+        "natural_care_music",
+        "skincare_ritual"
+      ],
+      "semantic_keywords": [
+        "organic skincare",
+        "natural skincare",
+        "care ritual",
+        "ingredient detail",
+        "personal care",
+        "天然护肤",
+        "有机护肤",
+        "护理仪式",
+        "成分细节",
+        "自然护理",
+        "tactile minimal",
+        "organic micro texture",
+        "wellness care",
+        "close dry sound",
+        "breathing space",
+        "not beauty commercial",
+        "soft ingredient music"
+      ],
+      "tags": [
+        "specialized_capability",
+        "beauty",
+        "wellness",
+        "lifestyle",
+        "sensory_detail",
+        "daily_ritual",
+        "background",
+        "product_showcase",
+        "calm",
+        "fresh",
+        "warm",
+        "tender"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "ambient_acoustic",
+        "ambient_pop",
+        "acoustic"
+      ],
+      "sub_genre": [
+        "ambient_pop",
+        "acoustic"
+      ],
+      "mood": [
+        "calm",
+        "fresh",
+        "warm",
+        "tender"
+      ],
+      "energy_level": 1,
+      "bpm_range": [
+        56,
+        76
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "breathing_pulse",
+        "free_spacing"
+      ],
+      "instrumentation": [
+        "soft_pluck",
+        "wood_texture",
+        "breathy_pad",
+        "felt_piano",
+        "light_shaker"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "breath_intro",
+        "organic_development",
+        "gentle_peak",
+        "clean_fade"
+      ],
+      "loopability": "high",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "organic",
+        "intimate",
+        "breathing"
+      ],
+      "timbre": [
+        "soft_pluck",
+        "wood_texture",
+        "breathy_pad"
+      ],
+      "density": "sparse",
+      "brightness": "neutral",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "dry",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "emotional_support"
+      ],
+      "narrative_function": [
+        "support_content",
+        "shape_emotional_context"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "calm",
+        "fresh",
+        "warm"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "beauty",
+        "wellness",
+        "lifestyle"
+      ],
+      "usage_context": [
+        "sensory_detail",
+        "daily_ritual",
+        "background",
+        "product_showcase"
+      ],
+      "content_types": [
+        "skincare",
+        "personal_care",
+        "slow_living",
+        "product_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "slow",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "intimate"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Sparse organic skincare instrumental with close soft plucks, subtle wood texture, breath-like pads, felt piano and generous silence, supporting ingredient detail and calm care rituals without glossy commercial bloom.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Keep every sound close and tactile, preserve natural transients and breathing space, and avoid shimmer-heavy beauty ambience, cafe swing, or overt emotional melody.",
+      "arrangement_notes": "Intro: begin with breath and one close organic touch. Development: add sparse ingredient-like details and a soft pulse. Peak: allow a gentle harmonic bloom that remains intimate. Ending: fade through natural room decay. Loop: join the final breath invisibly to the opening texture."
+    }
+  },
+  {
+    "metadata": {
+      "id": "crystalline_jewelry_signature_001",
+      "title": "Crystalline Jewelry Signature",
+      "description": "A precise fine-jewelry sonic identity capability expressing facets, rarity, craftsmanship, and lasting value through crystalline micro-detail.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "crystalline_jewelry_signature",
+        "fine_jewelry_music",
+        "jewelry_sonic_identity"
+      ],
+      "semantic_keywords": [
+        "crystalline jewelry",
+        "fine jewelry",
+        "jewelry signature",
+        "crystal motif",
+        "precious detail",
+        "珠宝品牌",
+        "珠宝声音标志",
+        "晶体",
+        "晶体音色",
+        "金属泛音",
+        "宝石细节",
+        "宝石切面",
+        "稀有价值",
+        "metallic overtone",
+        "facet reflection",
+        "craftsmanship music",
+        "pristine reveal",
+        "rare identity",
+        "not generic luxury",
+        "micro detail"
+      ],
+      "tags": [
+        "specialized_capability",
+        "luxury",
+        "design",
+        "advertising",
+        "product_showcase",
+        "identity",
+        "reveal",
+        "brand_signature",
+        "distinctive",
+        "precise",
+        "elegant",
+        "premium"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "sonic_branding",
+        "minimal_electronic",
+        "ambient_tech"
+      ],
+      "sub_genre": [
+        "minimal_electronic",
+        "ambient_tech"
+      ],
+      "mood": [
+        "distinctive",
+        "precise",
+        "elegant",
+        "premium"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        64,
+        88
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "spaced_impulses",
+        "micro_pulse"
+      ],
+      "instrumentation": [
+        "crystal_chime",
+        "metallic_overtone",
+        "soft_sub",
+        "glass_pluck",
+        "air_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "single_facet_intro",
+        "reflection_development",
+        "signature_peak",
+        "pristine_tail"
+      ],
+      "loopability": "medium",
+      "intensity_curve": "stinger"
+    },
+    "audio_character": {
+      "texture": [
+        "crystalline",
+        "precise",
+        "luminous"
+      ],
+      "timbre": [
+        "crystal_chime",
+        "metallic_overtone",
+        "glass_pluck"
+      ],
+      "density": "sparse",
+      "brightness": "bright",
+      "warmth": "cold",
+      "punch": "soft",
+      "space": "wide",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "brand_signature",
+      "secondary_roles": [
+        "intro",
+        "ending"
+      ],
+      "narrative_function": [
+        "build_recognition",
+        "express_brand_character"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "distinctive",
+        "precise",
+        "elegant"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "luxury",
+        "design",
+        "advertising"
+      ],
+      "usage_context": [
+        "product_showcase",
+        "identity",
+        "reveal",
+        "brand_signature"
+      ],
+      "content_types": [
+        "high_end_product",
+        "design_story",
+        "campaign",
+        "product_story"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        5,
+        8,
+        10,
+        15,
+        30
+      ],
+      "pacing_fit": [
+        "slow",
+        "accent_driven"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Pristine fine-jewelry identity instrumental built from a single crystalline motif, delicate metallic overtones, precise glass reflections, restrained soft sub and polished air, revealing craftsmanship and rarity in microscopic detail.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Give each overtone enough silence to read as a facet, keep the low end discreet, and avoid broad luxury pads, beauty shimmer wash, or a generic corporate logo sting.",
+      "arrangement_notes": "Intro: expose one crystalline facet motif. Development: layer precise harmonic reflections with generous silence. Peak: complete a short unmistakable jewelry signature reveal. Ending: leave a pristine metallic decay. Loop: provide a subtle reflected pickup for longer product detail sequences."
+    }
+  },
+  {
+    "metadata": {
+      "id": "intimate_romance_001",
+      "title": "Intimate Romance Score",
+      "description": "An intimate relationship-scoring capability for affection, vulnerability, hesitation, and unresolved emotional connection while preserving dialogue space.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "intimate_romance",
+        "relationship_score",
+        "quiet_love_music"
+      ],
+      "semantic_keywords": [
+        "intimate romance",
+        "relationship score",
+        "quiet connection",
+        "romantic tension",
+        "vulnerable affection",
+        "亲密关系",
+        "克制爱情",
+        "爱情对话",
+        "关系张力",
+        "温柔连接",
+        "dialogue romance",
+        "hesitant love",
+        "emotional closeness",
+        "unresolved tenderness",
+        "chamber intimacy",
+        "not life journey",
+        "not memory piano"
+      ],
+      "tags": [
+        "specialized_capability",
+        "storytelling",
+        "drama",
+        "human_interest",
+        "emotional_arc",
+        "conversation",
+        "resolution",
+        "emotional_support",
+        "tender",
+        "emotional",
+        "warm",
+        "melancholic"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "cinematic_piano",
+        "modern_classical",
+        "ambient"
+      ],
+      "sub_genre": [
+        "modern_classical",
+        "ambient"
+      ],
+      "mood": [
+        "tender",
+        "emotional",
+        "warm",
+        "melancholic"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        58,
+        78
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "rubato_pulse",
+        "breathing_phrases"
+      ],
+      "instrumentation": [
+        "felt_piano",
+        "soft_cello",
+        "chamber_strings",
+        "warm_pad",
+        "room_tone"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "hesitant_intro",
+        "closeness_development",
+        "restrained_peak",
+        "tender_unresolved_ending"
+      ],
+      "loopability": "low",
+      "intensity_curve": "rise_and_fall"
+    },
+    "audio_character": {
+      "texture": [
+        "intimate",
+        "fragile",
+        "breathing"
+      ],
+      "timbre": [
+        "felt_piano",
+        "soft_cello",
+        "chamber_strings"
+      ],
+      "density": "sparse",
+      "brightness": "dark",
+      "warmth": "warm",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "premium"
+    },
+    "music_role": {
+      "primary_role": "emotional_support",
+      "secondary_roles": [
+        "background",
+        "ending"
+      ],
+      "narrative_function": [
+        "shape_emotional_context",
+        "support_narrative_meaning"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "tender",
+        "emotional",
+        "warm"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "storytelling",
+        "drama",
+        "human_interest"
+      ],
+      "usage_context": [
+        "emotional_arc",
+        "conversation",
+        "resolution",
+        "emotional_support"
+      ],
+      "content_types": [
+        "character_arc",
+        "conversation",
+        "human_story",
+        "dramatic_narrative"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        15,
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "slow",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "intimate",
+        "minimal_motion"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Intimate romance score with close felt piano, soft cello, restrained chamber strings, warm room tone and breathing silence, supporting vulnerable affection and relationship tension while leaving dialogue fully clear.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Use harmonic hesitation and small human timing variations, keep the emotional peak private rather than cinematic, and avoid nostalgic life-journey framing or melodramatic swells.",
+      "arrangement_notes": "Intro: begin with a hesitant two-note piano exchange. Development: let cello and chamber strings move toward emotional closeness. Peak: allow one restrained relational swell. Ending: leave a tender partly unresolved cadence. Loop: provide only a subtle room-tone bridge for scenes requiring continuation."
+    }
+  },
+  {
+    "metadata": {
+      "id": "investigative_documentary_001",
+      "title": "Investigative Documentary Pulse",
+      "description": "A restrained investigative documentary capability supporting evidence, inquiry, interviews, and unfolding facts with measured tension rather than thriller pressure.",
+      "version": "1.2",
+      "status": "active",
+      "aliases": [
+        "investigative_documentary",
+        "journalism_pulse",
+        "evidence_music"
+      ],
+      "semantic_keywords": [
+        "investigative documentary",
+        "investigative journalism",
+        "evidence pulse",
+        "factual inquiry",
+        "factual inquiry background",
+        "unfolding facts",
+        "调查纪录片",
+        "调查新闻",
+        "调查报道",
+        "证据推进",
+        "证据出现",
+        "事实叙事",
+        "采访调查",
+        "measured tension",
+        "journalistic music",
+        "neutral suspense",
+        "inquiry background",
+        "evidence trail",
+        "not thriller",
+        "not reflective interview"
+      ],
+      "tags": [
+        "specialized_capability",
+        "documentary",
+        "journalism",
+        "mystery",
+        "investigation",
+        "interview",
+        "observation",
+        "tension",
+        "thoughtful",
+        "mysterious",
+        "controlled",
+        "tense"
+      ]
+    },
+    "music_identity": {
+      "genre": [
+        "documentary",
+        "minimal_score",
+        "dark_ambient"
+      ],
+      "sub_genre": [
+        "minimal_score",
+        "dark_ambient"
+      ],
+      "mood": [
+        "thoughtful",
+        "mysterious",
+        "controlled",
+        "tense"
+      ],
+      "energy_level": 2,
+      "bpm_range": [
+        64,
+        84
+      ],
+      "tempo_feel": "slow",
+      "rhythm": [
+        "measured_pulse",
+        "irregular_tick"
+      ],
+      "instrumentation": [
+        "low_pulse",
+        "metallic_tick",
+        "muted_piano",
+        "low_strings",
+        "grain_texture"
+      ],
+      "vocal_type": "instrumental",
+      "language": [
+        "none"
+      ],
+      "structure": [
+        "question_intro",
+        "evidence_development",
+        "inquiry_peak",
+        "neutral_unresolved_ending"
+      ],
+      "loopability": "high",
+      "intensity_curve": "build_up"
+    },
+    "audio_character": {
+      "texture": [
+        "restrained",
+        "observational",
+        "granular"
+      ],
+      "timbre": [
+        "low_pulse",
+        "metallic_tick",
+        "muted_piano"
+      ],
+      "density": "sparse",
+      "brightness": "dark",
+      "warmth": "cold",
+      "punch": "soft",
+      "space": "roomy",
+      "polish": "clean"
+    },
+    "music_role": {
+      "primary_role": "background",
+      "secondary_roles": [
+        "tension_builder",
+        "transition"
+      ],
+      "narrative_function": [
+        "provide_forward_motion",
+        "increase_uncertainty"
+      ],
+      "edit_function": [
+        "support_pacing",
+        "provide_clear_structural_landmarks"
+      ],
+      "emotional_function": [
+        "thoughtful",
+        "mysterious",
+        "controlled"
+      ]
+    },
+    "application_fit": {
+      "domains": [
+        "documentary",
+        "journalism",
+        "mystery"
+      ],
+      "usage_context": [
+        "investigation",
+        "interview",
+        "observation",
+        "tension"
+      ],
+      "content_types": [
+        "interview",
+        "journalism",
+        "social_issue",
+        "mystery"
+      ],
+      "audience_context": [
+        "general_audience",
+        "agent_generated_content"
+      ],
+      "recommended_duration_seconds": [
+        30,
+        60,
+        90
+      ],
+      "pacing_fit": [
+        "slow",
+        "adaptive"
+      ],
+      "visual_energy_fit": [
+        "minimal_motion",
+        "controlled_reveal"
+      ]
+    },
+    "generation_prompt": {
+      "music_prompt": "Restrained investigative documentary underscore with a measured low pulse, subtle metallic ticks, muted piano, controlled low strings and granular room texture, advancing evidence and inquiry without thriller pressure.",
+      "sound_effect_prompt": "Optional restrained sonic accents that share the cue's timbre; keep them secondary to the musical identity.",
+      "negative_prompt": "No copyrighted melody imitation, no muddy low end, no abrupt style changes, no unnecessary lead vocals, and no generic stock-music ending.",
+      "producer_notes": "Maintain factual neutrality, let small rhythmic changes mark new evidence, protect narration intelligibility, and avoid horror drones, action impacts, or purely reflective interview warmth.",
+      "arrangement_notes": "Intro: pose a sparse musical question over neutral room tone. Development: introduce a measured evidence pulse and irregular ticks. Peak: tighten the inquiry briefly without becoming a thriller. Ending: stop on a controlled unresolved fact. Loop: return invisibly to the opening question for long investigation sequences."
+    }
+  }
+]

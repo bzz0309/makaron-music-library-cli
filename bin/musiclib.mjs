@@ -86,7 +86,7 @@ function saveTracks(root, tracks) { writeJson(tracksFile(root), tracks.sort((a, 
 
 function parseArgs(argv) {
   const options = { _: [] };
-  const repeatable = new Set(['tag']);
+  const repeatable = new Set(['tag', 'turn']);
   const flags = new Set(['json', 'force', 'live', 'dry-run', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze']);
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
@@ -103,8 +103,8 @@ function parseArgs(argv) {
 function required(options, key) { if (!options[key]) fail('MISSING_REQUIRED_OPTION', `Missing required option --${key}`); return options[key]; }
 function sceneProfile(value) {
   if (!value) return null;
-  if (!SCENE_PROFILES[value]) fail('INVALID_SCENE', `Unknown scene: ${value}; use one of: ${Object.keys(SCENE_PROFILES).join(', ')}`);
-  return { id: value, ...SCENE_PROFILES[value] };
+  if (SCENE_PROFILES[value]) return { id: value, ...SCENE_PROFILES[value] };
+  return { id: value, label: value, brief: value.replace(/[-_]+/g, ' '), weights: {}, avoid: {} };
 }
 
 function executable(name) { return spawnSync(name, ['-version'], { encoding: 'utf8' }).status === 0; }
@@ -117,6 +117,53 @@ function run(command, args, timeout = 900000) {
 function providerCommand() {
   if (process.env.MAKARON_CLI_COMMAND) return process.env.MAKARON_CLI_COMMAND.trim().split(/\s+/);
   return ['npx', '-y', `makaron-cli@${process.env.MAKARON_CLI_VERSION || MAKARON_VERSION}`];
+}
+
+function intelligenceRoot() { return fileURLToPath(new URL('../vendor/music-prompt-library', import.meta.url)); }
+function intelligenceCli() { return path.join(intelligenceRoot(), 'dist', 'cli.js'); }
+function intelligenceRun(args, input) {
+  const cli = intelligenceCli();
+  if (!fs.existsSync(cli)) fail('INTELLIGENCE_MISSING', `Bundled music intelligence layer not found: ${cli}`);
+  const result = spawnSync(process.execPath, [cli, ...args], {
+    cwd: intelligenceRoot(), input: input === undefined ? undefined : JSON.stringify(input),
+    encoding: 'utf8', timeout: 180000, maxBuffer: 30 * 1024 * 1024,
+  });
+  if (result.error) fail('INTELLIGENCE_EXEC_FAILED', result.error.message, true);
+  const stdout = (result.stdout || '').trim();
+  let payload = null;
+  if (stdout) { try { payload = JSON.parse(stdout); } catch {} }
+  if (result.status !== 0) fail(payload?.error_code || 'INTELLIGENCE_FAILED', payload?.message || 'Music intelligence layer failed', false, { stderr_tail: (result.stderr || '').slice(-2000) });
+  if (!payload) fail('INTELLIGENCE_INVALID_RESPONSE', 'Music intelligence layer returned invalid JSON', true);
+  return payload;
+}
+function intelligenceQuery(input, adapter = 'generic') { return intelligenceRun(['query', '--adapter', adapter], input); }
+function intelligenceProfiles() { return intelligenceRun(['list', '--json']); }
+function requestFrom(options, analysis = null) {
+  const profile = sceneProfile(options.scene);
+  const parts = [profile?.brief, options.request, analysis?.brief, !analysis ? options.brief : null].filter(Boolean);
+  const request = unique(parts).join('. ');
+  if (!request && !(options.turn || []).length) fail('MISSING_INPUT', 'Provide --request, --scene, --video, --brief, or --turn');
+  return request;
+}
+function intelligenceInput(options, request, duration) {
+  const workflow = {
+    content_type: options['content-type'],
+    duration: duration || undefined,
+    style: options.style,
+    target: options.target,
+    platform: options.platform || 'makaron',
+  };
+  const workflow_context = Object.values(workflow).some((value) => value !== undefined) ? workflow : undefined;
+  if ((options.turn || []).length) return { turns: options.turn.map((value) => ({ request: value })), workflow_context };
+  return { request, duration: duration || undefined, workflow_context };
+}
+function intelligencePrompt(result) {
+  return result?.seed_audio?.music_prompt || result?.music_prompt || '';
+}
+function intelligenceSearchText(result, request) {
+  const attributes = result?.matched_attributes || {};
+  const flattened = Object.values(attributes).flatMap((value) => Array.isArray(value) ? value : value && typeof value === 'object' ? Object.values(value) : [value]);
+  return unique([request, result?.profile_id, result?.reason, intelligencePrompt(result), ...flattened.map(String)]).join(' ');
 }
 function providerRun(args, timeout) { const command = providerCommand(); return run(command[0], [...command.slice(1), ...args], timeout); }
 function parseProviderJson(stdout) {
@@ -324,7 +371,7 @@ function setup(options) {
   return installSkill({ ...options, global: true, yes: true });
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  profiles    List scene-aware music profiles\n  search      Search the library by natural language\n  recommend   Analyze a scene, video, or brief and recommend tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  profiles    List all bundled music intelligence profiles\n  brief       Turn a natural-language request into an agent-ready music brief\n  search      Search the local library by title, artist, tags, or natural language\n  recommend   Use music intelligence, then rank matching local tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
 }
 
 async function main() {
@@ -335,7 +382,8 @@ async function main() {
   if (command === 'install-skill') return emit(installSkill(options));
   if (command === 'doctor') {
     const authFile = fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json'));
-    const result = { ok: true, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    const profiles = intelligenceProfiles();
+    const result = { ok: true, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
     if (options.live) { providerRun(['list'], 60000); result.live_check = true; }
     return emit(redact(result));
   }
@@ -357,31 +405,47 @@ async function main() {
     return emit({ ok: true, source, source_name: sourceName, scanned: files.length, total: tracks.length, library: root });
   }
   if (command === 'list') return emit({ ok: true, count: loadTracks(root).length, tracks: loadTracks(root) });
-  if (command === 'profiles') return emit({ ok: true, profiles: Object.fromEntries(Object.entries(SCENE_PROFILES).map(([id, profile]) => [id, { id, ...profile }])) });
+  if (command === 'profiles') {
+    const result = intelligenceProfiles();
+    return emit({ ok: result.status === 'ok', intelligence_version: '0.8.1', ...result });
+  }
+  if (command === 'brief') {
+    const duration = Number(options.duration || 0); const request = requestFrom(options);
+    const input = intelligenceInput(options, request, duration);
+    const intelligence = intelligenceQuery(input, options.adapter || 'generic');
+    return emit({ ok: true, request, adapter: options.adapter || 'generic', intelligence });
+  }
   if (command === 'search') {
     const query = required(options, 'query'); const tracks = search(root, query, options);
     return emit({ ok: true, query, count: tracks.length, tracks });
   }
   if (command === 'recommend') {
     ensureLibrary(root); const video = options.video ? path.resolve(options.video) : null;
-    if (!video && !options.brief && !options.scene) fail('MISSING_INPUT', 'Provide --scene, --video, or --brief');
     if (video && !fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
-    const analysis = video ? analyzeVideo(video, options) : musicBrief(options);
+    const analysis = video ? analyzeVideo(video, options) : musicBrief(options); const request = requestFrom(options, analysis);
     const duration = video ? probe(video)?.duration_seconds : Number(options.duration || 0);
-    const tracks = search(root, analysis.brief, { ...options, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
-    const generation_prompt = `${analysis.brief}${duration ? `. Target duration: ${duration} seconds` : ''}. Create original music; do not imitate or reuse a copyrighted melody.`;
-    return emit({ ok: true, scene: analysis.profile || null, analysis, video, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks });
+    const input = intelligenceInput(options, request, duration); const intelligence = intelligenceQuery(input, options.adapter || 'generic');
+    const localQuery = intelligenceSearchText(intelligence, request);
+    const tracks = search(root, localQuery, { ...options, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
+    const generation_prompt = [intelligencePrompt(intelligence), intelligence.arrangement_notes || intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
+    return emit({ ok: true, profile_id: intelligence.profile_id, intelligence, scene: analysis.profile || null, analysis, request, video, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks });
   }
   if (command === 'export') {
     const track = findTrack(root, required(options, 'track')); const output = copyTrack(track, required(options, 'output'));
     return emit({ ok: true, track, output });
   }
   if (command === 'generate') {
-    const profile = sceneProfile(options.scene); const prompt = options.prompt || profile?.brief; if (!prompt) fail('MISSING_REQUIRED_OPTION', 'Provide --prompt or --scene');
-    if (options['dry-run']) return emit({ ok: true, dry_run: true, prompt, provider: 'makaron' });
+    let prompt = options.prompt;
+    let intelligence = null;
+    if (!prompt) {
+      const duration = Number(options.duration || 0); const request = requestFrom(options);
+      intelligence = intelligenceQuery(intelligenceInput(options, request, duration), 'makaron');
+      prompt = [intelligencePrompt(intelligence), intelligence.seed_audio?.producer_notes, intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
+    }
+    if (options['dry-run']) return emit({ ok: true, dry_run: true, intelligence, prompt, provider: 'makaron' });
     const submitted = submitGeneration(prompt, options);
     if (options['no-wait']) return emit({ ok: true, status: 'submitted', ...submitted });
-    const completed = waitFor(submitted.run_id); return emit({ ok: completed.outputs.length > 0, ...submitted, ...completed });
+    const completed = waitFor(submitted.run_id); return emit({ ok: completed.outputs.length > 0, intelligence, ...submitted, ...completed });
   }
   if (command === 'wait') {
     const runId = required(options, 'run-id'); const completed = waitFor(runId); return emit({ ok: completed.outputs.length > 0, run_id: runId, ...completed });
@@ -392,7 +456,10 @@ async function main() {
     let track; let analysis = null;
     if (options.track) track = findTrack(root, options.track);
     else {
-      analysis = analyzeVideo(video, options); const duration = probe(video)?.duration_seconds; const candidates = search(root, analysis.brief, { ...options, duration, limit: 5 });
+      analysis = analyzeVideo(video, options); const duration = probe(video)?.duration_seconds; const request = requestFrom(options, analysis);
+      const intelligence = intelligenceQuery(intelligenceInput(options, request, duration), options.adapter || 'video_editor');
+      analysis = { ...analysis, intelligence, request };
+      const candidates = search(root, intelligenceSearchText(intelligence, request), { ...options, duration, limit: 5 });
       track = candidates[0]; if (!track) fail('NO_MATCHING_TRACK', 'No matching library track found; run generate or broaden the brief', false, { brief: analysis.brief });
     }
     if (!fs.existsSync(track.path)) fail('TRACK_NOT_LOCAL', `Download this Baidu Netdisk track locally before mixing: ${track.path}`);

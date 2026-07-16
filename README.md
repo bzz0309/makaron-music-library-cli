@@ -1,6 +1,11 @@
 # Makaron Music Library CLI
 
-An npm CLI for AI agents to search an owned music collection, recommend music for a video, create original music through Makaron, and mix a selected track into a new video file.
+An npm CLI for AI agents to understand a music request, search an owned collection, recommend music for a video, create original music through Makaron, and mix a selected track into a new video file.
+
+One installation contains two layers:
+
+- A bundled, platform-neutral music intelligence layer with 40 reviewed Profiles, Chinese/English intent parsing, explainable ranking, multi-turn refinement, and adapters for Makaron, video editors, and short-video agents.
+- A local execution layer for real audio files, Baidu Netdisk-synced folders, rights metadata, Makaron jobs, and video soundtrack assembly.
 
 ## Install for any Agent
 
@@ -16,6 +21,7 @@ npx makaron-music-library-cli setup
 musiclib init --name "My Music"
 musiclib index --source "/path/to/BaiduNetdisk/Music" --source-name baidu-netdisk-local
 musiclib search --query "日系治愈、轻快、纯音乐"
+musiclib brief --request "20秒K-pop女团舞台，强节拍、副歌高潮" --duration 20 --adapter makaron
 musiclib recommend --video "/path/to/video.mp4"
 musiclib soundtrack --video input.mp4 --output output.mp4
 ```
@@ -30,7 +36,37 @@ musiclib recommend --scene ecommerce --duration 15 \
   --brief "高端美妆产品，干净现代、抓人、尽量无人声"
 ```
 
-The result includes a ranked track, matching reasons, a rights-aware decision, and an original-generation fallback prompt. `kpop-stage` and `ecommerce` are built-in profiles; more profiles can be added without changing the Agent interface.
+The result includes the selected intelligence Profile, interpreted intent, confidence, ranked local tracks, matching reasons, a rights-aware decision, and an original-generation fallback prompt. `kpop-stage` and `ecommerce` remain convenient aliases, while natural-language `--request` can access all 40 bundled Profiles.
+
+## Music intelligence
+
+Generate an agent-ready brief without searching local files:
+
+```bash
+musiclib brief \
+  --request "15秒高端美妆精华电商视频，干净现代、抓人、无人声" \
+  --duration 15 \
+  --adapter makaron
+```
+
+Adapters:
+
+- `generic`: professional generation brief
+- `makaron`: Seed Audio prompt fields
+- `video_editor`: structure, edit points, role, and loop behavior
+- `short_video_agent`: hook, energy, beat-sync, and short-form loop behavior
+
+Use `--turn` more than once for stateless multi-turn refinement:
+
+```bash
+musiclib brief \
+  --turn "8秒手机发布会开场音乐" \
+  --turn "更年轻一点" \
+  --turn "不要太商业，更电影感" \
+  --adapter makaron
+```
+
+The bundled intelligence snapshot comes from [`bzz0309/bzz`, branch `codex/music-prompt-library`](https://github.com/bzz0309/bzz/tree/codex/music-prompt-library/music-prompt-library). The wrapper ships only its compiled runtime and normal recommendation data.
 
 Use an explicit brief when you do not want video frames analyzed through Makaron:
 
@@ -71,6 +107,7 @@ Direct Baidu cloud-account search is intentionally left behind a future data-sou
 - `ffprobe` for full media metadata; macOS `afinfo` is used as an audio-duration fallback
 - `ffmpeg` for frame sampling and soundtrack assembly
 - `makaron-cli` authentication for video analysis and original music generation
+- Runtime dependencies `commander` and `zod`, installed automatically by npm
 
 Set `MUSICLIB_LIBRARY` to change the default library location (`~/.musiclib`). Run `musiclib doctor --live` to verify the complete toolchain.
 

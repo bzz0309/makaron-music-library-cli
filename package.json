@@ -11,9 +11,19 @@
     "test": "node test/smoke.mjs",
     "pack:check": "npm pack --dry-run"
   },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "zod": "^3.25.76"
+  },
   "files": [
     "bin/",
     "skills/",
+    "vendor/music-prompt-library/UPSTREAM.md",
+    "vendor/music-prompt-library/data/music_profiles.json",
+    "vendor/music-prompt-library/data/agent_adapters.json",
+    "vendor/music-prompt-library/dist/*.js",
+    "vendor/music-prompt-library/dist/intent/*.js",
+    "vendor/music-prompt-library/dist/workflow/*.js",
     "README.md",
     "LICENSE"
   ],

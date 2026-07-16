@@ -51,13 +51,19 @@ try {
   assert.match(recommended.recommendation.title, /史诗管弦/);
 
   const profiles = call(['profiles', '--library', library]);
-  assert.equal(profiles.profiles['kpop-stage'].target_bpm[0], 118);
+  assert.equal(profiles.count, 40);
+  assert.ok(profiles.profiles.some((profile) => profile.metadata.id === 'kpop_performance_001'));
+  const brief = call(['brief', '--request', '20秒K-pop女团舞台，强节拍、副歌高潮', '--duration', '20', '--adapter', 'makaron']);
+  assert.equal(brief.intelligence.profile_id, 'kpop_performance_001');
+  assert.match(brief.intelligence.seed_audio.music_prompt, /K-pop/i);
   const kpopRecommended = call(['recommend', '--library', library, '--scene', 'kpop-stage']);
   assert.match(kpopRecommended.recommendation.title, /女团Dance Pop/);
+  assert.equal(kpopRecommended.profile_id, 'kpop_performance_001');
   assert.ok(!kpopRecommended.recommendation.match.matched.includes('k'));
   assert.equal(kpopRecommended.decision.publish_ready, false);
   const ecommerceRecommended = call(['recommend', '--library', library, '--scene', 'ecommerce', '--brief', '美妆产品快速展示']);
   assert.match(ecommerceRecommended.recommendation.title, /Upbeat Product/);
+  assert.ok(['beauty_commercial_glow_001', 'product_launch_motion_001'].includes(ecommerceRecommended.profile_id));
 
   const exported = call(['export', '--library', library, '--track', searched.tracks[0].id, '--output', path.join(temp, 'export.mp3')]);
   assert.ok(fs.existsSync(exported.output));

@@ -1,11 +1,11 @@
 ---
 name: makaron-music-library
-description: Search, recommend, generate, export, and add music to videos through the makaron-music-library-cli. Use when an agent needs to find songs in a local or Baidu Netdisk-synced collection, choose fitting background music from a video or creative brief, create original music with Makaron, or mix a selected track into a video.
+description: Understand music intent, search, recommend, generate, export, and add music to videos through the makaron-music-library-cli. Use when an agent needs an expert music brief, song lookup in a local or Baidu Netdisk-synced collection, fitting background music for a video or content Skill, original Makaron music, or a mixed soundtrack file.
 ---
 
 # Makaron Music Library
 
-Use `musiclib` when installed globally. Otherwise use `npx -y makaron-music-library-cli`. The CLI owns the music index, natural-language retrieval, video-frame analysis, Makaron music jobs, and ffmpeg soundtrack assembly.
+Use `musiclib` when installed globally. Otherwise use `npx -y makaron-music-library-cli`. The CLI owns a bundled 40-Profile music intelligence layer, the local music index, natural-language retrieval, video-frame analysis, Makaron music jobs, and ffmpeg soundtrack assembly.
 
 Never request, print, save, or pass `MAKARON_API_KEY` as a command argument. Read it only from the environment or Makaron's auth file. Treat every indexed track as rights-unknown until its metadata explicitly permits the intended use.
 
@@ -14,10 +14,11 @@ Never request, print, save, or pass `MAKARON_API_KEY` as a command argument. Rea
 1. Run `musiclib doctor` before generation or video mixing.
 2. Initialize once with `musiclib init`.
 3. Index each local or Baidu Netdisk-synced music directory with `musiclib index`.
-4. For an explicit request, use `musiclib search --query`. For a known use case, pass `--scene kpop-stage` or `--scene ecommerce`. For a video, use `musiclib recommend --video`; it samples three frames and asks Makaron for a concise music brief.
-5. Prefer a fitting owned-library track. Use `musiclib generate` only when the library has no suitable result or the user asks for original music.
-6. Before commercial delivery, verify license and `commercial_use` metadata. Never infer rights from possession of a file.
-7. Use `musiclib soundtrack` to produce a new video file. Never overwrite the source video.
+4. Use `musiclib brief --request` when another Agent needs structured music intelligence without a local song. Select `generic`, `makaron`, `video_editor`, or `short_video_agent` with `--adapter`.
+5. For a known use case, use `musiclib recommend --request`, or pass the compatible aliases `--scene kpop-stage` and `--scene ecommerce`. For a video, add `--video`; the CLI combines visual analysis with the intelligence Profile.
+6. Prefer a fitting owned-library track. Use `musiclib generate` when the library has no suitable result, rights are unclear, or the user asks for original music.
+7. Before commercial delivery, verify license and `commercial_use` metadata. Never infer rights from possession of a file.
+8. Use `musiclib soundtrack` to produce a new video file. Never overwrite the source video.
 
 ## Commands
 
@@ -42,6 +43,13 @@ $MUSICLIB search --query "日系、治愈、轻快、纯音乐" --limit 5
 $MUSICLIB export --track TRACK_ID --output "/path/to/delivery/music.mp3"
 ```
 
+Build a structured brief for any Agent:
+
+```bash
+$MUSICLIB brief --request "20秒K-pop女团舞台，强节拍、副歌高潮" --duration 20 --adapter makaron
+$MUSICLIB brief --request "15秒高端美妆电商视频，干净现代、无人声" --duration 15 --adapter video_editor
+```
+
 Recommend music for a video. Pass `--brief` to avoid live visual analysis:
 
 ```bash
@@ -52,8 +60,8 @@ $MUSICLIB recommend --video "/path/to/video.mp4" --brief "温柔治愈的日常 
 Use a scene profile when another Skill already knows the video purpose:
 
 ```bash
-$MUSICLIB recommend --scene kpop-stage --duration 20 --brief "五人女团，强灯光切换，副歌高潮"
-$MUSICLIB recommend --scene ecommerce --duration 15 --brief "高端美妆精华，干净、现代、无人声"
+$MUSICLIB recommend --scene kpop-stage --duration 20 --request "五人女团，强灯光切换，副歌高潮"
+$MUSICLIB recommend --scene ecommerce --duration 15 --request "高端美妆精华，干净、现代、无人声"
 ```
 
 Read `decision.action` before delivery. When it is `review-rights-or-generate-original`, verify rights or generate an original replacement:

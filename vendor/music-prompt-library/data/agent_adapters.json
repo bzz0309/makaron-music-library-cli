@@ -1,0 +1,842 @@
+[
+  {
+    "profile_id": "kpop_performance_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "jpop_bright_opening_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "intro_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "anime_opening_lift_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "urban_ad_electronic_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "comedy_bumper_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "transition_music_prompt",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "fashion_luxury_groove_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "cinematic_travel_memory_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "cute_pet_bounce_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "emotional_story_piano_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "product_launch_motion_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "dance_competition_peak_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "climax_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "stage_opening_impact_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "intro_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "live_band_anthem_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "climax_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "luxury_minimal_electronic_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "premium_brand_signature_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "beauty_editorial_ambient_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "tech_product_reveal_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "intro_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "beauty_commercial_glow_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "automotive_premium_drive_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "food_refreshing_pop_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "cinematic_emotional_arc_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "inspirational_journey_build_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "documentary_reflective_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "suspense_tension_build_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "viral_short_hook_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "playful_trend_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "transition_snap_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "transition_music_prompt",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "cafe_lifestyle_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "travel_vlog_breeze_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "urban_night_drive_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "corporate_innovation_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "sustainable_brand_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "fintech_trust_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "retail_momentum_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "architectural_real_estate_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "couture_orchestral_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "organic_skincare_minimal_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "crystalline_jewelry_signature_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "intimate_romance_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  },
+  {
+    "profile_id": "investigative_documentary_001",
+    "adapters": {
+      "makaron": {
+        "type": "seed_audio_prompt",
+        "output_format": "makaron_prompt",
+        "prompt_strategy": "Use the complete music brief while preserving the requested content intent."
+      },
+      "video_editor": {
+        "type": "music_brief",
+        "prompt_strategy": "Expose duration, role, structure, edit points, and loop behavior for timeline placement."
+      },
+      "short_video_agent": {
+        "type": "background_music_prompt",
+        "prompt_strategy": "Prioritize an immediate hook, energy, beat synchronization, and short-form loop behavior."
+      },
+      "generic": {
+        "type": "music_generation_brief"
+      }
+    }
+  }
+]
