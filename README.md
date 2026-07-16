@@ -16,7 +16,7 @@
 
 ```bash
 npx makaron-music-library-cli setup \
-  --api-url https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev
+  --api-url https://makaron-music-library-api.bzz0309.workers.dev
 
 export MUSICLIB_API_TOKEN=由曲库管理员分配的Agent令牌
 musiclib doctor --remote

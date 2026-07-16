@@ -30,7 +30,7 @@ Worker secrets are `AGENT_TOKENS` and `SIGNING_SECRET`. Owner upload secrets are
 5. Only after separate explicit approval and Cloudflare login, create R2/D1, set Worker Secrets, deploy, and upload audio.
 6. Test the final Workers URL from a clean Agent installation before publishing npm.
 
-Cloudflare D1 database `makaron-music-library` and private R2 bucket `makaron-music-library` have been created. The D1 migration is applied. The Worker is not live until the compatibility update deploys successfully and its secrets are installed.
+Cloudflare D1 database `makaron-music-library` and private R2 bucket `makaron-music-library` have been created. The D1 migration is applied. The Worker and secrets are deployed at `https://makaron-music-library-api.bzz0309.workers.dev`; verify TLS propagation before calling the public endpoint live.
 
 ## Known later work
 

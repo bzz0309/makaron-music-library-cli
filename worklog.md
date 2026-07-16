@@ -21,3 +21,5 @@
 - Pushed the Cloudflare architecture after approval; no audio upload has started yet.
 - Created the APAC D1 database and private Standard-class R2 bucket after explicit approval; applied `0001_tracks.sql`.
 - The first Worker deployment exposed an unused vendored `node:fs/promises` import. Enabled Cloudflare's official `nodejs_compat` flag so the bundled upstream module graph can be validated without changing the local CLI snapshot.
+- Registered the account-level `bzz0309.workers.dev` subdomain and published `makaron-music-library-api`; generated Agent and signing secrets were installed in Worker Secrets and backed up in macOS Keychain.
+- The first public health check encountered expected new-subdomain TLS propagation; repeat the live check after DNS/certificate propagation.
