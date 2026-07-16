@@ -30,3 +30,4 @@
 - Added a separate `ADMIN_TOKEN` upload channel that streams owner audio into private R2 and batch-upserts safe metadata into D1.
 - Verified that the largest indexed track is about 15.3MB, below the configured 100MB upload ceiling.
 - Kept Agent tokens unable to call administrator routes and removed the need to distribute Cloudflare account or R2 S3 credentials.
+- Completed a real canary upload, search, signed access, and 1KB HTTP Range read; added bounded exponential retry before the full 7.35GB upload.

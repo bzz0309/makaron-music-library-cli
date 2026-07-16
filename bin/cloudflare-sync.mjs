@@ -125,6 +125,20 @@ async function workerRequest({ apiUrl, token, endpoint, method, headers = {}, bo
   if (!response.ok || !payload?.ok) fail('WORKER_SYNC_FAILED', `Worker rejected ${endpoint}: HTTP ${response.status} ${JSON.stringify(payload?.error || payload).slice(0, 1000)}`);
   return payload;
 }
+async function retry(task, label, attempts = 4) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try { return await task(attempt); }
+    catch (error) {
+      lastError = error;
+      if (attempt === attempts) break;
+      const delay = 500 * (2 ** (attempt - 1));
+      process.stderr.write(`${label} failed (attempt ${attempt}/${attempts}); retrying in ${delay}ms\n`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  }
+  throw lastError;
+}
 function workerTrack(track) {
   return {
     id: track.id, title: track.title, artist: track.artist, album: track.album, extension: extension(track),
@@ -136,23 +150,23 @@ function workerTrack(track) {
 async function syncViaWorker(config, tracks, concurrency) {
   await concurrent(tracks, concurrency, async (track) => {
     const stat = fs.statSync(track.path);
-    await workerRequest({
-      ...config,
-      endpoint: `/admin/tracks/${encodeURIComponent(track.id)}/audio?extension=${encodeURIComponent(extension(track))}`,
-      method: 'PUT',
-      headers: { 'content-type': contentType(track.path), 'content-length': String(stat.size) },
-      body: fs.createReadStream(track.path),
-    });
+    await retry(() => workerRequest({
+        ...config,
+        endpoint: `/admin/tracks/${encodeURIComponent(track.id)}/audio?extension=${encodeURIComponent(extension(track))}`,
+        method: 'PUT',
+        headers: { 'content-type': contentType(track.path), 'content-length': String(stat.size) },
+        body: fs.createReadStream(track.path),
+      }), `Upload ${track.id}`);
   });
   for (let offset = 0; offset < tracks.length; offset += 50) {
     const chunk = tracks.slice(offset, offset + 50);
-    await workerRequest({
+    await retry(() => workerRequest({
       ...config,
       endpoint: '/admin/tracks/batch',
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ tracks: chunk.map(workerTrack) }),
-    });
+    }), `Index batch ${offset / 50 + 1}`);
   }
 }
 
