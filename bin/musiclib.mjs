@@ -26,12 +26,35 @@ const CONCEPTS = {
   piano: ['piano', '钢琴'],
   guitar: ['guitar', '吉他'],
   electronic: ['electronic', 'synth', 'edm', '电子', '合成器'],
+  dance: ['dance', 'dance-pop', 'dj', '舞曲', '跳舞', '劲爆'],
+  pop: ['pop', '流行', '热歌'],
+  kpop: ['k-pop', 'kpop', 'korean pop', '韩国流行', '韩语', '韩流', '女团', '男团'],
+  trending: ['trending', 'viral', 'tiktok', '抖音', '热门', '爆款'],
+  bgm: ['bgm', 'background music', '背景音乐'],
+  product: ['product', 'ecommerce', 'e-commerce', '商品', '产品', '电商', '带货'],
+  luxury: ['luxury', 'premium', 'elegant', '奢华', '高级', '高端'],
   orchestral: ['orchestral', 'strings', 'symphony', '管弦', '弦乐', '交响'],
   rock: ['rock', '摇滚'],
   ambient: ['ambient', 'atmosphere', '氛围', '环境'],
   vlog: ['vlog', 'daily', 'lifestyle', '日常', '生活'],
   commercial: ['commercial', 'corporate', 'business', '广告', '商务', '企业'],
   no_vocals: ['instrumental', 'no vocals', '纯音乐', '无歌词', '无人声'],
+};
+const SCENE_PROFILES = {
+  'kpop-stage': {
+    label: 'K-pop stage performance',
+    brief: 'K-pop stage performance, high energy dance-pop, electronic production, strong beat, clear build and performance climax',
+    target_bpm: [118, 140], vocals: 'optional',
+    weights: { kpop: 18, dance: 6, energetic: 5, electronic: 4, pop: 3, trending: 2 },
+    avoid: { calm: 3, ambient: 3 },
+  },
+  ecommerce: {
+    label: 'E-commerce marketing video',
+    brief: 'e-commerce product marketing, clean catchy background music, clear rhythm, upbeat modern production, product-focused, minimal or no vocals',
+    target_bpm: [100, 128], vocals: 'prefer-none',
+    weights: { product: 9, bgm: 10, happy: 4, electronic: 3, trending: 3, no_vocals: 5, pop: 2 },
+    avoid: { sad: 4, tense: 2 },
+  },
 };
 
 class CliError extends Error {
@@ -78,6 +101,11 @@ function parseArgs(argv) {
   return options;
 }
 function required(options, key) { if (!options[key]) fail('MISSING_REQUIRED_OPTION', `Missing required option --${key}`); return options[key]; }
+function sceneProfile(value) {
+  if (!value) return null;
+  if (!SCENE_PROFILES[value]) fail('INVALID_SCENE', `Unknown scene: ${value}; use one of: ${Object.keys(SCENE_PROFILES).join(', ')}`);
+  return { id: value, ...SCENE_PROFILES[value] };
+}
 
 function executable(name) { return spawnSync(name, ['-version'], { encoding: 'utf8' }).status === 0; }
 function run(command, args, timeout = 900000) {
@@ -122,19 +150,30 @@ function waitFor(runId) {
 }
 
 function probe(file) {
-  if (!executable('ffprobe')) return null;
-  const result = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration:format_tags=title,artist,album,genre:stream=codec_type', '-of', 'json', file], { encoding: 'utf8', timeout: 30000 });
-  if (result.error || result.status !== 0) return null;
-  let data; try { data = JSON.parse(result.stdout || '{}'); } catch { return null; }
-  return {
-    duration_seconds: Number(data.format?.duration || 0) || null,
-    title: data.format?.tags?.title,
-    artist: data.format?.tags?.artist,
-    album: data.format?.tags?.album,
-    genre: data.format?.tags?.genre,
-    has_audio: (data.streams || []).some((item) => item.codec_type === 'audio'),
-    has_video: (data.streams || []).some((item) => item.codec_type === 'video'),
-  };
+  if (executable('ffprobe')) {
+    const result = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration:format_tags=title,artist,album,genre:stream=codec_type', '-of', 'json', file], { encoding: 'utf8', timeout: 30000 });
+    if (!result.error && result.status === 0) {
+      let data; try { data = JSON.parse(result.stdout || '{}'); } catch { data = null; }
+      if (data) return {
+        duration_seconds: Number(data.format?.duration || 0) || null,
+        title: data.format?.tags?.title,
+        artist: data.format?.tags?.artist,
+        album: data.format?.tags?.album,
+        genre: data.format?.tags?.genre,
+        has_audio: (data.streams || []).some((item) => item.codec_type === 'audio'),
+        has_video: (data.streams || []).some((item) => item.codec_type === 'video'),
+        probe: 'ffprobe',
+      };
+    }
+  }
+  if (AUDIO_EXTENSIONS.has(path.extname(file).toLowerCase()) && fs.existsSync('/usr/bin/afinfo')) {
+    const result = spawnSync('/usr/bin/afinfo', [file], { encoding: 'utf8', timeout: 30000 });
+    if (!result.error && result.status === 0) {
+      const duration = result.stdout.match(/estimated duration:\s*([\d.]+)\s*sec/i);
+      return { duration_seconds: Number(duration?.[1] || 0) || null, has_audio: true, has_video: false, probe: 'afinfo' };
+    }
+  }
+  return null;
 }
 function walk(directory) {
   const found = [];
@@ -172,26 +211,42 @@ function trackFromFile(file, sourceName) {
 }
 function queryTerms(query) {
   const raw = String(query || '').toLowerCase();
-  return unique([...raw.split(/[^\p{L}\p{N}]+/u).filter(Boolean), ...conceptsFor(raw)]);
+  const lexical = raw.split(/[^\p{L}\p{N}]+/u).filter((term) => term.length >= 2 || /[^\x00-\x7F]/.test(term));
+  return unique([...lexical, ...conceptsFor(raw)]);
 }
-function scoreTrack(track, query, wantedDuration) {
+function scoreTrack(track, query, wantedDuration, profile = null) {
   const terms = queryTerms(query); const text = `${track.title} ${track.artist || ''} ${track.album || ''} ${track.description || ''} ${(track.tags || []).join(' ')}`.toLowerCase();
   let score = 0; const matched = [];
   for (const term of terms) if (text.includes(term) || track.tags?.includes(term)) { score += track.tags?.includes(term) ? 4 : 2; matched.push(term); }
+  if (profile) {
+    for (const [tag, weight] of Object.entries(profile.weights || {})) if (track.tags?.includes(tag)) { score += weight; matched.push(`scene:${tag}`); }
+    for (const [tag, penalty] of Object.entries(profile.avoid || {})) if (track.tags?.includes(tag)) score -= penalty;
+  }
   if (wantedDuration && track.duration_seconds) {
     const ratio = Math.abs(track.duration_seconds - wantedDuration) / Math.max(wantedDuration, 1);
     score += Math.max(0, 2 - ratio * 2);
   }
-  return { score: Number(score.toFixed(3)), matched: unique(matched) };
+  return { score: Number(score.toFixed(3)), matched: unique(matched), scene: profile?.id || null };
 }
 function search(root, query, options = {}) {
-  const limit = Number(options.limit || 10); const duration = Number(options.duration || 0);
+  const limit = Number(options.limit || 10); const duration = Number(options.duration || 0); const profile = sceneProfile(options.scene);
   return loadTracks(root)
     .filter((track) => !options['commercial-only'] || track.commercial_use === true)
-    .map((track) => ({ ...track, match: scoreTrack(track, query, duration) }))
+    .map((track) => ({ ...track, match: scoreTrack(track, query, duration, profile) }))
     .filter((track) => !query || track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
     .slice(0, limit);
+}
+
+function musicBrief(options, analysis = null) {
+  const profile = sceneProfile(options.scene); const parts = [profile?.brief, analysis?.brief, !analysis ? options.brief : null].filter(Boolean);
+  return { profile, brief: unique(parts).join('. '), source: analysis?.source || (options.brief ? 'user' : profile ? 'scene-profile' : null), run_id: analysis?.run_id };
+}
+function recommendationDecision(track) {
+  if (!track) return { action: 'generate-original', publish_ready: false, reason: 'No matching library track was found.' };
+  const rightsKnown = track.commercial_use === true && track.license !== 'unknown';
+  if (rightsKnown) return { action: 'use-library-track', publish_ready: true, reason: 'The selected track is explicitly marked for commercial use.' };
+  return { action: 'review-rights-or-generate-original', publish_ready: false, reason: 'The selected track has no verified commercial-use metadata.' };
 }
 
 function extractFrames(video, directory) {
@@ -205,8 +260,8 @@ function extractFrames(video, directory) {
   });
 }
 function analyzeVideo(video, options) {
-  if (options.brief) return { brief: options.brief, source: 'user' };
-  if (options['no-analyze']) return { brief: path.basename(video, path.extname(video)), source: 'filename', confidence: 'low' };
+  if (options.brief) return musicBrief(options, { brief: options.brief, source: 'user' });
+  if (options['no-analyze']) return musicBrief(options, { brief: path.basename(video, path.extname(video)), source: 'filename', confidence: 'low' });
   const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'musiclib-frames-'));
   try {
     const frames = extractFrames(video, temp);
@@ -217,7 +272,7 @@ function analyzeVideo(video, options) {
     providerRun(['responses', 'watch', runId, '--jsonl']);
     const text = providerRun(['responses', 'get', runId, '--pick', 'text']).stdout.trim().replace(/^"|"$/g, '');
     if (!text) fail('EMPTY_ANALYSIS', 'Makaron returned no music brief', true);
-    return { brief: text, source: 'makaron-video-analysis', run_id: runId };
+    return musicBrief(options, { brief: text, source: 'makaron-video-analysis', run_id: runId });
   } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 }
 function submitGeneration(prompt, options) {
@@ -269,7 +324,7 @@ function setup(options) {
   return installSkill({ ...options, global: true, yes: true });
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  search      Search the library by natural language\n  recommend   Analyze a video or brief and recommend tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>]\n  musiclib <command> [options]\n\nCommands:\n  setup       Install the CLI and Agent Skill\n  doctor      Check Makaron, ffmpeg, and authentication\n  init        Initialize a music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List indexed tracks\n  profiles    List scene-aware music profiles\n  search      Search the library by natural language\n  recommend   Analyze a scene, video, or brief and recommend tracks\n  export      Copy one selected track to an output path\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n  soundtrack  Pick music and add it to a video\n  validate    Validate indexed files and rights metadata\n\nAll command results are JSON.`);
 }
 
 async function main() {
@@ -302,25 +357,27 @@ async function main() {
     return emit({ ok: true, source, source_name: sourceName, scanned: files.length, total: tracks.length, library: root });
   }
   if (command === 'list') return emit({ ok: true, count: loadTracks(root).length, tracks: loadTracks(root) });
+  if (command === 'profiles') return emit({ ok: true, profiles: Object.fromEntries(Object.entries(SCENE_PROFILES).map(([id, profile]) => [id, { id, ...profile }])) });
   if (command === 'search') {
     const query = required(options, 'query'); const tracks = search(root, query, options);
     return emit({ ok: true, query, count: tracks.length, tracks });
   }
   if (command === 'recommend') {
     ensureLibrary(root); const video = options.video ? path.resolve(options.video) : null;
-    if (!video && !options.brief) fail('MISSING_INPUT', 'Provide --video or --brief');
+    if (!video && !options.brief && !options.scene) fail('MISSING_INPUT', 'Provide --scene, --video, or --brief');
     if (video && !fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
-    const analysis = video ? analyzeVideo(video, options) : { brief: options.brief, source: 'user' };
+    const analysis = video ? analyzeVideo(video, options) : musicBrief(options);
     const duration = video ? probe(video)?.duration_seconds : Number(options.duration || 0);
-    const tracks = search(root, analysis.brief, { ...options, duration, limit: options.limit || 5 });
-    return emit({ ok: true, analysis, video, duration_seconds: duration || null, count: tracks.length, recommendation: tracks[0] || null, tracks });
+    const tracks = search(root, analysis.brief, { ...options, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
+    const generation_prompt = `${analysis.brief}${duration ? `. Target duration: ${duration} seconds` : ''}. Create original music; do not imitate or reuse a copyrighted melody.`;
+    return emit({ ok: true, scene: analysis.profile || null, analysis, video, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks });
   }
   if (command === 'export') {
     const track = findTrack(root, required(options, 'track')); const output = copyTrack(track, required(options, 'output'));
     return emit({ ok: true, track, output });
   }
   if (command === 'generate') {
-    const prompt = required(options, 'prompt');
+    const profile = sceneProfile(options.scene); const prompt = options.prompt || profile?.brief; if (!prompt) fail('MISSING_REQUIRED_OPTION', 'Provide --prompt or --scene');
     if (options['dry-run']) return emit({ ok: true, dry_run: true, prompt, provider: 'makaron' });
     const submitted = submitGeneration(prompt, options);
     if (options['no-wait']) return emit({ ok: true, status: 'submitted', ...submitted });
@@ -339,7 +396,7 @@ async function main() {
       track = candidates[0]; if (!track) fail('NO_MATCHING_TRACK', 'No matching library track found; run generate or broaden the brief', false, { brief: analysis.brief });
     }
     if (!fs.existsSync(track.path)) fail('TRACK_NOT_LOCAL', `Download this Baidu Netdisk track locally before mixing: ${track.path}`);
-    const plan = { video, music: track.path, track_id: track.id, output, analysis, mix_original: Boolean(options['mix-original']), music_volume: Number(options['music-volume'] || 0.8), original_volume: Number(options['original-volume'] || 0.2) };
+    const plan = { video, music: track.path, track_id: track.id, output, scene: options.scene || null, analysis, decision: recommendationDecision(track), mix_original: Boolean(options['mix-original']), music_volume: Number(options['music-volume'] || 0.8), original_volume: Number(options['original-volume'] || 0.2) };
     if (options['dry-run']) return emit({ ok: true, dry_run: true, plan });
     const created = addSoundtrack(video, track.path, output, options); return emit({ ok: true, output: created, track, analysis });
   }

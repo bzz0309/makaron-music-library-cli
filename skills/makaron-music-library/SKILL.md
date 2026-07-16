@@ -14,7 +14,7 @@ Never request, print, save, or pass `MAKARON_API_KEY` as a command argument. Rea
 1. Run `musiclib doctor` before generation or video mixing.
 2. Initialize once with `musiclib init`.
 3. Index each local or Baidu Netdisk-synced music directory with `musiclib index`.
-4. For an explicit request, use `musiclib search --query`. For a video, use `musiclib recommend --video`; it samples three frames and asks Makaron for a concise music brief.
+4. For an explicit request, use `musiclib search --query`. For a known use case, pass `--scene kpop-stage` or `--scene ecommerce`. For a video, use `musiclib recommend --video`; it samples three frames and asks Makaron for a concise music brief.
 5. Prefer a fitting owned-library track. Use `musiclib generate` only when the library has no suitable result or the user asks for original music.
 6. Before commercial delivery, verify license and `commercial_use` metadata. Never infer rights from possession of a file.
 7. Use `musiclib soundtrack` to produce a new video file. Never overwrite the source video.
@@ -49,6 +49,19 @@ $MUSICLIB recommend --video "/path/to/video.mp4"
 $MUSICLIB recommend --video "/path/to/video.mp4" --brief "温柔治愈的日常 vlog，钢琴和木吉他，无人声"
 ```
 
+Use a scene profile when another Skill already knows the video purpose:
+
+```bash
+$MUSICLIB recommend --scene kpop-stage --duration 20 --brief "五人女团，强灯光切换，副歌高潮"
+$MUSICLIB recommend --scene ecommerce --duration 15 --brief "高端美妆精华，干净、现代、无人声"
+```
+
+Read `decision.action` before delivery. When it is `review-rights-or-generate-original`, verify rights or generate an original replacement:
+
+```bash
+$MUSICLIB generate --scene ecommerce --prompt "15 seconds, premium beauty product launch, clean electronic pulse, no vocals"
+```
+
 Create original music with Makaron:
 
 ```bash
@@ -62,6 +75,7 @@ Add a selected or automatically recommended track to a new video:
 $MUSICLIB soundtrack --video input.mp4 --track TRACK_ID --output output.mp4
 $MUSICLIB soundtrack --video input.mp4 --brief "cinematic and hopeful" --output output.mp4
 $MUSICLIB soundtrack --video input.mp4 --output output.mp4 --mix-original --music-volume 0.7 --original-volume 0.2
+$MUSICLIB soundtrack --video input.mp4 --scene kpop-stage --output output.mp4
 ```
 
 Use `--dry-run` on `generate` or `soundtrack` before spending credits or writing final media. For cloud-only Baidu Netdisk files, ask the user or sync client to download them locally before export or mixing.

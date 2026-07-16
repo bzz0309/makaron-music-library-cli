@@ -20,6 +20,18 @@ musiclib recommend --video "/path/to/video.mp4"
 musiclib soundtrack --video input.mp4 --output output.mp4
 ```
 
+Scene-aware matching lets another Agent or video Skill state the purpose directly:
+
+```bash
+musiclib recommend --scene kpop-stage --duration 20 \
+  --brief "五人女团舞台，强节拍、灯光切换、副歌高潮"
+
+musiclib recommend --scene ecommerce --duration 15 \
+  --brief "高端美妆产品，干净现代、抓人、尽量无人声"
+```
+
+The result includes a ranked track, matching reasons, a rights-aware decision, and an original-generation fallback prompt. `kpop-stage` and `ecommerce` are built-in profiles; more profiles can be added without changing the Agent interface.
+
 Use an explicit brief when you do not want video frames analyzed through Makaron:
 
 ```bash
@@ -56,7 +68,7 @@ Direct Baidu cloud-account search is intentionally left behind a future data-sou
 ## Requirements
 
 - Node.js 18+
-- `ffprobe` for duration and media metadata
+- `ffprobe` for full media metadata; macOS `afinfo` is used as an audio-duration fallback
 - `ffmpeg` for frame sampling and soundtrack assembly
 - `makaron-cli` authentication for video analysis and original music generation
 

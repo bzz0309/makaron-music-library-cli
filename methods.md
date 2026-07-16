@@ -11,3 +11,7 @@ Index a locally visible sync directory without coupling the catalog to one cloud
 ## Sidecar metadata
 
 Use `<audio-file>.music.json` for tags and rights fields that are missing from embedded audio metadata. This is portable and does not modify the source track.
+
+## Scene profiles
+
+Convert a video use case into a stable weighted music profile. Combine that profile with the video's visual brief, rank library tracks with explainable tag matches, and return a generation fallback when rights or relevance are insufficient.

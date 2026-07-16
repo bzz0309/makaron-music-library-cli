@@ -24,8 +24,14 @@ try {
   fs.mkdirSync(source, { recursive: true });
   const healing = path.join(source, '日系治愈钢琴.mp3');
   const epic = path.join(source, '史诗管弦预告片.wav');
+  const kpopDir = path.join(source, '2024-韩语榜单');
+  const ecommerceDir = path.join(source, '电商广告BGM');
+  fs.mkdirSync(kpopDir, { recursive: true }); fs.mkdirSync(ecommerceDir, { recursive: true });
+  const kpop = path.join(kpopDir, '高能女团Dance Pop.mp3');
+  const ecommerce = path.join(ecommerceDir, 'Upbeat Product Background.mp3');
   fs.writeFileSync(healing, 'offline fixture');
   fs.writeFileSync(epic, 'offline fixture');
+  fs.writeFileSync(kpop, 'offline fixture'); fs.writeFileSync(ecommerce, 'offline fixture');
   fs.writeFileSync(`${healing}.music.json`, JSON.stringify({ tags: ['japanese', 'healing', 'piano', 'no_vocals'], license: 'owned-commercial-license', commercial_use: true }));
 
   const setup = call(['setup', '--dry-run']);
@@ -34,7 +40,7 @@ try {
 
   assert.equal(call(['init', '--library', library, '--name', 'Smoke']).ok, true);
   const indexed = call(['index', '--library', library, '--source', source]);
-  assert.equal(indexed.scanned, 2);
+  assert.equal(indexed.scanned, 4);
   assert.equal(indexed.source_name, 'baidu-netdisk-local');
 
   const searched = call(['search', '--library', library, '--query', '日系治愈纯音乐', '--commercial-only']);
@@ -43,6 +49,15 @@ try {
 
   const recommended = call(['recommend', '--library', library, '--brief', '史诗、紧张的电影预告片管弦乐']);
   assert.match(recommended.recommendation.title, /史诗管弦/);
+
+  const profiles = call(['profiles', '--library', library]);
+  assert.equal(profiles.profiles['kpop-stage'].target_bpm[0], 118);
+  const kpopRecommended = call(['recommend', '--library', library, '--scene', 'kpop-stage']);
+  assert.match(kpopRecommended.recommendation.title, /女团Dance Pop/);
+  assert.ok(!kpopRecommended.recommendation.match.matched.includes('k'));
+  assert.equal(kpopRecommended.decision.publish_ready, false);
+  const ecommerceRecommended = call(['recommend', '--library', library, '--scene', 'ecommerce', '--brief', '美妆产品快速展示']);
+  assert.match(ecommerceRecommended.recommendation.title, /Upbeat Product/);
 
   const exported = call(['export', '--library', library, '--track', searched.tracks[0].id, '--output', path.join(temp, 'export.mp3')]);
   assert.ok(fs.existsSync(exported.output));
@@ -58,7 +73,7 @@ try {
 
   const validated = call(['validate', '--library', library]);
   assert.equal(validated.ok, true);
-  assert.equal(validated.unknown_rights.length, 1);
+  assert.equal(validated.unknown_rights.length, 3);
 
   console.log('Music library CLI smoke test passed');
 } finally {
