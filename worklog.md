@@ -18,4 +18,6 @@
 - Added D1 schema/migration and a native Node R2/D1 synchronization command.
 - Added dry-run synchronization and Worker smoke tests with fake D1/R2 bindings.
 - Removed Render/Docker deployment artifacts and rewrote deployment documentation.
-- No Cloudflare resource has been created, no billing has been authorized, and these changes have not yet been pushed.
+- Pushed the Cloudflare architecture after approval; no audio upload has started yet.
+- Created the APAC D1 database and private Standard-class R2 bucket after explicit approval; applied `0001_tracks.sql`.
+- The first Worker deployment exposed an unused vendored `node:fs/promises` import. Enabled Cloudflare's official `nodejs_compat` flag so the bundled upstream module graph can be validated without changing the local CLI snapshot.

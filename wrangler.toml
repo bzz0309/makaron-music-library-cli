@@ -1,6 +1,7 @@
 name = "makaron-music-library-api"
 main = "worker/index.js"
 compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
 
 [vars]
 LINK_TTL_SECONDS = "900"
