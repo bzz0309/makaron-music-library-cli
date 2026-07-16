@@ -1,6 +1,6 @@
 # Handoff
 
-The project is `makaron-music-library-cli` version 0.1.0 at `https://github.com/bzz0309/makaron-music-library-cli`. The Cloudflare deployment is live at `https://makaron-music-library-api.bzz0309.workers.dev`.
+The project is `makaron-music-library-cli` version 0.1.0 at `https://github.com/bzz0309/makaron-music-library-cli`. Version `0.1.0` is published to public npm with the `latest` tag. The Cloudflare deployment is live at `https://makaron-music-library-api.bzz0309.workers.dev`.
 
 ## Current architecture
 
@@ -28,7 +28,7 @@ Worker secrets are `AGENT_TOKENS`, `SIGNING_SECRET`, and `ADMIN_TOKEN`. The owne
 1. Deploy the administrator upload routes and install `ADMIN_TOKEN`.
 2. Refresh the filtered 934-track metadata manifest with `--metadata-only`; do not sync all 4,291 local rows until their audio is uploaded.
 3. Verify K-pop and e-commerce recommendations after the metadata refresh.
-4. Test a clean Agent installation before publishing npm.
+4. Distribute per-Agent access tokens safely; never place a token in the npm package, Skill, GitHub, or chat.
 
 Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R2 contains the uploaded collection. Health, Agent authentication, title/artist search, signed access, and Range playback are live. The local source now contains 4,291 tracks, so only the filtered 934-track manifest may receive metadata-only updates until additional audio uploads are explicitly approved.
 

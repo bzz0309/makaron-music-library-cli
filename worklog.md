@@ -34,3 +34,5 @@
 - Confirmed the owner-completed full upload: D1 contains 934 tracks and 7,354,593,476 indexed bytes; title/artist search and signed Range delivery pass.
 - A later rescan found 4,291 locally available files. Built a filtered 934-track refresh manifest so metadata updates cannot create D1 rows for audio that has not been uploaded.
 - Added metadata-only synchronization, removed numeric/profile-ID and stop-word false matches, and applied scene weights so K-pop favors Korean-tagged tracks and e-commerce favors BGM-tagged tracks.
+- Published `makaron-music-library-cli@0.1.0` as the public npm `latest` release after explicit approval.
+- Verified the registry artifact from an empty directory: npx version execution and authenticated live BGM search both pass.
