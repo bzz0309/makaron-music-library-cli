@@ -46,10 +46,10 @@ function queryTerms(query) {
   const lexical = String(query || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((term) => (term.length >= 2 || /[^\x00-\x7F]/.test(term)) && !/^\d+$/.test(term) && !stop.has(term));
   return unique([...lexical, ...conceptsFor(query)]).slice(0, 12);
 }
-function authorized(request, env) {
+function legacyAuthorized(request, env) {
   const candidate = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
   const tokens = String(env.AGENT_TOKENS || '').split(',').map((item) => item.trim()).filter(Boolean);
-  return candidate && tokens.includes(candidate);
+  return Boolean(candidate && tokens.includes(candidate));
 }
 function adminAuthorized(request, env) {
   const candidate = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
@@ -113,6 +113,129 @@ async function hmac(secret, value) {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
   const signature = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(value));
   return [...new Uint8Array(signature)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+async function sha256(value) {
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+function randomToken(bytes = 32) {
+  const value = crypto.getRandomValues(new Uint8Array(bytes));
+  return btoa(String.fromCharCode(...value)).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+}
+function bearerToken(request) {
+  return request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
+}
+function scopesFrom(value) {
+  return String(value || '').split(',').map((item) => item.trim()).filter(Boolean);
+}
+async function authorize(request, env) {
+  const candidate = bearerToken(request);
+  if (!candidate) return null;
+  if (legacyAuthorized(request, env)) return { type: 'legacy', token_id: 'legacy', scopes: ['search', 'recommend', 'access'] };
+  const tokenHash = await sha256(candidate);
+  const row = await env.DB.prepare('SELECT id, scopes, status FROM agent_tokens WHERE token_hash = ? LIMIT 1').bind(tokenHash).first();
+  if (!row || row.status !== 'active') return null;
+  return { type: 'registered', token_id: row.id, scopes: scopesFrom(row.scopes) };
+}
+const QUOTA_COLUMNS = { search: 'search_count', recommend: 'recommend_count', access: 'access_count' };
+function quotaLimit(env, action) {
+  const defaults = { search: 200, recommend: 100, access: 25 };
+  const keys = { search: 'DAILY_SEARCH_LIMIT', recommend: 'DAILY_RECOMMEND_LIMIT', access: 'DAILY_ACCESS_LIMIT' };
+  return Math.max(1, Number(env[keys[action]] || defaults[action]));
+}
+async function consumeQuota(env, auth, action) {
+  if (auth.type === 'legacy') return { allowed: true, limit: null, remaining: null };
+  if (!auth.scopes.includes(action)) return { allowed: false, reason: 'scope' };
+  const column = QUOTA_COLUMNS[action];
+  const day = new Date().toISOString().slice(0, 10);
+  await env.DB.prepare(
+    `INSERT INTO agent_usage (token_id, usage_day, ${column}) VALUES (?, ?, 1)
+     ON CONFLICT(token_id, usage_day) DO UPDATE SET ${column} = ${column} + 1`,
+  ).bind(auth.token_id, day).run();
+  const usage = await env.DB.prepare(`SELECT ${column} AS count FROM agent_usage WHERE token_id = ? AND usage_day = ?`).bind(auth.token_id, day).first();
+  const count = Number(usage?.count || 0);
+  const limit = quotaLimit(env, action);
+  return { allowed: count <= limit, reason: count <= limit ? null : 'quota', limit, remaining: Math.max(0, limit - count) };
+}
+async function registeredRequest(request, env, action) {
+  const auth = await authorize(request, env);
+  if (!auth) return { response: error('UNAUTHORIZED', 'A valid Agent credential is required.', 401) };
+  const quota = await consumeQuota(env, auth, action);
+  if (!quota.allowed) {
+    if (quota.reason === 'scope') return { response: error('FORBIDDEN', `This Agent credential does not permit ${action}.`, 403) };
+    return { response: error('DAILY_QUOTA_EXCEEDED', `The daily ${action} quota has been reached.`, 429) };
+  }
+  return { auth, quota };
+}
+function registrationQuotas(env) {
+  return {
+    search_per_day: quotaLimit(env, 'search'),
+    recommend_per_day: quotaLimit(env, 'recommend'),
+    access_per_day: quotaLimit(env, 'access'),
+  };
+}
+async function registrationIdentity(request, env) {
+  const address = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  return hmac(env.SIGNING_SECRET, `registration-ip:${address}`);
+}
+async function createRegistrationChallenge(request, env) {
+  const ipHash = await registrationIdentity(request, env);
+  const recent = await env.DB.prepare(
+    "SELECT COUNT(*) AS count FROM registration_challenges WHERE ip_hash = ? AND created_at >= datetime('now', '-1 hour')",
+  ).bind(ipHash).first();
+  const hourlyLimit = Math.max(1, Number(env.REGISTRATION_CHALLENGES_PER_HOUR || 10));
+  if (Number(recent?.count || 0) >= hourlyLimit) return error('REGISTRATION_RATE_LIMITED', 'Too many registration attempts. Try again later.', 429);
+  const id = crypto.randomUUID();
+  const nonce = randomToken(24);
+  const difficulty = Math.max(2, Math.min(Number(env.REGISTRATION_DIFFICULTY || 4), 6));
+  const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+  await env.DB.prepare(
+    'INSERT INTO registration_challenges (id, nonce, difficulty, ip_hash, expires_at) VALUES (?, ?, ?, ?, ?)',
+  ).bind(id, nonce, difficulty, ipHash, expiresAt).run();
+  return json({
+    ok: true,
+    challenge_id: id,
+    challenge: { algorithm: 'sha256-prefix', nonce, difficulty },
+    expires_at: expiresAt,
+  });
+}
+async function verifyRegistration(request, env) {
+  const body = await request.json();
+  const challengeId = String(body.challenge_id || '');
+  const solution = String(body.solution || '');
+  if (!challengeId || !/^\d{1,10}$/.test(solution)) return error('INVALID_REGISTRATION_PROOF', 'A valid challenge ID and numeric solution are required.');
+  const challenge = await env.DB.prepare(
+    'SELECT id, nonce, difficulty, ip_hash, expires_at, used_at FROM registration_challenges WHERE id = ? LIMIT 1',
+  ).bind(challengeId).first();
+  if (!challenge || challenge.used_at || Date.parse(challenge.expires_at) <= Date.now()) return error('REGISTRATION_CHALLENGE_EXPIRED', 'The registration challenge is invalid, expired, or already used.', 400);
+  const ipHash = await registrationIdentity(request, env);
+  if (ipHash !== challenge.ip_hash) return error('REGISTRATION_ORIGIN_CHANGED', 'Complete registration from the same network origin.', 400);
+  const digest = await sha256(`${challenge.nonce}:${solution}`);
+  if (!digest.startsWith('0'.repeat(Number(challenge.difficulty)))) return error('INVALID_REGISTRATION_PROOF', 'The registration proof is incorrect.', 400);
+  const consumed = await env.DB.prepare(
+    'UPDATE registration_challenges SET used_at = CURRENT_TIMESTAMP WHERE id = ? AND used_at IS NULL',
+  ).bind(challengeId).run();
+  if (Number(consumed?.meta?.changes || 0) !== 1) return error('REGISTRATION_CHALLENGE_USED', 'The registration challenge has already been used.', 409);
+  const tokenId = `agt_${crypto.randomUUID().replaceAll('-', '')}`;
+  const apiToken = `ml_live_${randomToken(32)}`;
+  const tokenHash = await sha256(apiToken);
+  const agentName = String(body.agent_name || 'generic-agent').slice(0, 80);
+  const client = String(body.client || 'unknown').slice(0, 80);
+  const clientVersion = String(body.client_version || 'unknown').slice(0, 32);
+  const scopes = 'search,recommend,access';
+  const createdAt = new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO agent_tokens (id, token_hash, agent_name, client, client_version, scopes, status, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'active', ?)`,
+  ).bind(tokenId, tokenHash, agentName, client, clientVersion, scopes, createdAt).run();
+  return json({
+    ok: true,
+    token_id: tokenId,
+    api_token: apiToken,
+    scopes: scopesFrom(scopes),
+    quotas: registrationQuotas(env),
+    created_at: createdAt,
+  }, 201);
 }
 async function validSignature(secret, value, candidate) {
   if (!candidate) return false;
@@ -182,6 +305,8 @@ export default {
     try {
       const url = new URL(request.url);
       if (request.method === 'GET' && url.pathname === '/v1/health') return json({ ok: true, service: 'makaron-music-library-worker', api_version: 'v1', storage: 'r2', catalog: 'd1' });
+      if (request.method === 'POST' && url.pathname === '/v1/register') return createRegistrationChallenge(request, env);
+      if (request.method === 'POST' && url.pathname === '/v1/register/verify') return verifyRegistration(request, env);
       const adminUpload = url.pathname.match(/^\/v1\/admin\/tracks\/([^/]+)\/audio$/);
       if (request.method === 'PUT' && adminUpload) {
         if (!adminAuthorized(request, env)) return error('ADMIN_UNAUTHORIZED', 'A valid administrator token is required.', 401);
@@ -220,13 +345,16 @@ export default {
         if (range) headers.set('content-range', `bytes ${range.start}-${range.end}/${total}`);
         return new Response(object.body, { status: range ? 206 : 200, headers });
       }
-      if (!authorized(request, env)) return error('UNAUTHORIZED', 'A valid Agent token is required.', 401);
       if (request.method === 'GET' && url.pathname === '/v1/search') {
+        const authorization = await registeredRequest(request, env, 'search');
+        if (authorization.response) return authorization.response;
         const query = url.searchParams.get('query'); if (!query) return error('MISSING_REQUIRED_OPTION', 'Missing query.');
         const tracks = await searchTracks(env, query, { limit: url.searchParams.get('limit'), commercial_only: url.searchParams.get('commercial_only') === 'true' });
-        return json({ ok: true, query, count: tracks.length, tracks });
+        return json({ ok: true, query, count: tracks.length, tracks, quota: authorization.quota });
       }
       if (request.method === 'POST' && url.pathname === '/v1/recommend') {
+        const authorization = await registeredRequest(request, env, 'recommend');
+        if (authorization.response) return authorization.response;
         const body = await request.json(); if (body.video) return error('REMOTE_VIDEO_UPLOAD_NOT_IMPLEMENTED', 'Send a textual video brief or request.');
         const requestText = unique([SCENES[body.scene], body.request, body.brief]).join('. ');
         if (!requestText) return error('MISSING_INPUT', 'Provide request, brief, or scene.');
@@ -237,14 +365,16 @@ export default {
         const localQuery = unique([requestText, intelligence.profile_id, musicPrompt(intelligence), ...attributes.map(String)]).join(' ');
         const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: body.scene });
         const recommendation = tracks[0] || null;
-        return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks });
+        return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks, quota: authorization.quota });
       }
       const access = url.pathname.match(/^\/v1\/tracks\/([^/]+)\/access$/);
       if (request.method === 'POST' && access) {
+        const authorization = await registeredRequest(request, env, 'access');
+        if (authorization.response) return authorization.response;
         const id = decodeURIComponent(access[1]); const row = await trackRow(env, id); if (!row) return error('TRACK_NOT_FOUND', 'Track not found.', 404);
         const ttl = Math.max(30, Math.min(Number(env.LINK_TTL_SECONDS || 900), 3600)); const expires = Math.floor(Date.now() / 1000) + ttl;
         const signature = await hmac(env.SIGNING_SECRET, `${id}:${expires}`);
-        return json({ ok: true, track: safeTrack(row), url: `${url.origin}/v1/tracks/${encodeURIComponent(id)}/audio?expires=${expires}&signature=${signature}`, expires_at: new Date(expires * 1000).toISOString() });
+        return json({ ok: true, track: safeTrack(row), url: `${url.origin}/v1/tracks/${encodeURIComponent(id)}/audio?expires=${expires}&signature=${signature}`, expires_at: new Date(expires * 1000).toISOString(), quota: authorization.quota });
       }
       return error('NOT_FOUND', 'API route not found.', 404);
     } catch (cause) {

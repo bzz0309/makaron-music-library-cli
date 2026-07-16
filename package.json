@@ -1,6 +1,6 @@
 {
   "name": "makaron-music-library-cli",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Portable music library, video soundtrack, and Makaron music CLI for AI agents",
   "type": "module",
   "bin": {
@@ -8,7 +8,7 @@
     "makaron-music-library-cli": "bin/musiclib.mjs"
   },
   "scripts": {
-    "test": "node test/smoke.mjs && node test/remote-smoke.mjs && node test/worker-smoke.mjs && node test/cloudflare-sync-smoke.mjs",
+    "test": "node test/smoke.mjs && node test/remote-smoke.mjs && node test/worker-smoke.mjs && node test/register-smoke.mjs && node test/cloudflare-sync-smoke.mjs",
     "pack:check": "npm pack --dry-run"
   },
   "dependencies": {

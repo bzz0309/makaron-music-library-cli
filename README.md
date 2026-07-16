@@ -15,14 +15,19 @@
 ## Agent 安装和使用
 
 ```bash
-npx makaron-music-library-cli setup \
-  --api-url https://makaron-music-library-api.bzz0309.workers.dev
-
-export MUSICLIB_API_TOKEN=由曲库管理员分配的Agent令牌
+npx makaron-music-library-cli setup
 musiclib doctor --remote
 ```
 
-`setup` 会安装 `musiclib` 命令和仅含一个 `SKILL.md` 的 Agent Skill。API URL 可以保存在本机配置中；令牌只从环境变量读取，不接受命令参数，也不会写进 Skill。
+`setup` 会安装 `musiclib` 命令和仅含一个 `SKILL.md` 的 Agent Skill，自动连接默认曲库、完成一次轻量计算挑战，并为当前 Agent 签发独立凭证。凭证以 `0600` 权限写入 `~/.musiclib/auth.json`，不会显示在正常命令输出中，也不会写进 Skill。
+
+无需曲库管理员逐个发送 `MUSICLIB_API_TOKEN`。需要更换凭证时运行：
+
+```bash
+musiclib register --force --agent "my-agent-name"
+```
+
+私有部署可通过 `--api-url` 覆盖默认地址。`MUSICLIB_API_TOKEN` 环境变量仍受支持，并优先于本机凭证文件。
 
 常用命令：
 
@@ -71,15 +76,14 @@ npx wrangler r2 bucket create makaron-music-library
 npx wrangler d1 create makaron-music-library
 ```
 
-3. 把 D1 命令返回的 `database_id` 填进 `wrangler.toml`，然后创建三项 Worker Secret：
+3. 把 D1 命令返回的 `database_id` 填进 `wrangler.toml`，然后创建 Worker Secret：
 
 ```bash
-npx wrangler secret put AGENT_TOKENS
 npx wrangler secret put SIGNING_SECRET
 npx wrangler secret put ADMIN_TOKEN
 ```
 
-`AGENT_TOKENS` 是一个或多个逗号分隔的随机 Agent 令牌。`SIGNING_SECRET` 用于生成限时音频签名。`ADMIN_TOKEN` 仅供曲库主人上传音频和元数据。三者必须使用不同随机值，且不要提交。
+`SIGNING_SECRET` 用于注册来源散列和限时音频签名。`ADMIN_TOKEN` 仅供曲库主人上传音频和元数据。两者必须使用不同随机值，且不要提交。升级自 0.1.0 时可保留 `AGENT_TOKENS`，旧共享 Token 会继续兼容，但新 Agent 不再依赖它。
 
 4. 建表并部署：
 
@@ -149,6 +153,8 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 ## API
 
 - `GET /v1/health`：公开、无曲库内容。
+- `POST /v1/register`：公开获取短时计算挑战，按来源限流。
+- `POST /v1/register/verify`：验证挑战并一次性签发 Agent 凭证。
 - `GET /v1/search?query=...`：Bearer 鉴权。
 - `POST /v1/recommend`：Bearer 鉴权。
 - `POST /v1/tracks/:id/access`：Bearer 鉴权，生成限时 URL。
@@ -156,7 +162,7 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 - `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
 - `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
-版本 0.1.0 使用共享令牌列表。每 Agent 签发/吊销、审计日志、远程视频上传和服务端视频混音属于后续版本。
+版本 0.2.0 为每个 Agent 自助签发独立凭证，D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
 
 ## 版权
 

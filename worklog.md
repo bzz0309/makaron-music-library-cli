@@ -36,3 +36,12 @@
 - Added metadata-only synchronization, removed numeric/profile-ID and stop-word false matches, and applied scene weights so K-pop favors Korean-tagged tracks and e-commerce favors BGM-tagged tracks.
 - Published `makaron-music-library-cli@0.1.0` as the public npm `latest` release after explicit approval.
 - Verified the registry artifact from an empty directory: npx version execution and authenticated live BGM search both pass.
+
+## Agent self-registration — 2026-07-17
+
+- Prepared version 0.2.0 with automatic per-Agent registration; no production deployment or package publication has been performed yet.
+- Added a short-lived SHA-256 prefix challenge and per-origin registration throttling.
+- Added D1 tables for challenge state, hashed Agent credentials, status-based revocation, and daily search/recommend/access usage.
+- Added automatic credential storage at `~/.musiclib/auth.json` with `0600` permissions and retained `MUSICLIB_API_TOKEN` plus legacy Worker token compatibility.
+- Added default hosted API configuration so external Agents can run `npx makaron-music-library-cli setup` without an owner-provided URL or Token.
+- Added Worker and CLI smoke coverage for registration, hash-only persistence, credential reuse, and daily quotas.
