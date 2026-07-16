@@ -31,3 +31,6 @@
 - Verified that the largest indexed track is about 15.3MB, below the configured 100MB upload ceiling.
 - Kept Agent tokens unable to call administrator routes and removed the need to distribute Cloudflare account or R2 S3 credentials.
 - Completed a real canary upload, search, signed access, and 1KB HTTP Range read; added bounded exponential retry before the full 7.35GB upload.
+- Confirmed the owner-completed full upload: D1 contains 934 tracks and 7,354,593,476 indexed bytes; title/artist search and signed Range delivery pass.
+- A later rescan found 4,291 locally available files. Built a filtered 934-track refresh manifest so metadata updates cannot create D1 rows for audio that has not been uploaded.
+- Added metadata-only synchronization, removed numeric/profile-ID and stop-word false matches, and applied scene weights so K-pop favors Korean-tagged tracks and e-commerce favors BGM-tagged tracks.

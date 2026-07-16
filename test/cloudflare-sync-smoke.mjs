@@ -56,7 +56,6 @@ const workerResult = await syncCloudflare({
   concurrency: 1,
 });
 delete process.env.MUSICLIB_ADMIN_TOKEN;
-globalThis.fetch = originalFetch;
 
 assert.equal(workerResult.transport, 'worker-admin');
 assert.equal(workerResult.uploaded, 1);
@@ -64,5 +63,19 @@ assert.equal(calls.length, 2);
 assert.match(calls[0].url, /\/v1\/admin\/tracks\/fixture-track\/audio\?extension=mp3$/);
 assert.match(calls[1].url, /\/v1\/admin\/tracks\/batch$/);
 
+calls.length = 0;
+process.env.MUSICLIB_ADMIN_TOKEN = 'test-admin-token';
+const metadataResult = await syncCloudflare({
+  library,
+  apiUrl: 'https://music.example.com',
+  metadataOnly: true,
+});
+delete process.env.MUSICLIB_ADMIN_TOKEN;
+assert.equal(metadataResult.uploaded, 0);
+assert.equal(metadataResult.indexed, 1);
+assert.equal(calls.length, 1);
+assert.match(calls[0].url, /\/v1\/admin\/tracks\/batch$/);
+
+globalThis.fetch = originalFetch;
 fs.rmSync(library, { recursive: true, force: true });
 console.log('Cloudflare sync smoke test passed');

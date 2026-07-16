@@ -26,11 +26,11 @@ Worker secrets are `AGENT_TOKENS`, `SIGNING_SECRET`, and `ADMIN_TOKEN`. The owne
 ## Next actions
 
 1. Deploy the administrator upload routes and install `ADMIN_TOKEN`.
-2. Upload the 934-track, 7.35GB collection through `cloud-sync`, with explicit owner confirmation.
-3. Verify search, recommendation, signed access, and Range delivery against one uploaded track.
+2. Refresh the filtered 934-track metadata manifest with `--metadata-only`; do not sync all 4,291 local rows until their audio is uploaded.
+3. Verify K-pop and e-commerce recommendations after the metadata refresh.
 4. Test a clean Agent installation before publishing npm.
 
-Cloudflare D1 database `makaron-music-library` and private R2 bucket `makaron-music-library` exist, the migration is applied, and the public Worker endpoint has passed live health and Agent-auth tests. Audio upload has not started yet.
+Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R2 contains the uploaded collection. Health, Agent authentication, title/artist search, signed access, and Range playback are live. The local source now contains 4,291 tracks, so only the filtered 934-track manifest may receive metadata-only updates until additional audio uploads are explicitly approved.
 
 ## Known later work
 

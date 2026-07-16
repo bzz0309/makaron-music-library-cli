@@ -117,6 +117,12 @@ musiclib cloud-sync --library ~/.musiclib --concurrency 3
 音频会写入私有 R2，安全元数据会写入 D1；本地路径不会进入 D1。重复执行会按曲目 ID 更新索引和覆盖对应对象。
 上传走独立的 Worker 管理员通道，不需要把 Cloudflare 账号令牌或 R2 S3 Key 分发给 CLI。
 
+只刷新标签、版权或描述而不重复上传音频：
+
+```bash
+musiclib cloud-sync --library ~/.musiclib --metadata-only
+```
+
 可用 `<歌曲文件>.music.json` 补充标签和版权：
 
 ```json

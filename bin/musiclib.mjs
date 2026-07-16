@@ -55,7 +55,7 @@ const SCENE_PROFILES = {
     label: 'E-commerce marketing video',
     brief: 'e-commerce product marketing, clean catchy background music, clear rhythm, upbeat modern production, product-focused, minimal or no vocals',
     target_bpm: [100, 128], vocals: 'prefer-none',
-    weights: { product: 9, bgm: 10, happy: 4, electronic: 3, trending: 3, no_vocals: 5, pop: 2 },
+    weights: { product: 9, bgm: 14, happy: 4, electronic: 3, trending: 3, no_vocals: 5, pop: 2 },
     avoid: { sad: 4, tense: 2 },
   },
 };
@@ -97,7 +97,7 @@ function saveTracks(root, tracks) { writeJson(tracksFile(root), tracks.sort((a, 
 function parseArgs(argv) {
   const options = { _: [] };
   const repeatable = new Set(['tag', 'turn']);
-  const flags = new Set(['json', 'force', 'live', 'dry-run', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze', 'local', 'remote', 'allow-unauthenticated']);
+  const flags = new Set(['json', 'force', 'live', 'dry-run', 'metadata-only', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze', 'local', 'remote', 'allow-unauthenticated']);
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (!token.startsWith('--')) { options._.push(token); continue; }
@@ -330,7 +330,8 @@ function trackFromFile(file, sourceName) {
 }
 function queryTerms(query) {
   const raw = String(query || '').toLowerCase();
-  const lexical = raw.split(/[^\p{L}\p{N}]+/u).filter((term) => term.length >= 2 || /[^\x00-\x7F]/.test(term));
+  const stop = new Set(['and', 'the', 'with', 'for', 'from', 'into', 'music', 'production', 'no']);
+  const lexical = raw.split(/[^\p{L}\p{N}]+/u).filter((term) => (term.length >= 2 || /[^\x00-\x7F]/.test(term)) && !/^\d+$/.test(term) && !stop.has(term));
   return unique([...lexical, ...conceptsFor(raw)]);
 }
 function scoreTrack(track, query, wantedDuration, profile = null) {
@@ -541,7 +542,7 @@ async function main() {
     const result = await syncCloudflare({
       library: rootFor(options), accountId: options['account-id'], databaseId: options['database-id'],
       apiUrl: apiUrlFor(options), bucket: options.bucket, concurrency: options.concurrency,
-      limit: options.limit, dryRun: Boolean(options['dry-run']),
+      limit: options.limit, dryRun: Boolean(options['dry-run']), metadataOnly: Boolean(options['metadata-only']),
     });
     return emit(result);
   }

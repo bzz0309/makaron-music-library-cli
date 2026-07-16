@@ -181,14 +181,25 @@ export async function syncCloudflare(options) {
   const databaseId = options.databaseId || process.env.CLOUDFLARE_D1_DATABASE_ID;
   const bucket = options.bucket || process.env.CLOUDFLARE_R2_BUCKET || 'makaron-music-library';
   if (!apiUrl && (!accountId || !databaseId)) fail('CLOUDFLARE_CONFIG_REQUIRED', 'Set MUSICLIB_API_URL, or set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_D1_DATABASE_ID.');
-  const summary = { ok: true, dry_run: Boolean(options.dryRun), transport: apiUrl ? 'worker-admin' : 'direct-r2-d1', library, bucket, database_id: databaseId || null, api_url: apiUrl || null, tracks: selected.length, bytes: selected.reduce((total, track) => total + Number(track.size_bytes || 0), 0) };
+  const summary = { ok: true, dry_run: Boolean(options.dryRun), metadata_only: Boolean(options.metadataOnly), transport: apiUrl ? 'worker-admin' : 'direct-r2-d1', library, bucket, database_id: databaseId || null, api_url: apiUrl || null, tracks: selected.length, bytes: selected.reduce((total, track) => total + Number(track.size_bytes || 0), 0) };
   if (options.dryRun) return summary;
   const concurrency = Math.max(1, Math.min(Number(options.concurrency || 3), 8));
   if (apiUrl) {
     const token = process.env.MUSICLIB_ADMIN_TOKEN;
     if (!token) fail('WORKER_ADMIN_AUTH_REQUIRED', 'Set MUSICLIB_ADMIN_TOKEN before uploading through the Worker.');
-    await syncViaWorker({ apiUrl, token }, selected, concurrency);
-    return { ...summary, dry_run: false, uploaded: selected.length, indexed: selected.length };
+    if (options.metadataOnly) {
+      for (let offset = 0; offset < selected.length; offset += 50) {
+        const chunk = selected.slice(offset, offset + 50);
+        await retry(() => workerRequest({
+          apiUrl, token, endpoint: '/admin/tracks/batch', method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ tracks: chunk.map(workerTrack) }),
+        }), `Index batch ${offset / 50 + 1}`);
+      }
+    } else {
+      await syncViaWorker({ apiUrl, token }, selected, concurrency);
+    }
+    return { ...summary, dry_run: false, uploaded: options.metadataOnly ? 0 : selected.length, indexed: selected.length };
   }
   const token = process.env.CLOUDFLARE_API_TOKEN;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
@@ -196,7 +207,7 @@ export async function syncCloudflare(options) {
   if (!token || !accessKeyId || !secretAccessKey) fail('CLOUDFLARE_AUTH_REQUIRED', 'Set CLOUDFLARE_API_TOKEN, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY.');
   const d1 = { accountId, databaseId, token };
   for (const sql of SCHEMA) await cloudflareQuery({ ...d1, sql });
-  await concurrent(selected, concurrency, (track) => putObject({ accountId, accessKeyId, secretAccessKey, bucket, key: objectKey(track), file: track.path }));
+  if (!options.metadataOnly) await concurrent(selected, concurrency, (track) => putObject({ accountId, accessKeyId, secretAccessKey, bucket, key: objectKey(track), file: track.path }));
   await upsertRows(d1, selected);
-  return { ...summary, dry_run: false, uploaded: selected.length, indexed: selected.length };
+  return { ...summary, dry_run: false, uploaded: options.metadataOnly ? 0 : selected.length, indexed: selected.length };
 }

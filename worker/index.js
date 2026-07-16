@@ -27,6 +27,10 @@ const SCENES = {
   'kpop-stage': 'K-pop stage performance, high energy dance-pop, electronic production, strong beat, clear build and performance climax',
   ecommerce: 'e-commerce product marketing, clean catchy background music, clear rhythm, upbeat modern production, product-focused, minimal or no vocals',
 };
+const SCENE_WEIGHTS = {
+  'kpop-stage': { kpop: 18, dance: 6, energetic: 5, electronic: 4, pop: 3, trending: 2 },
+  ecommerce: { product: 9, bgm: 14, happy: 4, electronic: 3, trending: 3, no_vocals: 5, pop: 2 },
+};
 
 function json(payload, status = 200) {
   return new Response(`${JSON.stringify(payload)}\n`, { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
@@ -38,7 +42,8 @@ function conceptsFor(text) {
   return Object.entries(CONCEPTS).filter(([, words]) => words.some((word) => value.includes(word))).map(([concept]) => concept);
 }
 function queryTerms(query) {
-  const lexical = String(query || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((term) => term.length >= 2 || /[^\x00-\x7F]/.test(term));
+  const stop = new Set(['and', 'the', 'with', 'for', 'from', 'into', 'music', 'production', 'no']);
+  const lexical = String(query || '').toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((term) => (term.length >= 2 || /[^\x00-\x7F]/.test(term)) && !/^\d+$/.test(term) && !stop.has(term));
   return unique([...lexical, ...conceptsFor(query)]).slice(0, 12);
 }
 function authorized(request, env) {
@@ -61,12 +66,15 @@ function safeTrack(row) {
     modified_at: row.modified_at,
   };
 }
-function score(row, terms) {
+function score(row, terms, scene) {
   const text = String(row.search_text || '').toLowerCase(); let tags = []; let value = 0; const matched = [];
   try { tags = JSON.parse(row.tags_json || '[]'); } catch {}
   for (const term of terms) {
     if (tags.includes(term)) { value += 4; matched.push(term); }
     else if (text.includes(term)) { value += 2; matched.push(term); }
+  }
+  for (const [tag, weight] of Object.entries(SCENE_WEIGHTS[scene] || {})) {
+    if (tags.includes(tag)) { value += weight; matched.push(`scene:${tag}`); }
   }
   return { score: value, matched: unique(matched) };
 }
@@ -78,7 +86,7 @@ async function searchTracks(env, query, options = {}) {
   const statement = env.DB.prepare(`SELECT * FROM tracks WHERE ${filters.join(' AND ')} LIMIT 250`).bind(...params);
   const result = await statement.all();
   return (result.results || [])
-    .map((row) => ({ ...safeTrack(row), match: score(row, terms) }))
+    .map((row) => ({ ...safeTrack(row), match: score(row, terms, options.scene) }))
     .filter((track) => track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
     .slice(0, Math.min(Number(options.limit || 10), 50));
@@ -215,7 +223,7 @@ export default {
         const intelligence = queryMusic(input, body.adapter || 'generic');
         const attributes = Object.values(intelligence.matched_attributes || {}).flatMap((value) => Array.isArray(value) ? value : value && typeof value === 'object' ? Object.values(value) : [value]);
         const localQuery = unique([requestText, intelligence.profile_id, musicPrompt(intelligence), ...attributes.map(String)]).join(' ');
-        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'] });
+        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: body.scene });
         const recommendation = tracks[0] || null;
         return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks });
       }

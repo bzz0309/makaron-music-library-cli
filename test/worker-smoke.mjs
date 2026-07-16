@@ -16,6 +16,13 @@ const rows = [
     license: 'unknown', commercial_use: null, modified_at: '2026-07-16T00:00:00Z',
     search_text: 'calm piano gentle healing background no_vocals',
   },
+  {
+    id: 'trk_bgm', title: 'Catchy Product BGM', artist: null, album: null,
+    object_key: 'audio/trk_bgm.mp3', source: 'test', size_bytes: 18, duration_seconds: 15,
+    tags_json: JSON.stringify(['bgm', 'trending', 'no_vocals']), description: 'clean modern ecommerce marketing background',
+    license: 'unknown', commercial_use: null, modified_at: '2026-07-16T00:00:00Z',
+    search_text: 'catchy product bgm clean modern ecommerce marketing background trending no_vocals',
+  },
 ];
 
 class FakeStatement {
@@ -114,6 +121,14 @@ const recommended = await worker.fetch(authorized('/v1/recommend', {
 const recommendBody = await payload(recommended);
 assert.equal(recommendBody.profile_id, 'kpop_performance_001');
 assert.equal(recommendBody.recommendation.id, 'trk_kpop');
+
+const ecommerce = await worker.fetch(authorized('/v1/recommend', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ scene: 'ecommerce', duration: 15, adapter: 'video_editor' }),
+}), env);
+const ecommerceBody = await payload(ecommerce);
+assert.equal(ecommerceBody.recommendation.id, 'trk_bgm');
 
 const access = await worker.fetch(authorized('/v1/tracks/trk_kpop/access', { method: 'POST' }), env);
 const accessBody = await payload(access);

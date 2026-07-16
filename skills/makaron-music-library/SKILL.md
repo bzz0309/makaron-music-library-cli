@@ -90,6 +90,7 @@ Owner-only Cloudflare synchronization:
 ```bash
 $MUSICLIB cloud-sync --library "/path/to/index" --dry-run
 $MUSICLIB cloud-sync --library "/path/to/index" --concurrency 3
+$MUSICLIB cloud-sync --library "/path/to/index" --metadata-only
 ```
 
 Read the upload endpoint from `MUSICLIB_API_URL` and the separate administrator credential from `MUSICLIB_ADMIN_TOKEN`. Never start the non-dry-run command without explicit owner approval.
