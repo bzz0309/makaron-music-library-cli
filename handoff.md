@@ -1,6 +1,6 @@
 # Handoff
 
-The project is `makaron-music-library-cli` version 0.1.0. The public baseline repository is `https://github.com/bzz0309/makaron-music-library-cli`. The current Cloudflare changes are staged locally and are not yet pushed.
+The project is `makaron-music-library-cli` version 0.1.0 at `https://github.com/bzz0309/makaron-music-library-cli`. The Cloudflare deployment is live at `https://makaron-music-library-api.bzz0309.workers.dev`.
 
 ## Current architecture
 
@@ -18,19 +18,19 @@ Worker routes:
 - `POST /v1/recommend`
 - `POST /v1/tracks/:id/access`
 - `GET /v1/tracks/:id/audio`
+- `PUT /v1/admin/tracks/:id/audio`
+- `POST /v1/admin/tracks/batch`
 
-Worker secrets are `AGENT_TOKENS` and `SIGNING_SECRET`. Owner upload secrets are `CLOUDFLARE_API_TOKEN`, `R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY`; account/database/bucket identifiers use the documented environment variables. Never commit or print any of them.
+Worker secrets are `AGENT_TOKENS`, `SIGNING_SECRET`, and `ADMIN_TOKEN`. The owner CLI reads the matching administrator value from `MUSICLIB_ADMIN_TOKEN`; it does not need Cloudflare account or R2 S3 credentials. Never commit or print any secret.
 
 ## Next actions
 
-1. Finish local syntax, smoke, package, Skill, and dependency checks.
-2. Rebuild or locate the real 934-track local index and run `cloud-sync --dry-run`.
-3. Show the user the exact pending file/architecture changes.
-4. Only after explicit approval, copy the staged changes into the real repository and push.
-5. Only after separate explicit approval and Cloudflare login, create R2/D1, set Worker Secrets, deploy, and upload audio.
-6. Test the final Workers URL from a clean Agent installation before publishing npm.
+1. Deploy the administrator upload routes and install `ADMIN_TOKEN`.
+2. Upload the 934-track, 7.35GB collection through `cloud-sync`, with explicit owner confirmation.
+3. Verify search, recommendation, signed access, and Range delivery against one uploaded track.
+4. Test a clean Agent installation before publishing npm.
 
-Cloudflare D1 database `makaron-music-library` and private R2 bucket `makaron-music-library` have been created. The D1 migration is applied. The Worker and secrets are deployed at `https://makaron-music-library-api.bzz0309.workers.dev`; verify TLS propagation before calling the public endpoint live.
+Cloudflare D1 database `makaron-music-library` and private R2 bucket `makaron-music-library` exist, the migration is applied, and the public Worker endpoint has passed live health and Agent-auth tests. Audio upload has not started yet.
 
 ## Known later work
 

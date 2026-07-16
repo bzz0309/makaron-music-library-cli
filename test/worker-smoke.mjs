@@ -31,10 +31,17 @@ class FakeStatement {
 
 const env = {
   AGENT_TOKENS: 'test-agent-token',
+  ADMIN_TOKEN: 'test-admin-token',
   SIGNING_SECRET: 'test-signing-secret',
   LINK_TTL_SECONDS: '900',
   DB: { prepare: (sql) => new FakeStatement(sql) },
   MUSIC: {
+    async put(key, body) {
+      const text = await new Response(body).text();
+      assert.equal(key, 'audio/trk_upload.mp3');
+      assert.equal(text, 'uploaded audio');
+      return { httpEtag: '"uploaded"' };
+    },
     async get(key, options) {
       if (key !== 'audio/trk_kpop.mp3') return null;
       const audio = 'remote audio fixture';
@@ -43,6 +50,18 @@ const env = {
       return { body, size: audio.length, httpEtag: '"test"', httpMetadata: { contentType: 'audio/mpeg' } };
     },
   },
+};
+env.DB.batch = async (statements) => {
+  for (const statement of statements) {
+    const values = statement.params;
+    const row = Object.fromEntries([
+      'id', 'title', 'artist', 'album', 'object_key', 'source', 'size_bytes', 'duration_seconds',
+      'tags_json', 'description', 'license', 'commercial_use', 'modified_at', 'search_text',
+    ].map((key, index) => [key, values[index]]));
+    const current = rows.findIndex((item) => item.id === row.id);
+    if (current >= 0) rows[current] = row; else rows.push(row);
+  }
+  return statements.map(() => ({ success: true }));
 };
 
 async function payload(response) { return JSON.parse(await response.text()); }
@@ -57,6 +76,29 @@ assert.equal((await payload(health)).storage, 'r2');
 
 const rejected = await worker.fetch(request('/v1/search?query=kpop'), env);
 assert.equal(rejected.status, 401);
+
+const rejectedAdmin = await worker.fetch(authorized('/v1/admin/tracks/trk_upload/audio?extension=mp3', {
+  method: 'PUT', headers: { 'content-length': '14' }, body: 'uploaded audio',
+}), env);
+assert.equal(rejectedAdmin.status, 401);
+
+const uploaded = await worker.fetch(request('/v1/admin/tracks/trk_upload/audio?extension=mp3', {
+  method: 'PUT',
+  headers: { authorization: 'Bearer test-admin-token', 'content-length': '14', 'content-type': 'audio/mpeg' },
+  body: 'uploaded audio',
+}), env);
+assert.equal(uploaded.status, 200);
+
+const indexed = await worker.fetch(request('/v1/admin/tracks/batch', {
+  method: 'POST',
+  headers: { authorization: 'Bearer test-admin-token', 'content-type': 'application/json' },
+  body: JSON.stringify({ tracks: [{
+    id: 'trk_upload', title: 'Uploaded Track', artist: 'Owner', extension: 'mp3', size_bytes: 14,
+    duration_seconds: 12, tags: ['test'], license: 'unknown', commercial_use: null,
+  }] }),
+}), env);
+assert.equal(indexed.status, 200);
+assert.equal(rows.some((row) => row.id === 'trk_upload'), true);
 
 const searched = await worker.fetch(authorized('/v1/search?query=K-pop%20stage'), env);
 const searchBody = await payload(searched);

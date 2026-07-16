@@ -21,6 +21,8 @@ This split lets every Agent use the same library while keeping owner paths and s
 
 Perform a dry-run first, upload objects with limited concurrency, then batch-upsert D1 metadata. Derive stable R2 keys from track IDs, never local filenames or paths. Repeat runs are idempotent at the track ID/object key level.
 
+Prefer a dedicated Worker administrator token over distributing Cloudflare account or R2 S3 credentials. Keep administrator routes separate from Agent routes, enforce supported extensions and body-size limits, and stream request bodies directly into private R2.
+
 ## Media delivery
 
 Support a single standard HTTP byte range on signed audio routes. Return `206`, `Content-Range`, and `Accept-Ranges` for valid ranges and `416` for invalid ranges, so browsers and media tools can seek without downloading the whole track.

@@ -71,6 +71,7 @@ function searchText(track) {
   return [track.title, track.artist, track.album, track.description, ...(track.tags || [])].filter(Boolean).join(' ').toLowerCase();
 }
 function objectKey(track) { return `audio/${track.id}${path.extname(track.path).toLowerCase()}`; }
+function extension(track) { return path.extname(track.path).toLowerCase().replace(/^\./, ''); }
 function rowFor(track) {
   return [
     track.id, track.title, track.artist, track.album, objectKey(track), track.source, track.size_bytes,
@@ -113,6 +114,47 @@ async function concurrent(items, limit, task) {
   });
   await Promise.all(workers);
 }
+async function workerRequest({ apiUrl, token, endpoint, method, headers = {}, body }) {
+  const response = await fetch(`${apiUrl.replace(/\/+$/, '')}/v1${endpoint}`, {
+    method,
+    headers: { authorization: `Bearer ${token}`, ...headers },
+    body,
+    ...(body && typeof body.pipe === 'function' ? { duplex: 'half' } : {}),
+  });
+  const payload = await response.json().catch(() => null);
+  if (!response.ok || !payload?.ok) fail('WORKER_SYNC_FAILED', `Worker rejected ${endpoint}: HTTP ${response.status} ${JSON.stringify(payload?.error || payload).slice(0, 1000)}`);
+  return payload;
+}
+function workerTrack(track) {
+  return {
+    id: track.id, title: track.title, artist: track.artist, album: track.album, extension: extension(track),
+    source: track.source, size_bytes: track.size_bytes, duration_seconds: track.duration_seconds,
+    tags: track.tags || [], description: track.description || '', license: track.license || 'unknown',
+    commercial_use: track.commercial_use ?? null, modified_at: track.modified_at,
+  };
+}
+async function syncViaWorker(config, tracks, concurrency) {
+  await concurrent(tracks, concurrency, async (track) => {
+    const stat = fs.statSync(track.path);
+    await workerRequest({
+      ...config,
+      endpoint: `/admin/tracks/${encodeURIComponent(track.id)}/audio?extension=${encodeURIComponent(extension(track))}`,
+      method: 'PUT',
+      headers: { 'content-type': contentType(track.path), 'content-length': String(stat.size) },
+      body: fs.createReadStream(track.path),
+    });
+  });
+  for (let offset = 0; offset < tracks.length; offset += 50) {
+    const chunk = tracks.slice(offset, offset + 50);
+    await workerRequest({
+      ...config,
+      endpoint: '/admin/tracks/batch',
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ tracks: chunk.map(workerTrack) }),
+    });
+  }
+}
 
 export async function syncCloudflare(options) {
   const library = path.resolve(options.library);
@@ -120,19 +162,27 @@ export async function syncCloudflare(options) {
   if (!fs.existsSync(tracksFile)) fail('NOT_A_LIBRARY', `No tracks.json found in ${library}`);
   const tracks = JSON.parse(fs.readFileSync(tracksFile, 'utf8')).filter((track) => fs.existsSync(track.path));
   const selected = options.limit ? tracks.slice(0, Number(options.limit)) : tracks;
+  const apiUrl = options.apiUrl || process.env.MUSICLIB_API_URL;
   const accountId = options.accountId || process.env.CLOUDFLARE_ACCOUNT_ID;
   const databaseId = options.databaseId || process.env.CLOUDFLARE_D1_DATABASE_ID;
   const bucket = options.bucket || process.env.CLOUDFLARE_R2_BUCKET || 'makaron-music-library';
-  if (!accountId || !databaseId) fail('CLOUDFLARE_CONFIG_REQUIRED', 'Set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_D1_DATABASE_ID.');
-  const summary = { ok: true, dry_run: Boolean(options.dryRun), library, bucket, database_id: databaseId, tracks: selected.length, bytes: selected.reduce((total, track) => total + Number(track.size_bytes || 0), 0) };
+  if (!apiUrl && (!accountId || !databaseId)) fail('CLOUDFLARE_CONFIG_REQUIRED', 'Set MUSICLIB_API_URL, or set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_D1_DATABASE_ID.');
+  const summary = { ok: true, dry_run: Boolean(options.dryRun), transport: apiUrl ? 'worker-admin' : 'direct-r2-d1', library, bucket, database_id: databaseId || null, api_url: apiUrl || null, tracks: selected.length, bytes: selected.reduce((total, track) => total + Number(track.size_bytes || 0), 0) };
   if (options.dryRun) return summary;
+  const concurrency = Math.max(1, Math.min(Number(options.concurrency || 3), 8));
+  if (apiUrl) {
+    const token = process.env.MUSICLIB_ADMIN_TOKEN;
+    if (!token) fail('WORKER_ADMIN_AUTH_REQUIRED', 'Set MUSICLIB_ADMIN_TOKEN before uploading through the Worker.');
+    await syncViaWorker({ apiUrl, token }, selected, concurrency);
+    return { ...summary, dry_run: false, uploaded: selected.length, indexed: selected.length };
+  }
   const token = process.env.CLOUDFLARE_API_TOKEN;
   const accessKeyId = process.env.R2_ACCESS_KEY_ID;
   const secretAccessKey = process.env.R2_SECRET_ACCESS_KEY;
   if (!token || !accessKeyId || !secretAccessKey) fail('CLOUDFLARE_AUTH_REQUIRED', 'Set CLOUDFLARE_API_TOKEN, R2_ACCESS_KEY_ID, and R2_SECRET_ACCESS_KEY.');
   const d1 = { accountId, databaseId, token };
   for (const sql of SCHEMA) await cloudflareQuery({ ...d1, sql });
-  await concurrent(selected, Number(options.concurrency || 3), (track) => putObject({ accountId, accessKeyId, secretAccessKey, bucket, key: objectKey(track), file: track.path }));
+  await concurrent(selected, concurrency, (track) => putObject({ accountId, accessKeyId, secretAccessKey, bucket, key: objectKey(track), file: track.path }));
   await upsertRows(d1, selected);
   return { ...summary, dry_run: false, uploaded: selected.length, indexed: selected.length };
 }

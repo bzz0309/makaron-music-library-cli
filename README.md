@@ -71,36 +71,21 @@ npx wrangler r2 bucket create makaron-music-library
 npx wrangler d1 create makaron-music-library
 ```
 
-3. 把 D1 命令返回的 `database_id` 填进 `wrangler.toml`，然后创建两项 Worker Secret：
+3. 把 D1 命令返回的 `database_id` 填进 `wrangler.toml`，然后创建三项 Worker Secret：
 
 ```bash
 npx wrangler secret put AGENT_TOKENS
 npx wrangler secret put SIGNING_SECRET
+npx wrangler secret put ADMIN_TOKEN
 ```
 
-`AGENT_TOKENS` 是一个或多个逗号分隔的随机 Agent 令牌。`SIGNING_SECRET` 是另一条独立的长随机值，只用于生成限时音频签名。不要提交它们。
+`AGENT_TOKENS` 是一个或多个逗号分隔的随机 Agent 令牌。`SIGNING_SECRET` 用于生成限时音频签名。`ADMIN_TOKEN` 仅供曲库主人上传音频和元数据。三者必须使用不同随机值，且不要提交。
 
 4. 建表并部署：
 
 ```bash
 npx wrangler d1 migrations apply makaron-music-library --remote
 npx wrangler deploy
-```
-
-5. 在 Cloudflare 控制台创建：
-
-- 一个可写入目标 R2 Bucket 的 R2 S3 API 凭证；
-- 一个可查询目标 D1 数据库的 Cloudflare API Token。
-
-把凭证仅放进当前终端环境：
-
-```bash
-export CLOUDFLARE_ACCOUNT_ID=...
-export CLOUDFLARE_D1_DATABASE_ID=...
-export CLOUDFLARE_R2_BUCKET=makaron-music-library
-export CLOUDFLARE_API_TOKEN=...
-export R2_ACCESS_KEY_ID=...
-export R2_SECRET_ACCESS_KEY=...
 ```
 
 ## 索引并上传曲库
@@ -118,6 +103,8 @@ musiclib index \
 先进行零写入预检：
 
 ```bash
+export MUSICLIB_API_URL=https://makaron-music-library-api.bzz0309.workers.dev
+export MUSICLIB_ADMIN_TOKEN=曲库管理员令牌
 musiclib cloud-sync --library ~/.musiclib --dry-run
 ```
 
@@ -128,6 +115,7 @@ musiclib cloud-sync --library ~/.musiclib --concurrency 3
 ```
 
 音频会写入私有 R2，安全元数据会写入 D1；本地路径不会进入 D1。重复执行会按曲目 ID 更新索引和覆盖对应对象。
+上传走独立的 Worker 管理员通道，不需要把 Cloudflare 账号令牌或 R2 S3 Key 分发给 CLI。
 
 可用 `<歌曲文件>.music.json` 补充标签和版权：
 
@@ -159,6 +147,8 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 - `POST /v1/recommend`：Bearer 鉴权。
 - `POST /v1/tracks/:id/access`：Bearer 鉴权，生成限时 URL。
 - `GET /v1/tracks/:id/audio?...`：HMAC 签名和过期校验，支持 Range。
+- `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
+- `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
 版本 0.1.0 使用共享令牌列表。每 Agent 签发/吊销、审计日志、远程视频上传和服务端视频混音属于后续版本。
 

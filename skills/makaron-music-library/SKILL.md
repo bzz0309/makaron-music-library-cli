@@ -92,7 +92,7 @@ $MUSICLIB cloud-sync --library "/path/to/index" --dry-run
 $MUSICLIB cloud-sync --library "/path/to/index" --concurrency 3
 ```
 
-Read Cloudflare upload credentials only from the environment. Never start the non-dry-run command without explicit owner approval.
+Read the upload endpoint from `MUSICLIB_API_URL` and the separate administrator credential from `MUSICLIB_ADMIN_TOKEN`. Never start the non-dry-run command without explicit owner approval.
 
 Use `--dry-run` on `generate` or `soundtrack` before spending credits or writing final media. For cloud-only Baidu Netdisk files, ask the user or sync client to download them locally before export or mixing.
 

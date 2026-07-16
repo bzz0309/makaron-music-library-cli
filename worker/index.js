@@ -46,6 +46,10 @@ function authorized(request, env) {
   const tokens = String(env.AGENT_TOKENS || '').split(',').map((item) => item.trim()).filter(Boolean);
   return candidate && tokens.includes(candidate);
 }
+function adminAuthorized(request, env) {
+  const candidate = request.headers.get('authorization')?.replace(/^Bearer\s+/i, '') || '';
+  return Boolean(candidate && env.ADMIN_TOKEN && candidate === env.ADMIN_TOKEN);
+}
 function safeTrack(row) {
   let tags = [];
   try { tags = JSON.parse(row.tags_json || '[]'); } catch {}
@@ -99,6 +103,40 @@ async function validSignature(secret, value, candidate) {
   return difference === 0;
 }
 async function trackRow(env, id) { return env.DB.prepare('SELECT * FROM tracks WHERE id = ? LIMIT 1').bind(id).first(); }
+const AUDIO_TYPES = {
+  mp3: 'audio/mpeg', wav: 'audio/wav', m4a: 'audio/mp4', aac: 'audio/aac',
+  flac: 'audio/flac', ogg: 'audio/ogg', opus: 'audio/opus', aiff: 'audio/aiff', aif: 'audio/aiff',
+};
+const TRACK_COLUMNS = ['id', 'title', 'artist', 'album', 'object_key', 'source', 'size_bytes', 'duration_seconds', 'tags_json', 'description', 'license', 'commercial_use', 'modified_at', 'search_text'];
+function uploadDescriptor(id, extension) {
+  if (!/^[A-Za-z0-9_-]{1,128}$/.test(id)) return null;
+  const normalized = String(extension || '').toLowerCase().replace(/^\./, '');
+  if (!AUDIO_TYPES[normalized]) return null;
+  return { object_key: `audio/${id}.${normalized}`, content_type: AUDIO_TYPES[normalized] };
+}
+function adminTrackRow(track) {
+  const descriptor = uploadDescriptor(String(track.id || ''), track.extension);
+  if (!descriptor || !track.title || !Number.isFinite(Number(track.size_bytes))) return null;
+  const tags = Array.isArray(track.tags) ? track.tags.map(String) : [];
+  const searchText = [track.title, track.artist, track.album, track.description, ...tags].filter(Boolean).join(' ').toLowerCase();
+  return [
+    track.id, String(track.title), track.artist ? String(track.artist) : null, track.album ? String(track.album) : null,
+    descriptor.object_key, track.source ? String(track.source) : null, Number(track.size_bytes),
+    Number.isFinite(Number(track.duration_seconds)) ? Number(track.duration_seconds) : null,
+    JSON.stringify(tags), track.description ? String(track.description) : '', track.license ? String(track.license) : 'unknown',
+    track.commercial_use === null || track.commercial_use === undefined ? null : track.commercial_use ? 1 : 0,
+    track.modified_at ? String(track.modified_at) : null, searchText,
+  ];
+}
+async function upsertAdminTracks(env, tracks) {
+  if (!Array.isArray(tracks) || tracks.length < 1 || tracks.length > 50) throw new Error('Provide between 1 and 50 tracks.');
+  const rows = tracks.map(adminTrackRow);
+  if (rows.some((row) => !row)) throw new Error('One or more tracks contain invalid metadata.');
+  const placeholders = TRACK_COLUMNS.map(() => '?').join(',');
+  const updates = TRACK_COLUMNS.filter((column) => column !== 'id').map((column) => `${column}=excluded.${column}`).join(',');
+  const sql = `INSERT INTO tracks (${TRACK_COLUMNS.join(',')}) VALUES (${placeholders}) ON CONFLICT(id) DO UPDATE SET ${updates}, updated_at=CURRENT_TIMESTAMP`;
+  await env.DB.batch(rows.map((row) => env.DB.prepare(sql).bind(...row)));
+}
 function requestedRange(header, total) {
   if (!header) return null;
   const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
@@ -124,6 +162,24 @@ export default {
     try {
       const url = new URL(request.url);
       if (request.method === 'GET' && url.pathname === '/v1/health') return json({ ok: true, service: 'makaron-music-library-worker', api_version: 'v1', storage: 'r2', catalog: 'd1' });
+      const adminUpload = url.pathname.match(/^\/v1\/admin\/tracks\/([^/]+)\/audio$/);
+      if (request.method === 'PUT' && adminUpload) {
+        if (!adminAuthorized(request, env)) return error('ADMIN_UNAUTHORIZED', 'A valid administrator token is required.', 401);
+        const id = decodeURIComponent(adminUpload[1]);
+        const descriptor = uploadDescriptor(id, url.searchParams.get('extension'));
+        const size = Number(request.headers.get('content-length'));
+        const maximum = Number(env.MAX_UPLOAD_BYTES || 100 * 1024 * 1024);
+        if (!descriptor) return error('INVALID_AUDIO_UPLOAD', 'Use a valid track ID and supported audio extension.');
+        if (!request.body || !Number.isFinite(size) || size < 1 || size > maximum) return error('INVALID_AUDIO_SIZE', `Audio must include a content length between 1 and ${maximum} bytes.`);
+        const object = await env.MUSIC.put(descriptor.object_key, request.body, { httpMetadata: { contentType: descriptor.content_type } });
+        return json({ ok: true, id, size_bytes: size, etag: object?.httpEtag || object?.etag || null });
+      }
+      if (request.method === 'POST' && url.pathname === '/v1/admin/tracks/batch') {
+        if (!adminAuthorized(request, env)) return error('ADMIN_UNAUTHORIZED', 'A valid administrator token is required.', 401);
+        const body = await request.json();
+        await upsertAdminTracks(env, body.tracks);
+        return json({ ok: true, indexed: body.tracks.length });
+      }
       const audio = url.pathname.match(/^\/v1\/tracks\/([^/]+)\/audio$/);
       if (request.method === 'GET' && audio) {
         const id = decodeURIComponent(audio[1]); const expires = Number(url.searchParams.get('expires')); const signature = url.searchParams.get('signature');

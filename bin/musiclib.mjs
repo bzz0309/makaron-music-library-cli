@@ -540,7 +540,8 @@ async function main() {
     const { syncCloudflare } = await import('./cloudflare-sync.mjs');
     const result = await syncCloudflare({
       library: rootFor(options), accountId: options['account-id'], databaseId: options['database-id'],
-      bucket: options.bucket, concurrency: options.concurrency, limit: options.limit, dryRun: Boolean(options['dry-run']),
+      apiUrl: apiUrlFor(options), bucket: options.bucket, concurrency: options.concurrency,
+      limit: options.limit, dryRun: Boolean(options['dry-run']),
     });
     return emit(result);
   }

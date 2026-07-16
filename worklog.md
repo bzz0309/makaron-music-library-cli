@@ -23,3 +23,10 @@
 - The first Worker deployment exposed an unused vendored `node:fs/promises` import. Enabled Cloudflare's official `nodejs_compat` flag so the bundled upstream module graph can be validated without changing the local CLI snapshot.
 - Registered the account-level `bzz0309.workers.dev` subdomain and published `makaron-music-library-api`; generated Agent and signing secrets were installed in Worker Secrets and backed up in macOS Keychain.
 - The first public health check encountered expected new-subdomain TLS propagation; repeat the live check after DNS/certificate propagation.
+
+## Live deployment — 2026-07-17
+
+- Confirmed the public health endpoint, Agent-authenticated search, and K-pop recommendation on the deployed Worker.
+- Added a separate `ADMIN_TOKEN` upload channel that streams owner audio into private R2 and batch-upserts safe metadata into D1.
+- Verified that the largest indexed track is about 15.3MB, below the configured 100MB upload ceiling.
+- Kept Agent tokens unable to call administrator routes and removed the need to distribute Cloudflare account or R2 S3 credentials.

@@ -37,5 +37,32 @@ assert.equal(result.tracks, 1);
 assert.equal(result.bytes, 10);
 assert.equal(result.bucket, 'test-bucket');
 
+const originalFetch = globalThis.fetch;
+const calls = [];
+globalThis.fetch = async (url, options) => {
+  if (options.body && typeof options.body[Symbol.asyncIterator] === 'function') {
+    for await (const _chunk of options.body) {}
+  }
+  calls.push({ url: String(url), method: options.method, body: options.body });
+  return new Response(JSON.stringify(options.method === 'PUT' ? { ok: true, id: 'fixture-track' } : { ok: true, indexed: 1 }), {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+  });
+};
+process.env.MUSICLIB_ADMIN_TOKEN = 'test-admin-token';
+const workerResult = await syncCloudflare({
+  library,
+  apiUrl: 'https://music.example.com',
+  concurrency: 1,
+});
+delete process.env.MUSICLIB_ADMIN_TOKEN;
+globalThis.fetch = originalFetch;
+
+assert.equal(workerResult.transport, 'worker-admin');
+assert.equal(workerResult.uploaded, 1);
+assert.equal(calls.length, 2);
+assert.match(calls[0].url, /\/v1\/admin\/tracks\/fixture-track\/audio\?extension=mp3$/);
+assert.match(calls[1].url, /\/v1\/admin\/tracks\/batch$/);
+
 fs.rmSync(library, { recursive: true, force: true });
 console.log('Cloudflare sync smoke test passed');
