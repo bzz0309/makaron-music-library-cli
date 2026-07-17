@@ -1,6 +1,6 @@
 # Handoff
 
-The public baseline is `makaron-music-library-cli` version 0.1.0 at `https://github.com/bzz0309/makaron-music-library-cli`; npm `latest` and the live Cloudflare Worker remain on 0.1.0. A local 0.2.0 candidate adds self-service Agent registration and has not yet been pushed, deployed, or published.
+The production CLI is `makaron-music-library-cli` version 0.2.0. npm `latest` and the live Cloudflare Worker provide self-service Agent registration. GitHub commit `029b2aa` is on `agent/self-register-agents` with draft PR #1 targeting `main`.
 
 ## Current architecture
 
@@ -28,10 +28,9 @@ Worker secrets are `SIGNING_SECRET` and `ADMIN_TOKEN`; production still has lega
 
 ## Next actions
 
-1. Review the 0.2.0 release table, then explicitly approve or reject the D1 migration, Worker deployment, GitHub push, and npm publication.
-2. After approval, apply `0002_agent_registration.sql` before deploying the Worker.
-3. Verify a clean-machine `setup`, self-registration, search, recommendation, signed access, legacy Token compatibility, and quota rejection against production.
-4. Do not sync all 4,291 local rows until their audio is uploaded.
+1. Review and merge GitHub PR #1 when the release diff is ready for `main`.
+2. Verify `npx makaron-music-library-cli setup` from an external Agent; it should not request a Token.
+3. Do not sync all 4,291 local rows until their audio is uploaded.
 
 Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R2 contains the uploaded collection. Health, Agent authentication, title/artist search, signed access, and Range playback are live. The local source now contains 4,291 tracks, so only the filtered 934-track manifest may receive metadata-only updates until additional audio uploads are explicitly approved.
 

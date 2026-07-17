@@ -45,3 +45,6 @@
 - Added automatic credential storage at `~/.musiclib/auth.json` with `0600` permissions and retained `MUSICLIB_API_TOKEN` plus legacy Worker token compatibility.
 - Added default hosted API configuration so external Agents can run `npx makaron-music-library-cli setup` without an owner-provided URL or Token.
 - Added Worker and CLI smoke coverage for registration, hash-only persistence, credential reuse, and daily quotas.
+- Applied the production D1 migration and deployed Worker version `040382ec-acbc-4d18-919d-b1c8d5880bd1`.
+- Published `makaron-music-library-cli@0.2.0` to public npm with `latest` after upgrading the publishing client from npm 11.0.0 to 11.6.2 to avoid a broken web-auth polling endpoint.
+- Verified the public package from a clean install with live self-registration and K-pop search; revoked both release-smoke credentials afterward.
