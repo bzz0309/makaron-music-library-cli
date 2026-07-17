@@ -86,6 +86,24 @@ function score(row, terms, scene) {
   }
   return { score: value, matched: unique(matched), scene: scene || null };
 }
+function canonicalTrackKey(track) {
+  return [track.title, track.artist].filter(Boolean).join(' ')
+    .normalize('NFKC')
+    .toLowerCase()
+    .replace(/[\(\[\uFF08\u3010][^\)\]\uFF09\u3011]*b[\s-]?roll[^\)\]\uFF09\u3011]*[\)\]\uFF09\u3011]/gi, ' ')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim();
+}
+function variantPenalty(track) { return /b[\s-]?roll/i.test(track.title || '') ? 1 : 0; }
+function distinctTracks(tracks) {
+  const seen = new Set();
+  return tracks.filter((track) => {
+    const key = canonicalTrackKey(track) || track.id;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
 async function searchTracks(env, query, options = {}) {
   const terms = queryTerms(query); if (!terms.length) return [];
   const conditions = terms.map(() => 'search_text LIKE ?').join(' OR ');
@@ -106,12 +124,12 @@ async function searchTracks(env, query, options = {}) {
     rows = [...new Map([...(preferred.results || []), ...rows].map((row) => [row.id, row])).values()];
   }
   const requiredTags = unique([...(SCENE_REQUIRED_TAGS[options.scene] || []), ...(options.required_tags || [])]);
-  return rows
+  const ranked = rows
     .map((row) => ({ ...safeTrack(row), match: score(row, terms, options.scene) }))
     .filter((track) => !requiredTags.length || requiredTags.every((tag) => track.tags.includes(tag)))
     .filter((track) => track.match.score > 0)
-    .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
-    .slice(0, Math.min(Number(options.limit || 10), 50));
+    .sort((a, b) => b.match.score - a.match.score || variantPenalty(a) - variantPenalty(b) || a.title.localeCompare(b.title));
+  return distinctTracks(ranked).slice(0, Math.min(Number(options.limit || 10), 50));
 }
 function musicPrompt(intelligence) { return intelligence?.seed_audio?.music_prompt || intelligence?.music_prompt || intelligence?.music_cue?.prompt || intelligence?.short_video_music?.hook_prompt || ''; }
 function recommendationDecision(track) {

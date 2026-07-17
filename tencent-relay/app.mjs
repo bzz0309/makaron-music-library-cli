@@ -6,6 +6,7 @@ const PORT = Number(process.env.PORT || 9000);
 const UPSTREAM = new URL(process.env.MUSICLIB_UPSTREAM_URL || 'https://makaron-music-library-api.bzz0309.workers.dev');
 const RELAY_SECRET = process.env.MUSICLIB_RELAY_SECRET || '';
 const MAX_JSON_BODY_BYTES = 512 * 1024;
+const MAX_AUDIO_RANGE_BYTES = 4 * 1024 * 1024;
 
 const ROUTES = [
   ['GET', /^\/v1\/health$/],
@@ -71,11 +72,32 @@ async function requestBody(request) {
   return chunks.length ? Buffer.concat(chunks) : undefined;
 }
 
-function upstreamHeaders(request) {
+function browserLike(request) {
+  return /(?:mozilla|applewebkit|chrome|safari|firefox|edg)\//i.test(String(request.headers['user-agent'] || ''));
+}
+
+function boundedAudioRange(value, useDefault = false) {
+  const match = /^bytes=(\d*)-(\d*)$/i.exec(String(value || '').trim());
+  if (!match || (!match[1] && !match[2])) return useDefault ? `bytes=0-${MAX_AUDIO_RANGE_BYTES - 1}` : null;
+  if (!match[1]) {
+    const suffix = Number(match[2]);
+    return `bytes=-${Math.min(Number.isFinite(suffix) && suffix > 0 ? suffix : MAX_AUDIO_RANGE_BYTES, MAX_AUDIO_RANGE_BYTES)}`;
+  }
+  const start = Number(match[1]);
+  const requestedEnd = match[2] ? Number(match[2]) : start + MAX_AUDIO_RANGE_BYTES - 1;
+  const end = Math.min(Number.isFinite(requestedEnd) ? requestedEnd : start + MAX_AUDIO_RANGE_BYTES - 1, start + MAX_AUDIO_RANGE_BYTES - 1);
+  return `bytes=${start}-${end}`;
+}
+
+function upstreamHeaders(request, pathname) {
   const headers = new Headers();
   for (const name of ['accept', 'authorization', 'content-type', 'range', 'user-agent']) {
     const value = request.headers[name];
     if (value) headers.set(name, String(value));
+  }
+  if (/^\/v1\/tracks\/[^/]+\/audio$/.test(pathname)) {
+    const range = boundedAudioRange(request.headers.range, browserLike(request));
+    if (range) headers.set('range', range); else headers.delete('range');
   }
   const origin = clientOrigin(request);
   headers.set('x-musiclib-relay-origin', origin);
@@ -88,12 +110,13 @@ function upstreamHeaders(request) {
   return headers;
 }
 
-function responseHeaders(upstreamResponse) {
+function responseHeaders(upstreamResponse, audio = false) {
   const headers = {};
   for (const name of ['accept-ranges', 'cache-control', 'content-length', 'content-range', 'content-type', 'etag', 'retry-after']) {
     const value = upstreamResponse.headers.get(name);
     if (value) headers[name] = value;
   }
+  if (audio) headers['content-disposition'] = 'inline';
   return headers;
 }
 
@@ -102,19 +125,20 @@ function rewrittenAccessBody(body, request) {
   const upstreamAudioPrefix = `${UPSTREAM.origin}/v1/tracks/`;
   if (!body.url.startsWith(upstreamAudioPrefix) || !body.url.includes('/audio?')) return body;
   const target = new URL(body.url);
-  return { ...body, url: `${publicOrigin(request)}${target.pathname}${target.search}` };
+  const origin = publicOrigin(request);
+  const url = `${origin}${target.pathname}${target.search}`;
+  return { ...body, url };
 }
 
 async function proxy(request, response) {
   if (!RELAY_SECRET) return json(response, 503, { ok: false, error: { code: 'RELAY_NOT_CONFIGURED', message: 'Relay authentication is not configured.' } });
   const incoming = new URL(request.url, 'http://relay.local');
   if (!allowed(request.method, incoming.pathname)) return json(response, 404, { ok: false, error: { code: 'NOT_FOUND', message: 'API route not found.' } });
-
   const target = new URL(`${incoming.pathname}${incoming.search}`, UPSTREAM);
   const body = ['GET', 'HEAD'].includes(request.method) ? undefined : await requestBody(request);
   const upstreamResponse = await fetch(target, {
     method: request.method,
-    headers: upstreamHeaders(request),
+    headers: upstreamHeaders(request, incoming.pathname),
     body,
     redirect: 'manual',
   });
@@ -125,7 +149,8 @@ async function proxy(request, response) {
     return json(response, upstreamResponse.status, payload);
   }
 
-  response.writeHead(upstreamResponse.status, responseHeaders(upstreamResponse));
+  const audio = /^\/v1\/tracks\/[^/]+\/audio$/.test(incoming.pathname);
+  response.writeHead(upstreamResponse.status, responseHeaders(upstreamResponse, audio));
   if (!upstreamResponse.body) return response.end();
   Readable.fromWeb(upstreamResponse.body).pipe(response);
 }

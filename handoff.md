@@ -2,6 +2,8 @@
 
 Production is `makaron-music-library-cli` version 0.3.1 on GitHub `main` and npm `latest`. Worker version `7b1ac649-0a2d-4d99-be28-767c4f3a3642` makes explicit no-vocals intent a hard constraint and adds automatic Makaron-original fallback for remote video soundtracks. The Tencent relay and R2 catalog are unchanged.
 
+A local, unshipped server hotfix caps browser and player audio Range requests at 4MB so Tencent SCF stays below its response-body limit, while preserving the CLI's complete ranged-download fallback. It also deduplicates K-pop recommendation results by canonical title and artist, preferring the non-B-Roll variant. Deploy the Worker and Tencent relay together after owner approval; no npm package update is required.
+
 ## Current architecture
 
 - Any Agent installs the npm CLI and the single-file Skill.

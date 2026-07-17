@@ -31,6 +31,18 @@ const rows = [
     license: 'unknown', commercial_use: null, modified_at: '2026-07-16T00:00:00Z',
     search_text: 'catchy product bgm clean modern ecommerce marketing background trending no_vocals',
   },
+  {
+    id: 'trk_screen_time_broll', title: 'Screen Time (B-Roll Version) (feat. Hoshi of SEVENTEEN) - Epik High,HOSHI', artist: null, album: null,
+    object_key: 'audio/trk_screen_time_broll.mp3', source: 'test', size_bytes: 100, duration_seconds: 233.808,
+    tags_json: JSON.stringify(['kpop']), description: 'K-pop track', license: 'unknown', commercial_use: null,
+    modified_at: '2026-07-16T00:00:00Z', search_text: 'screen time b-roll version feat hoshi seventeen epik high kpop',
+  },
+  {
+    id: 'trk_screen_time', title: 'Screen Time (feat. Hoshi of SEVENTEEN) - Epik High,HOSHI', artist: null, album: null,
+    object_key: 'audio/trk_screen_time.mp3', source: 'test', size_bytes: 100, duration_seconds: 233.808,
+    tags_json: JSON.stringify(['kpop']), description: 'K-pop track', license: 'unknown', commercial_use: null,
+    modified_at: '2026-07-16T00:00:00Z', search_text: 'screen time feat hoshi seventeen epik high kpop',
+  },
 ];
 
 const challenges = [];
@@ -232,7 +244,7 @@ const searched = await worker.fetch(authorized('/v1/search?query=K-pop%20stage')
 const searchBody = await payload(searched);
 assert.equal(searchBody.scene, 'kpop-stage');
 assert.equal(searchBody.scene_inferred, true);
-assert.equal(searchBody.count, 1);
+assert.equal(searchBody.count, 2);
 assert.equal(searchBody.tracks[0].id, 'trk_kpop');
 assert.equal(searchBody.tracks[0].match.scene, 'kpop-stage');
 assert.ok(searchBody.tracks[0].match.matched.includes('scene:kpop'));
@@ -240,9 +252,15 @@ assert.equal('object_key' in searchBody.tracks[0], false);
 
 const sceneSearch = await worker.fetch(authorized('/v1/search?query=dance%20pop%20stage&scene=kpop-stage&limit=5'), env);
 const sceneSearchBody = await payload(sceneSearch);
-assert.equal(sceneSearchBody.count, 1);
+assert.equal(sceneSearchBody.count, 2);
 assert.equal(sceneSearchBody.tracks[0].id, 'trk_kpop');
 assert.ok(sceneSearchBody.tracks[0].match.matched.includes('scene:kpop'));
+
+const duplicateSearch = await worker.fetch(authorized('/v1/search?query=Screen%20Time&scene=kpop-stage&limit=5'), env);
+const duplicateSearchBody = await payload(duplicateSearch);
+const screenTimeTracks = duplicateSearchBody.tracks.filter((track) => track.title.startsWith('Screen Time'));
+assert.equal(screenTimeTracks.length, 1);
+assert.equal(screenTimeTracks[0].id, 'trk_screen_time');
 
 const recommended = await worker.fetch(authorized('/v1/recommend', {
   method: 'POST',

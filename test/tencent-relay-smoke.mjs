@@ -15,6 +15,7 @@ const relaySecret = 'relay-smoke-secret';
 const clientIp = '203.0.113.9';
 const registrationSession = 'relay_smoke_registration_session_123456789';
 let relayHeaders;
+const audioRanges = [];
 
 const upstream = http.createServer(async (request, response) => {
   if (request.url === '/v1/health') {
@@ -31,9 +32,14 @@ const upstream = http.createServer(async (request, response) => {
     return response.end(JSON.stringify({ ok: true, url: `${upstreamOrigin}/v1/tracks/trk_1/audio?expires=9999999999&signature=test` }));
   }
   if (request.url?.startsWith('/v1/tracks/trk_1/audio?')) {
-    assert.equal(request.headers.range, 'bytes=0-3');
-    response.writeHead(206, { 'content-type': 'audio/mpeg', 'content-range': 'bytes 0-3/10', 'content-length': '4', 'accept-ranges': 'bytes' });
-    return response.end('test');
+    audioRanges.push(request.headers.range);
+    if (request.headers.range === 'bytes=0-3') {
+      response.writeHead(206, { 'content-type': 'audio/mpeg', 'content-range': 'bytes 0-3/10', 'content-length': '4', 'accept-ranges': 'bytes' });
+      return response.end('test');
+    }
+    assert.equal(request.headers.range, 'bytes=0-4194303');
+    response.writeHead(206, { 'content-type': 'audio/mpeg', 'content-range': 'bytes 0-9/10', 'content-length': '10', 'accept-ranges': 'bytes' });
+    return response.end('test-audio');
   }
   response.writeHead(404, { 'content-type': 'application/json' });
   response.end(JSON.stringify({ ok: false }));
@@ -84,11 +90,17 @@ try {
   });
   const accessBody = await access.json();
   assert.equal(accessBody.url, `${relayOrigin}/v1/tracks/trk_1/audio?expires=9999999999&signature=test`);
-
   const audio = await fetch(accessBody.url, { headers: { range: 'bytes=0-3' } });
   assert.equal(audio.status, 206);
   assert.equal(audio.headers.get('content-range'), 'bytes 0-3/10');
   assert.equal(await audio.text(), 'test');
+
+  const browserAudio = await fetch(accessBody.url, { headers: { 'user-agent': 'Mozilla/5.0 Chrome/126.0' } });
+  assert.equal(browserAudio.status, 206);
+  assert.equal(browserAudio.headers.get('content-range'), 'bytes 0-9/10');
+  assert.equal(browserAudio.headers.get('content-disposition'), 'inline');
+  assert.equal(await browserAudio.text(), 'test-audio');
+  assert.deepEqual(audioRanges, ['bytes=0-3', 'bytes=0-4194303']);
 
   const admin = await fetch(`${relayOrigin}/v1/admin/tracks/batch`, { method: 'POST', body: '{}' });
   assert.equal(admin.status, 404);
