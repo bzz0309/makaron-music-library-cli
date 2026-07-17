@@ -79,6 +79,7 @@
 - Added smoke coverage for remote media download, recommendation, audio access, mixing, and strict K-pop scene filtering.
 - Added platform ffmpeg/ffprobe fallbacks so Agents do not depend on system packages; system binaries still take precedence.
 - A real three-second MP4 with original audio passed HTTP download, production signed-audio Range retrieval, fade/mix, and output probing; the result contains valid video and audio streams, and the temporary Agent credential was revoked.
-- No Worker deployment, GitHub push, or npm publication has been performed for 0.3.0.
+- Deployed Worker version `e522a1e2-50e8-4988-ae8b-7a6238f52416`, pushed GitHub `main`, and published `makaron-music-library-cli@0.3.0` to npm `latest` after explicit owner approval.
 - Revised the interface boundary after user review: ordinary users provide only natural language; both CLI and Worker now infer K-pop/e-commerce scenes for search, recommendation, and remote soundtrack requests.
 - Added server-side K-pop hard filtering and returned `scene`, `scene_inferred`, and `match.scene` evidence so an Agent cannot rank generic dance/pop above tagged K-pop merely by choosing plain search.
+- Verified the public package from a clean cache: automatic registration, natural-language K-pop search, bundled ffmpeg/ffprobe detection, and natural-language e-commerce soundtrack dry-run all passed. Revoked both production and public-package release-smoke credentials.

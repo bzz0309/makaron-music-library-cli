@@ -1,6 +1,6 @@
 # Handoff
 
-Production remains `makaron-music-library-cli` version 0.2.2. A local 0.3.0 candidate adds Agent-side public-CDN video soundtrack assembly plus natural-language scene inference in both CLI and Worker. K-pop constraints apply even when an Agent chooses plain search; the candidate has not been deployed, pushed, or published.
+Production is `makaron-music-library-cli` version 0.3.0 on GitHub `main` and npm `latest`. The production Worker, Tencent relay path, public package, Agent-side CDN soundtrack assembly, and natural-language scene inference are live. K-pop constraints apply even when an Agent chooses plain search.
 
 ## Current architecture
 
@@ -28,9 +28,8 @@ Worker secrets are `SIGNING_SECRET`, `ADMIN_TOKEN`, and `RELAY_SHARED_SECRET`; T
 
 ## Next actions
 
-1. Complete 0.3.0 release checks, then obtain explicit owner approval before Worker deployment, GitHub push, or npm publication.
-2. After publication, test `soundtrack-remote` in an Agent environment that has ffmpeg and a direct CDN video URL.
-3. Do not sync all 4,291 local rows until their audio is uploaded.
+1. Test the public `soundtrack-remote` command in Miaoda or another Agent with a real direct CDN video URL.
+2. Do not sync all 4,291 local rows until their audio is uploaded.
 
 Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R2 contains the uploaded collection. The Tencent endpoint is `https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com`. Live health, self-registration, K-pop search, signed access URL rewriting, and a 1KB Range read all pass through it. The local source now contains 4,291 tracks, so only the filtered 934-track manifest may receive metadata-only updates until additional audio uploads are explicitly approved.
 
