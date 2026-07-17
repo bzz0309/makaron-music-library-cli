@@ -69,3 +69,16 @@
 - Passed a production canary through Tencent: automatic self-registration, K-pop search, and short-lived audio access all succeeded without an owner-provided Token.
 - Published `makaron-music-library-cli@0.2.2` to GitHub `main` and public npm `latest` after owner approval.
 - Verified the public package from an empty directory: version, OpenClaw setup dry-run, and live self-registration passed; revoked the release-smoke credential afterward.
+
+## Remote soundtrack candidate — 2026-07-17
+
+- Started version 0.3.0 with `soundtrack-remote` for direct public HTTP/HTTPS video URLs.
+- Added bounded streaming downloads, temporary-file cleanup, ffmpeg/ffprobe checks, output collision protection, original-audio preservation, adjustable volumes, and fade-in/fade-out.
+- Added automatic central recommendation and short-lived audio retrieval; unknown rights block mixing unless the user explicitly authorizes a non-commercial test.
+- Made Worker search honor `scene` and required the `kpop` tag for `kpop-stage`, preventing generic dance/pop tracks from outranking actual K-pop.
+- Added smoke coverage for remote media download, recommendation, audio access, mixing, and strict K-pop scene filtering.
+- Added platform ffmpeg/ffprobe fallbacks so Agents do not depend on system packages; system binaries still take precedence.
+- A real three-second MP4 with original audio passed HTTP download, production signed-audio Range retrieval, fade/mix, and output probing; the result contains valid video and audio streams, and the temporary Agent credential was revoked.
+- No Worker deployment, GitHub push, or npm publication has been performed for 0.3.0.
+- Revised the interface boundary after user review: ordinary users provide only natural language; both CLI and Worker now infer K-pop/e-commerce scenes for search, recommendation, and remote soundtrack requests.
+- Added server-side K-pop hard filtering and returned `scene`, `scene_inferred`, and `match.scene` evidence so an Agent cannot rank generic dance/pop above tagged K-pop merely by choosing plain search.

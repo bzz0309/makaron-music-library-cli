@@ -50,6 +50,7 @@ try {
   const remoteEnv = { MUSICLIB_API_URL: apiUrl, MUSICLIB_API_TOKEN: token };
   const searched = call(['search', '--query', 'K-pop stage'], remoteEnv);
   assert.equal(searched.count, 1);
+  assert.equal(searched.scene_inferred, true);
   assert.equal('path' in searched.tracks[0], false);
 
   const recommended = call(['recommend', '--scene', 'kpop-stage', '--duration', '20'], remoteEnv);
@@ -61,6 +62,18 @@ try {
   const downloaded = await fetch(access.url);
   assert.equal(downloaded.status, 200);
   assert.equal(await downloaded.text(), 'remote audio fixture');
+
+  const fakeBin = path.join(temp, 'bin'); fs.mkdirSync(fakeBin, { recursive: true });
+  const fakeProbe = path.join(fakeBin, 'ffprobe');
+  const fakeFfmpeg = path.join(fakeBin, 'ffmpeg');
+  fs.writeFileSync(fakeProbe, '#!/bin/sh\nif [ "$1" = "-version" ]; then exit 0; fi\nprintf \'%s\\n\' \'{"format":{"duration":"20"},"streams":[{"codec_type":"video"},{"codec_type":"audio"}]}\'\n', { mode: 0o755 });
+  fs.writeFileSync(fakeFfmpeg, '#!/bin/sh\nif [ "$1" = "-version" ]; then exit 0; fi\nfor last do :; done\nprintf \'mixed video fixture\' > "$last"\n', { mode: 0o755 });
+  const mixedOutput = path.join(temp, 'mixed.mp4');
+  const mixed = call(['soundtrack-remote', '--video-url', access.url, '--scene', 'kpop-stage', '--output', mixedOutput], { ...remoteEnv, PATH: `${fakeBin}:${process.env.PATH}` });
+  assert.equal(mixed.ok, true);
+  assert.equal(mixed.track.id, searched.tracks[0].id);
+  assert.equal(mixed.mix.original_audio_preserved, true);
+  assert.equal(fs.readFileSync(mixedOutput, 'utf8'), 'mixed video fixture');
 
   const unauthorized = call(['search', '--query', 'K-pop'], { MUSICLIB_API_URL: apiUrl, MUSICLIB_API_TOKEN: 'wrong' }, 1);
   assert.equal(unauthorized.error.code, 'UNAUTHORIZED');

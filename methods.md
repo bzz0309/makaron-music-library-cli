@@ -27,6 +27,14 @@ Prefer a dedicated Worker administrator token over distributing Cloudflare accou
 
 Support a single standard HTTP byte range on signed audio routes. Return `206`, `Content-Range`, and `Accept-Ranges` for valid ranges and `416` for invalid ranges, so browsers and media tools can seek without downloading the whole track.
 
+## Agent-side remote soundtrack assembly
+
+Keep public video bytes out of the central library service. Let the Agent download a bounded HTTP/HTTPS video to a temporary directory, probe its duration, request a scene-aware central recommendation, download the short-lived authorized audio, and run ffmpeg locally. Prefer system media tools and fall back to platform-specific npm binaries. When a regional relay rejects a full audio response, use bounded Range chunks and validate every `Content-Range`. Preserve original audio by default, apply bounded volumes and fades, refuse existing outputs, and always delete temporary media. Require an explicit non-commercial override when rights metadata is unknown.
+
+For strongly typed scenes, distinguish retrieval from suitability. Plain search may return broad lexical matches; `recommend --scene` must enforce defining tags. A K-pop stage result without a `kpop` tag is a mismatch even if it is dance/pop.
+
+Natural language is the public contract; commands are an internal implementation detail. Infer known scenes independently in the CLI and central service, apply the same constraints to both search and recommendation, and return the inferred scene plus matched evidence. This keeps results correct even when an Agent chooses a less-specific internal command.
+
 ## Rights remain explicit
 
 Use sidecar `<audio>.music.json` files for tags and rights fields. Possession is not evidence of commercial permission; unknown rights must trigger review or original generation.

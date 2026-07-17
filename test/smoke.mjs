@@ -61,6 +61,12 @@ try {
   assert.equal(kpopRecommended.profile_id, 'kpop_performance_001');
   assert.ok(!kpopRecommended.recommendation.match.matched.includes('k'));
   assert.equal(kpopRecommended.decision.publish_ready, false);
+  const naturalKpopSearch = call(['search', '--library', library, '--query', '20秒 K-pop 女团舞台，节奏强，副歌高潮']);
+  assert.match(naturalKpopSearch.tracks[0].title, /女团Dance Pop/);
+  assert.equal(naturalKpopSearch.tracks[0].match.scene, 'kpop-stage');
+  const naturalKpopRecommended = call(['recommend', '--library', library, '--request', '给一个 K-pop 女团舞台视频配乐，强节拍和副歌高潮']);
+  assert.match(naturalKpopRecommended.recommendation.title, /女团Dance Pop/);
+  assert.equal(naturalKpopRecommended.recommendation.match.scene, 'kpop-stage');
   const ecommerceRecommended = call(['recommend', '--library', library, '--scene', 'ecommerce', '--brief', '美妆产品快速展示']);
   assert.match(ecommerceRecommended.recommendation.title, /Upbeat Product/);
   assert.ok(['beauty_commercial_glow_001', 'product_launch_motion_001'].includes(ecommerceRecommended.profile_id));

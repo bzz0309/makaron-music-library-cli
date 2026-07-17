@@ -1,6 +1,6 @@
 {
   "name": "makaron-music-library-cli",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Portable music library, video soundtrack, and Makaron music CLI for AI agents",
   "type": "module",
   "bin": {
@@ -12,6 +12,8 @@
     "pack:check": "npm pack --dry-run"
   },
   "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "@ffprobe-installer/ffprobe": "^2.1.2",
     "commander": "^12.1.0",
     "zod": "^3.25.76"
   },

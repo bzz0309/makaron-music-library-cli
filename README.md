@@ -149,6 +149,23 @@ musiclib recommend --local --scene ecommerce --duration 15
 musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.mp4
 ```
 
+### 公开视频直链自动配乐
+
+Agent 拿到可直接下载的 HTTP/HTTPS 视频地址后，可用一条命令完成下载、场景推荐、限时音频获取、裁剪、淡入淡出和混音：
+
+普通用户只需要用大白话告诉 Agent 需求，例如“给这个 K-pop 女团舞台视频配乐”。Agent 内部传递原始请求，CLI 和云端会自动识别 `kpop-stage` 或 `ecommerce` 等场景。即使 Agent 误用普通搜索，云端也会应用同样的场景约束；用户不需要知道命令、标签或场景 ID。
+
+```bash
+musiclib soundtrack-remote \
+  --video-url "https://cdn.example.com/video.mp4" \
+  --request "给这个高端美妆广告配干净现代的 BGM" \
+  --output output.mp4
+```
+
+默认保留视频原声，原声音量 20%，背景音乐 35%，淡入淡出 1 秒。可使用 `--replace-audio`、`--music-volume`、`--original-volume` 和 `--fade-seconds` 调整。默认最大视频 500MB、音频 50MB，且不覆盖已有输出。
+
+当曲目版权字段未验证时，CLI 会返回 `RIGHTS_REVIEW_REQUIRED`。只有在用户确认具有使用权的非商业测试中，才传入 `--allow-unknown-rights`。CLI 优先使用系统 `ffmpeg` / `ffprobe`，未安装时自动使用 npm 包提供的当前平台二进制。
+
 需要 `ffprobe` 读取完整媒体元数据，`ffmpeg` 分析视频和混音；macOS 可用 `afinfo` 作为音频时长后备。Makaron 生成需要 `MAKARON_API_KEY` 或 makaron-cli 已保存的认证。
 
 ## API
@@ -163,7 +180,7 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 - `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
 - `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
-版本 0.2.2 默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。注册挑战与验证使用中继签名的一次性 Agent 会话标识，即使妙搭两次请求使用不同出口 IP 也能完成注册。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
+版本 0.3.0 在 Agent 本地执行公开视频下载和混音，视频不会上传到曲库服务器。默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。注册挑战与验证使用中继签名的一次性 Agent 会话标识，即使妙搭两次请求使用不同出口 IP 也能完成注册。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。
 
 ## 妙搭与中国网络入口
 

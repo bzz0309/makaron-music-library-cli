@@ -3,18 +3,22 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import http from 'node:http';
+import { createRequire } from 'node:module';
 import os from 'node:os';
 import path from 'node:path';
+import { Readable, Transform } from 'node:stream';
+import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const VERSION = '0.2.2';
+const VERSION = '0.3.0';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
 const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
 const AUTH_FILE = path.join(os.homedir(), '.musiclib', 'auth.json');
 const DEFAULT_API_URL = 'https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com';
 const API_VERSION = 'v1';
+const require = createRequire(import.meta.url);
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.aiff', '.aif']);
 const CONCEPTS = {
   calm: ['calm', 'gentle', 'soft', 'peaceful', 'relax', '安静', '平静', '轻柔', '舒缓'],
@@ -36,7 +40,7 @@ const CONCEPTS = {
   kpop: ['k-pop', 'kpop', 'korean pop', '韩国流行', '韩语', '韩流', '女团', '男团'],
   trending: ['trending', 'viral', 'tiktok', '抖音', '热门', '爆款'],
   bgm: ['bgm', 'background music', '背景音乐'],
-  product: ['product', 'ecommerce', 'e-commerce', '商品', '产品', '电商', '带货'],
+  product: ['product', 'ecommerce', 'e-commerce', 'marketing', 'advertising', '商品', '产品', '电商', '带货', '营销', '广告', '美妆'],
   luxury: ['luxury', 'premium', 'elegant', '奢华', '高级', '高端'],
   orchestral: ['orchestral', 'strings', 'symphony', '管弦', '弦乐', '交响'],
   rock: ['rock', '摇滚'],
@@ -61,6 +65,7 @@ const SCENE_PROFILES = {
     avoid: { sad: 4, tense: 2 },
   },
 };
+const SCENE_REQUIRED_TAGS = { 'kpop-stage': ['kpop'] };
 
 class CliError extends Error {
   constructor(code, message, retryable = false, details = {}) {
@@ -108,7 +113,7 @@ function saveTracks(root, tracks) { writeJson(tracksFile(root), tracks.sort((a, 
 function parseArgs(argv) {
   const options = { _: [] };
   const repeatable = new Set(['tag', 'turn']);
-  const flags = new Set(['json', 'force', 'live', 'dry-run', 'metadata-only', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'commercial-only', 'no-analyze', 'local', 'remote', 'allow-unauthenticated']);
+  const flags = new Set(['json', 'force', 'live', 'dry-run', 'metadata-only', 'no-wait', 'global', 'yes', 'help', 'copy', 'mix-original', 'replace-audio', 'commercial-only', 'allow-unknown-rights', 'no-analyze', 'local', 'remote', 'allow-unauthenticated']);
   for (let index = 0; index < argv.length; index += 1) {
     const token = argv[index];
     if (!token.startsWith('--')) { options._.push(token); continue; }
@@ -122,13 +127,32 @@ function parseArgs(argv) {
   return options;
 }
 function required(options, key) { if (!options[key]) fail('MISSING_REQUIRED_OPTION', `Missing required option --${key}`); return options[key]; }
+function inferredScene(text) {
+  const concepts = new Set(conceptsFor(text));
+  if (concepts.has('kpop')) return 'kpop-stage';
+  if (concepts.has('product')) return 'ecommerce';
+  return null;
+}
 function sceneProfile(value) {
   if (!value) return null;
   if (SCENE_PROFILES[value]) return { id: value, ...SCENE_PROFILES[value] };
   return { id: value, label: value, brief: value.replace(/[-_]+/g, ' '), weights: {}, avoid: {} };
 }
 
-function executable(name) { return spawnSync(name, ['-version'], { encoding: 'utf8' }).status === 0; }
+function bundledExecutable(name) {
+  try {
+    if (name === 'ffmpeg') return require('@ffmpeg-installer/ffmpeg').path;
+    if (name === 'ffprobe') return require('@ffprobe-installer/ffprobe').path;
+  } catch {}
+  return null;
+}
+function executablePath(name) {
+  if (spawnSync(name, ['-version'], { encoding: 'utf8' }).status === 0) return name;
+  const fallback = bundledExecutable(name);
+  if (fallback && fs.existsSync(fallback) && spawnSync(fallback, ['-version'], { encoding: 'utf8' }).status === 0) return fallback;
+  return null;
+}
+function executable(name) { return Boolean(executablePath(name)); }
 function run(command, args, timeout = 900000) {
   const result = spawnSync(command, args, { encoding: 'utf8', env: { ...process.env, MAKARON_DISABLE_UPDATE_CHECK: '1' }, timeout, maxBuffer: 30 * 1024 * 1024 });
   if (result.error) fail('COMMAND_EXEC_FAILED', result.error.message, true);
@@ -350,8 +374,9 @@ function waitFor(runId) {
 }
 
 function probe(file) {
-  if (executable('ffprobe')) {
-    const result = spawnSync('ffprobe', ['-v', 'error', '-show_entries', 'format=duration:format_tags=title,artist,album,genre:stream=codec_type', '-of', 'json', file], { encoding: 'utf8', timeout: 30000 });
+  const ffprobe = executablePath('ffprobe');
+  if (ffprobe) {
+    const result = spawnSync(ffprobe, ['-v', 'error', '-show_entries', 'format=duration:format_tags=title,artist,album,genre:stream=codec_type', '-of', 'json', file], { encoding: 'utf8', timeout: 30000 });
     if (!result.error && result.status === 0) {
       let data; try { data = JSON.parse(result.stdout || '{}'); } catch { data = null; }
       if (data) return {
@@ -431,8 +456,10 @@ function scoreTrack(track, query, wantedDuration, profile = null) {
 }
 function search(root, query, options = {}) {
   const limit = Number(options.limit || 10); const duration = Number(options.duration || 0); const profile = sceneProfile(options.scene);
+  const requiredTags = SCENE_REQUIRED_TAGS[profile?.id] || [];
   return loadTracks(root)
     .filter((track) => !options['commercial-only'] || track.commercial_use === true)
+    .filter((track) => !requiredTags.length || requiredTags.some((tag) => track.tags?.includes(tag)))
     .map((track) => ({ ...track, match: scoreTrack(track, query, duration, profile) }))
     .filter((track) => !query || track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
@@ -527,12 +554,13 @@ async function serveLibrary(root, options) {
 }
 
 function extractFrames(video, directory) {
-  if (!executable('ffmpeg')) fail('FFMPEG_REQUIRED', 'ffmpeg is required for automatic video analysis');
+  const ffmpeg = executablePath('ffmpeg');
+  if (!ffmpeg) fail('FFMPEG_REQUIRED', 'ffmpeg is required for automatic video analysis');
   fs.mkdirSync(directory, { recursive: true });
   const info = probe(video); const duration = info?.duration_seconds || 12; const positions = [0.15, 0.5, 0.85].map((ratio) => Math.max(0, duration * ratio));
   return positions.map((seconds, index) => {
     const output = path.join(directory, `frame-${index + 1}.jpg`);
-    run('ffmpeg', ['-y', '-ss', String(seconds), '-i', video, '-frames:v', '1', '-vf', 'scale=960:-2', '-q:v', '3', output], 60000);
+    run(ffmpeg, ['-y', '-ss', String(seconds), '-i', video, '-frames:v', '1', '-vf', 'scale=960:-2', '-q:v', '3', output], 60000);
     return output;
   });
 }
@@ -570,16 +598,130 @@ function copyTrack(track, output) {
   const destination = path.resolve(output); fs.mkdirSync(path.dirname(destination), { recursive: true }); fs.copyFileSync(track.path, destination); return destination;
 }
 function addSoundtrack(video, music, output, options) {
-  if (!executable('ffmpeg')) fail('FFMPEG_REQUIRED', 'ffmpeg is required to add music to video');
+  const ffmpeg = executablePath('ffmpeg');
+  if (!ffmpeg) fail('FFMPEG_REQUIRED', 'ffmpeg is required to add music to video');
   const videoMeta = probe(video); const args = ['-y', '-i', video, '-stream_loop', '-1', '-i', music];
+  const duration = Number(videoMeta?.duration_seconds || 0); const fade = Math.max(0, Number(options['fade-seconds'] ?? 1));
+  const trim = duration > 0 ? `atrim=0:${duration},asetpts=PTS-STARTPTS,` : '';
+  const fades = fade > 0 && duration > fade ? `afade=t=in:st=0:d=${fade},afade=t=out:st=${Math.max(0, duration - fade)}:d=${fade},` : '';
   if (options['mix-original'] && videoMeta?.has_audio) {
     const original = Number(options['original-volume'] || 0.2); const musicVolume = Number(options['music-volume'] || 0.8);
-    args.push('-filter_complex', `[0:a]volume=${original}[original];[1:a]volume=${musicVolume}[music];[original][music]amix=inputs=2:duration=first:dropout_transition=2[a]`, '-map', '0:v:0', '-map', '[a]');
+    args.push('-filter_complex', `[0:a]volume=${original}[original];[1:a]${trim}${fades}volume=${musicVolume}[music];[original][music]amix=inputs=2:duration=first:dropout_transition=2[a]`, '-map', '0:v:0', '-map', '[a]');
   } else {
-    args.push('-filter:a', `volume=${Number(options['music-volume'] || 0.8)}`, '-map', '0:v:0', '-map', '1:a:0');
+    args.push('-filter:a', `${trim}${fades}volume=${Number(options['music-volume'] || 0.8)}`, '-map', '0:v:0', '-map', '1:a:0');
   }
   args.push('-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', output);
-  run('ffmpeg', args, 1800000); return path.resolve(output);
+  run(ffmpeg, args, 1800000); return path.resolve(output);
+}
+
+function remoteMediaUrl(value, label) {
+  let parsed;
+  try { parsed = new URL(value); } catch { fail('INVALID_MEDIA_URL', `${label} must be a valid HTTP or HTTPS URL.`); }
+  if (!['http:', 'https:'].includes(parsed.protocol)) fail('INVALID_MEDIA_URL', `${label} must use HTTP or HTTPS.`);
+  return parsed.toString();
+}
+async function saveRemoteBody(response, destination, maxBytes, label) {
+  const declared = Number(response.headers.get('content-length') || 0);
+  if (declared > maxBytes) fail('MEDIA_TOO_LARGE', `${label} exceeds the ${Math.round(maxBytes / 1024 / 1024)}MB download limit.`);
+  let received = 0;
+  const limiter = new Transform({ transform(chunk, encoding, callback) {
+    received += chunk.length;
+    if (received > maxBytes) callback(new CliError('MEDIA_TOO_LARGE', `${label} exceeds the ${Math.round(maxBytes / 1024 / 1024)}MB download limit.`));
+    else callback(null, chunk);
+  } });
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  try { await pipeline(Readable.fromWeb(response.body), limiter, fs.createWriteStream(destination, { flags: 'wx' })); }
+  catch (error) {
+    fs.rmSync(destination, { force: true });
+    if (error instanceof CliError) throw error;
+    fail('MEDIA_DOWNLOAD_FAILED', `${label} could not be saved: ${error.message}`, true);
+  }
+  return { path: destination, bytes: received, content_type: response.headers.get('content-type') || null };
+}
+async function downloadRemoteMediaByRange(url, destination, maxBytes, label) {
+  const chunkSize = 4 * 1024 * 1024; let start = 0; let total = null; let contentType = null; let handle = null;
+  fs.mkdirSync(path.dirname(destination), { recursive: true });
+  try {
+    handle = fs.openSync(destination, 'wx');
+    while (total === null || start < total) {
+      const end = Math.min(start + chunkSize - 1, maxBytes - 1);
+      if (end < start) fail('MEDIA_TOO_LARGE', `${label} exceeds the ${Math.round(maxBytes / 1024 / 1024)}MB download limit.`);
+      let response;
+      try { response = await fetch(url, { headers: { range: `bytes=${start}-${end}` }, redirect: 'follow', signal: AbortSignal.timeout(120000) }); }
+      catch (error) { fail('MEDIA_DOWNLOAD_FAILED', `${label} range download failed: ${error.message}`, true); }
+      if (response.status !== 206 || !response.body) fail('MEDIA_DOWNLOAD_FAILED', `${label} range download returned HTTP ${response.status}.`, response.status >= 500);
+      const contentRange = response.headers.get('content-range')?.match(/^bytes\s+(\d+)-(\d+)\/(\d+)$/i);
+      if (!contentRange || Number(contentRange[1]) !== start) fail('MEDIA_DOWNLOAD_FAILED', `${label} returned an invalid Content-Range.`);
+      total = Number(contentRange[3]);
+      if (!Number.isFinite(total) || total > maxBytes) fail('MEDIA_TOO_LARGE', `${label} exceeds the ${Math.round(maxBytes / 1024 / 1024)}MB download limit.`);
+      const chunk = Buffer.from(await response.arrayBuffer());
+      if (!chunk.length || chunk.length !== Number(contentRange[2]) - start + 1) fail('MEDIA_DOWNLOAD_FAILED', `${label} returned an incomplete byte range.`, true);
+      fs.writeSync(handle, chunk, 0, chunk.length, start); start += chunk.length;
+      contentType ||= response.headers.get('content-type') || null;
+    }
+  } catch (error) {
+    if (handle !== null) fs.closeSync(handle);
+    handle = null; fs.rmSync(destination, { force: true });
+    throw error;
+  } finally { if (handle !== null) fs.closeSync(handle); }
+  return { path: destination, bytes: start, content_type: contentType, ranged: true };
+}
+async function downloadRemoteMedia(url, destination, maxBytes, label, options = {}) {
+  let response;
+  try { response = await fetch(url, { redirect: 'follow', signal: AbortSignal.timeout(120000) }); }
+  catch (error) { fail('MEDIA_DOWNLOAD_FAILED', `${label} download failed: ${error.message}`, true); }
+  if (response.status === 406 && options.range_fallback) return downloadRemoteMediaByRange(url, destination, maxBytes, label);
+  if (!response.ok || !response.body) fail('MEDIA_DOWNLOAD_FAILED', `${label} download returned HTTP ${response.status}.`, response.status >= 500);
+  return saveRemoteBody(response, destination, maxBytes, label);
+}
+async function soundtrackRemote(options) {
+  if (useLocal(options)) fail('REMOTE_COMMAND_MODE', 'soundtrack-remote uses the central library; remove --local and --library.');
+  const videoUrl = remoteMediaUrl(required(options, 'video-url'), 'Video URL');
+  const output = path.resolve(required(options, 'output'));
+  if (fs.existsSync(output) && !options.force) fail('OUTPUT_EXISTS', `Output already exists: ${output}; choose another path or pass --force.`);
+  const explicitScene = options.scene || null; const scene = explicitScene || inferredScene(unique([options.request, options.brief]).join('. '));
+  if (scene) options = { ...options, scene };
+  const plan = {
+    video_url: videoUrl, output, scene: scene || null, scene_inferred: Boolean(scene && !explicitScene), track_id: options.track || null,
+    analyze_video: !options.track && !options.scene && !options.request && !options.brief && !options['no-analyze'],
+    mix_original: !options['replace-audio'], music_volume: Number(options['music-volume'] || 0.35),
+    original_volume: Number(options['original-volume'] || 0.2), fade_seconds: Number(options['fade-seconds'] ?? 1),
+    max_video_mb: Number(options['max-video-mb'] || 500), max_audio_mb: Number(options['max-audio-mb'] || 50),
+  };
+  if (options['dry-run']) return { ok: true, dry_run: true, plan };
+  if (!executable('ffmpeg') || !executable('ffprobe')) fail('FFMPEG_REQUIRED', 'ffmpeg and ffprobe are required for soundtrack-remote.');
+  const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'musiclib-remote-soundtrack-'));
+  try {
+    const video = path.join(temp, 'source-video');
+    const videoDownload = await downloadRemoteMedia(videoUrl, video, plan.max_video_mb * 1024 * 1024, 'Video');
+    const duration = probe(video)?.duration_seconds || Number(options.duration || 0) || undefined;
+    let analysis = null; let track = null; let decision = null; let access = null;
+    if (options.track) {
+      access = await apiRequest(options, `/tracks/${encodeURIComponent(options.track)}/access`, { method: 'POST', body: '{}' });
+      track = access.track; decision = recommendationDecision(track);
+    } else {
+      if (plan.analyze_video) analysis = analyzeVideo(video, options);
+      const requestBody = {
+        request: options.request, brief: options.brief || analysis?.brief, scene: options.scene,
+        duration, limit: options.limit || 5, adapter: options.adapter || 'video_editor',
+        style: options.style, target: options.target, platform: options.platform,
+        'content-type': options['content-type'], 'commercial-only': Boolean(options['commercial-only']),
+      };
+      const recommended = await apiRequest(options, '/recommend', { method: 'POST', body: JSON.stringify(requestBody) });
+      track = recommended.recommendation; decision = recommended.decision; analysis = analysis || recommended.intelligence || null;
+      if (!track) fail('NO_MATCHING_TRACK', 'No suitable central-library track was found; broaden the brief or generate original music.');
+    }
+    if (!options['allow-unknown-rights'] && decision?.publish_ready !== true) {
+      fail('RIGHTS_REVIEW_REQUIRED', 'The selected track is not verified for commercial use. Review its rights or pass --allow-unknown-rights for an authorized non-commercial test.', false, { track, decision });
+    }
+    access ||= await apiRequest(options, `/tracks/${encodeURIComponent(track.id)}/access`, { method: 'POST', body: '{}' });
+    const audioUrl = remoteMediaUrl(access.url, 'Audio URL'); const audio = path.join(temp, 'source-audio');
+    const audioDownload = await downloadRemoteMedia(audioUrl, audio, plan.max_audio_mb * 1024 * 1024, 'Audio', { range_fallback: true });
+    fs.mkdirSync(path.dirname(output), { recursive: true });
+    const mixOptions = { ...options, 'mix-original': !options['replace-audio'], 'music-volume': plan.music_volume, 'original-volume': plan.original_volume, 'fade-seconds': plan.fade_seconds };
+    const created = addSoundtrack(video, audio, output, mixOptions);
+    return { ok: true, output: created, track, decision, duration_seconds: duration || null, analysis, mix: { original_audio_preserved: plan.mix_original, music_volume: plan.music_volume, original_volume: plan.original_volume, fade_seconds: plan.fade_seconds }, downloads: { video_bytes: videoDownload.bytes, audio_bytes: audioDownload.bytes } };
+  } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 }
 
 function installSkill(options) {
@@ -620,7 +762,7 @@ async function setup(options) {
   return { ok: true, installed: true, skill_install, remote_config, registration };
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>] [--api-url <central-api-url>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  register    Self-register this Agent and securely save its credential\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  cloud-sync  Upload an indexed owner library to private R2 and D1\n  config      Save the central API URL\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nThe default hosted library is configured automatically. Credentials are read from MUSICLIB_API_TOKEN or ~/.musiclib/auth.json. Pass --local (or --library) for the owner's local index. All command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>] [--api-url <central-api-url>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  register           Self-register this Agent and securely save its credential\n  search             Search the central library by title, artist, tags, or natural language\n  recommend          Use music intelligence and rank central-library tracks\n  access             Create a short-lived audio URL for an authorized track\n  soundtrack-remote  Download a public video, select remote music, and create a mixed video\n  brief              Turn a natural-language request into an agent-ready music brief\n  generate           Generate original music through Makaron\n  wait               Wait for a Makaron music run\n\nOwner/admin commands:\n  cloud-sync  Upload an indexed owner library to private R2 and D1\n  config      Save the central API URL\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nThe default hosted library is configured automatically. Credentials are read from MUSICLIB_API_TOKEN or ~/.musiclib/auth.json. Pass --local (or --library) for the owner's local index. All command results are JSON.`);
 }
 
 async function main() {
@@ -684,20 +826,26 @@ async function main() {
   }
   if (command === 'search') {
     const query = required(options, 'query');
+    const explicitScene = options.scene || null; options.scene ||= inferredScene(query);
     if (!useLocal(options)) {
       const params = new URLSearchParams({ query, limit: String(options.limit || 10) });
       if (options.duration) params.set('duration', options.duration);
       if (options.scene) params.set('scene', options.scene);
       if (options['commercial-only']) params.set('commercial_only', 'true');
-      return emit(await apiRequest(options, `/search?${params}`));
+      const result = await apiRequest(options, `/search?${params}`);
+      if (options.scene && !explicitScene) result.scene_inferred = true;
+      return emit(result);
     }
     const tracks = search(root, query, options);
     return emit({ ok: true, mode: 'local', query, count: tracks.length, tracks });
   }
   if (command === 'recommend') {
+    const explicitScene = options.scene || null; options.scene ||= inferredScene(unique([options.request, options.brief]).join('. '));
     if (!useLocal(options)) {
       const remoteOptions = { request: options.request, brief: options.brief, scene: options.scene, duration: options.duration, limit: options.limit, adapter: options.adapter, style: options.style, target: options.target, platform: options.platform, 'content-type': options['content-type'], 'commercial-only': Boolean(options['commercial-only']), video: options.video };
-      return emit(await apiRequest(options, '/recommend', { method: 'POST', body: JSON.stringify(remoteOptions) }));
+      const result = await apiRequest(options, '/recommend', { method: 'POST', body: JSON.stringify(remoteOptions) });
+      if (options.scene && !explicitScene) result.scene_inferred = true;
+      return emit(result);
     }
     ensureLibrary(root); const video = options.video ? path.resolve(options.video) : null;
     if (video && !fs.existsSync(video)) fail('VIDEO_NOT_FOUND', `Video not found: ${video}`);
@@ -714,6 +862,7 @@ async function main() {
     const trackId = required(options, 'track');
     return emit(await apiRequest(options, `/tracks/${encodeURIComponent(trackId)}/access`, { method: 'POST', body: '{}' }));
   }
+  if (command === 'soundtrack-remote') return emit(await soundtrackRemote(options));
   if (command === 'export') {
     const track = findTrack(root, required(options, 'track')); const output = copyTrack(track, required(options, 'output'));
     return emit({ ok: true, track, output });

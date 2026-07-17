@@ -11,6 +11,13 @@ const rows = [
     search_text: 'high energy girl group test artist k-pop stage kpop dance energetic electronic performance',
   },
   {
+    id: 'trk_generic_dance', title: 'Generic Viral Dance Pop', artist: 'DJ Test', album: null,
+    object_key: 'audio/trk_generic_dance.mp3', source: 'test', size_bytes: 16, duration_seconds: 180,
+    tags_json: JSON.stringify(['dance', 'pop', 'trending']), description: 'viral dance pop stage track',
+    license: 'unknown', commercial_use: null, modified_at: '2026-07-16T00:00:00Z',
+    search_text: 'generic viral dance pop dj stage trending girl group strong beat climax',
+  },
+  {
     id: 'trk_calm', title: 'Calm Piano', artist: null, album: null,
     object_key: 'audio/trk_calm.mp3', source: 'test', size_bytes: 10, duration_seconds: 30,
     tags_json: JSON.stringify(['healing', 'piano', 'no_vocals']), description: 'gentle healing background',
@@ -223,9 +230,19 @@ assert.equal(rows.some((row) => row.id === 'trk_upload'), true);
 
 const searched = await worker.fetch(authorized('/v1/search?query=K-pop%20stage'), env);
 const searchBody = await payload(searched);
+assert.equal(searchBody.scene, 'kpop-stage');
+assert.equal(searchBody.scene_inferred, true);
 assert.equal(searchBody.count, 1);
 assert.equal(searchBody.tracks[0].id, 'trk_kpop');
+assert.equal(searchBody.tracks[0].match.scene, 'kpop-stage');
+assert.ok(searchBody.tracks[0].match.matched.includes('scene:kpop'));
 assert.equal('object_key' in searchBody.tracks[0], false);
+
+const sceneSearch = await worker.fetch(authorized('/v1/search?query=dance%20pop%20stage&scene=kpop-stage&limit=5'), env);
+const sceneSearchBody = await payload(sceneSearch);
+assert.equal(sceneSearchBody.count, 1);
+assert.equal(sceneSearchBody.tracks[0].id, 'trk_kpop');
+assert.ok(sceneSearchBody.tracks[0].match.matched.includes('scene:kpop'));
 
 const recommended = await worker.fetch(authorized('/v1/recommend', {
   method: 'POST',
@@ -235,6 +252,17 @@ const recommended = await worker.fetch(authorized('/v1/recommend', {
 const recommendBody = await payload(recommended);
 assert.equal(recommendBody.profile_id, 'kpop_performance_001');
 assert.equal(recommendBody.recommendation.id, 'trk_kpop');
+
+const naturalRecommendation = await worker.fetch(authorized('/v1/recommend', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ request: '20秒 K-pop 女团舞台，节奏强，适合灯光切换，副歌有高潮', duration: 20 }),
+}), env);
+const naturalBody = await payload(naturalRecommendation);
+assert.equal(naturalBody.scene, 'kpop-stage');
+assert.equal(naturalBody.scene_inferred, true);
+assert.equal(naturalBody.recommendation.id, 'trk_kpop');
+assert.ok(naturalBody.tracks.every((track) => track.tags.includes('kpop')));
 
 const ecommerce = await worker.fetch(authorized('/v1/recommend', {
   method: 'POST',

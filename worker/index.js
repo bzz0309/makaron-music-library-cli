@@ -19,7 +19,7 @@ const CONCEPTS = {
   kpop: ['k-pop', 'kpop', 'korean pop', '韩国流行', '韩语', '韩流', '女团', '男团'],
   trending: ['trending', 'viral', 'tiktok', '抖音', '热门', '爆款'],
   bgm: ['bgm', 'background music', '背景音乐'],
-  product: ['product', 'ecommerce', 'e-commerce', '商品', '产品', '电商', '带货'],
+  product: ['product', 'ecommerce', 'e-commerce', 'marketing', 'advertising', '商品', '产品', '电商', '带货', '营销', '广告', '美妆'],
   luxury: ['luxury', 'premium', 'elegant', '奢华', '高级', '高端'],
   no_vocals: ['instrumental', 'no vocals', '纯音乐', '无歌词', '无人声'],
 };
@@ -31,6 +31,14 @@ const SCENE_WEIGHTS = {
   'kpop-stage': { kpop: 18, dance: 6, energetic: 5, electronic: 4, pop: 3, trending: 2 },
   ecommerce: { product: 9, bgm: 14, happy: 4, electronic: 3, trending: 3, no_vocals: 5, pop: 2 },
 };
+const SCENE_REQUIRED_TAGS = { 'kpop-stage': ['kpop'] };
+
+function inferScene(text) {
+  const concepts = new Set(conceptsFor(text));
+  if (concepts.has('kpop')) return 'kpop-stage';
+  if (concepts.has('product')) return 'ecommerce';
+  return null;
+}
 
 function json(payload, status = 200) {
   return new Response(`${JSON.stringify(payload)}\n`, { status, headers: { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
@@ -76,7 +84,7 @@ function score(row, terms, scene) {
   for (const [tag, weight] of Object.entries(SCENE_WEIGHTS[scene] || {})) {
     if (tags.includes(tag)) { value += weight; matched.push(`scene:${tag}`); }
   }
-  return { score: value, matched: unique(matched) };
+  return { score: value, matched: unique(matched), scene: scene || null };
 }
 async function searchTracks(env, query, options = {}) {
   const terms = queryTerms(query); if (!terms.length) return [];
@@ -97,8 +105,10 @@ async function searchTracks(env, query, options = {}) {
     const preferred = await env.DB.prepare(`SELECT * FROM tracks WHERE ${preferredFilters.join(' AND ')} ORDER BY ${order} DESC LIMIT 250`).bind(...tagParams, ...tagParams).all();
     rows = [...new Map([...(preferred.results || []), ...rows].map((row) => [row.id, row])).values()];
   }
+  const requiredTags = SCENE_REQUIRED_TAGS[options.scene] || [];
   return rows
     .map((row) => ({ ...safeTrack(row), match: score(row, terms, options.scene) }))
+    .filter((track) => !requiredTags.length || requiredTags.some((tag) => track.tags.includes(tag)))
     .filter((track) => track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
     .slice(0, Math.min(Number(options.limit || 10), 50));
@@ -364,23 +374,25 @@ export default {
         const authorization = await registeredRequest(request, env, 'search');
         if (authorization.response) return authorization.response;
         const query = url.searchParams.get('query'); if (!query) return error('MISSING_REQUIRED_OPTION', 'Missing query.');
-        const tracks = await searchTracks(env, query, { limit: url.searchParams.get('limit'), commercial_only: url.searchParams.get('commercial_only') === 'true' });
-        return json({ ok: true, query, count: tracks.length, tracks, quota: authorization.quota });
+        const explicitScene = url.searchParams.get('scene') || null; const scene = explicitScene || inferScene(query);
+        const tracks = await searchTracks(env, query, { limit: url.searchParams.get('limit'), commercial_only: url.searchParams.get('commercial_only') === 'true', scene: scene || undefined });
+        return json({ ok: true, query, scene, scene_inferred: Boolean(scene && !explicitScene), count: tracks.length, tracks, quota: authorization.quota });
       }
       if (request.method === 'POST' && url.pathname === '/v1/recommend') {
         const authorization = await registeredRequest(request, env, 'recommend');
         if (authorization.response) return authorization.response;
         const body = await request.json(); if (body.video) return error('REMOTE_VIDEO_UPLOAD_NOT_IMPLEMENTED', 'Send a textual video brief or request.');
-        const requestText = unique([SCENES[body.scene], body.request, body.brief]).join('. ');
+        const explicitScene = body.scene || null; const scene = explicitScene || inferScene(unique([body.request, body.brief]).join('. '));
+        const requestText = unique([SCENES[scene], body.request, body.brief]).join('. ');
         if (!requestText) return error('MISSING_INPUT', 'Provide request, brief, or scene.');
         const input = { request: requestText, duration: Number(body.duration || 0) || undefined, workflow_context: { platform: body.platform || 'makaron', content_type: body['content-type'], style: body.style, target: body.target } };
         input.workflow_context = Object.fromEntries(Object.entries(input.workflow_context).filter(([, value]) => value !== undefined));
         const intelligence = queryMusic(input, body.adapter || 'generic');
         const attributes = Object.values(intelligence.matched_attributes || {}).flatMap((value) => Array.isArray(value) ? value : value && typeof value === 'object' ? Object.values(value) : [value]);
         const localQuery = unique([requestText, intelligence.profile_id, musicPrompt(intelligence), ...attributes.map(String)]).join(' ');
-        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: body.scene });
+        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: scene || undefined });
         const recommendation = tracks[0] || null;
-        return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks, quota: authorization.quota });
+        return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, scene, scene_inferred: Boolean(scene && !explicitScene), duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks, quota: authorization.quota });
       }
       const access = url.pathname.match(/^\/v1\/tracks\/([^/]+)\/access$/);
       if (request.method === 'POST' && access) {
