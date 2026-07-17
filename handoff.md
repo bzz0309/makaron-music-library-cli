@@ -1,8 +1,8 @@
 # Handoff
 
-Production is `makaron-music-library-cli` version 0.3.1 on GitHub `main` and npm `latest`. Worker version `7b1ac649-0a2d-4d99-be28-767c4f3a3642` makes explicit no-vocals intent a hard constraint and adds automatic Makaron-original fallback for remote video soundtracks. The Tencent relay and R2 catalog are unchanged.
+Production is `makaron-music-library-cli` version 0.3.1 on GitHub `main` and npm `latest`. Worker version `cf075773-1808-4553-8592-2b2f51c0d32b` keeps explicit no-vocals intent as a hard constraint, adds automatic Makaron-original fallback for remote video soundtracks, and deduplicates recommendations by canonical title and artist while preferring non-B-Roll variants.
 
-A local, unshipped server hotfix caps browser and player audio Range requests at 4MB so Tencent SCF stays below its response-body limit, while preserving the CLI's complete ranged-download fallback. It also deduplicates K-pop recommendation results by canonical title and artist, preferring the non-B-Roll variant. Deploy the Worker and Tencent relay together after owner approval; no npm package update is required.
+The Tencent relay now caps browser and player audio requests at 4MB so SCF stays below its response-body limit. Browser links return a bounded `206` audio preview instead of `406 ERR_INVALID_RESPONSE`; non-browser full downloads preserve the CLI's complete multi-range fallback. The change is server-side, so no npm package update or CLI reinstall is required. R2 and D1 catalog contents are unchanged.
 
 ## Current architecture
 
@@ -41,3 +41,4 @@ Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R
 - Remote video upload and server-side soundtrack mixing.
 - Beat, vocal, and climax analysis beyond current metadata/profile matching.
 - Direct Baidu cloud API ingestion after a supported authorization flow is selected.
+- A first-party preview page on a normal web/CDN origin if direct in-browser playback is required; Tencent SCF's function URL currently forces `Content-Disposition: attachment`.

@@ -94,9 +94,13 @@
 - Pushed the 0.3.1 implementation to GitHub `main` and published `makaron-music-library-cli@0.3.1` to npm `latest` after security-key authentication.
 - Verified the public package from a clean temporary directory: version resolution and the OpenClaw `setup --dry-run` Skill installation plan both passed, then revoked the temporary production test credential.
 
-## Browser preview and duplicate-result hotfix candidate — 2026-07-17
+## Browser preview and duplicate-result hotfix — 2026-07-17
 
 - Reproduced the reported signed-link failure: a 1KB Range request returned `206`, while a browser-style full request for a 9,019,763-byte MP3 returned Tencent SCF `406` with `The HTTP response body exceeds the size limit`.
 - Added browser-aware 4MB Range capping in the Tencent relay. Browser/player requests receive bounded `206` responses, while non-browser full downloads retain the existing `406` to CLI multi-range fallback and therefore still download the complete file.
 - Confirmed the two Screen Time records have the same 233.808-second duration and nearly identical sizes; added canonical title/artist deduplication that removes the B-Roll marker and prefers the ordinary variant.
-- Added relay and Worker regression coverage; the full test suite passes. The hotfix has not been deployed or pushed.
+- Added relay and Worker regression coverage; the full test suite passes.
+- Deployed Cloudflare Worker version `cf075773-1808-4553-8592-2b2f51c0d32b` and the matching Tencent SCF relay update after owner approval.
+- Passed production regression: browser-style requests return a 4,194,304-byte `206` response, a later 1KB Range succeeds, and a `Screen Time` search returns only the ordinary variant.
+- Confirmed Tencent SCF function URLs force `Content-Disposition: attachment` even when the application requests `inline`; removed the ineffective HTML preview indirection instead of exposing a misleading link.
+- Revoked the temporary production verification credential. The hotfix does not change npm `0.3.1`, R2 audio, or D1 catalog rows.
