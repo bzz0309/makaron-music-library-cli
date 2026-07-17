@@ -58,4 +58,4 @@
 - Enabled the account's required CLS service, then deployed the 128MB Web Function at `https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com`.
 - Corrected Tencent client-origin handling to prefer `X-Forwarded-For` after a real registration exposed unstable `X-Real-IP` values.
 - Passed live health, Agent self-registration, K-pop search, signed access URL rewriting, and a 1KB `206` Range read.
-- Prepared version 0.2.1 to make the Tencent endpoint the default for new and re-run setup flows; GitHub and npm publication remain pending owner approval.
+- Published version 0.2.1 to GitHub `main` and public npm `latest` after owner approval; the npm CLI reported a successful `+ makaron-music-library-cli@0.2.1` release.
