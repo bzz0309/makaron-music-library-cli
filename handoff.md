@@ -1,6 +1,6 @@
 # Handoff
 
-Production remains `makaron-music-library-cli` version 0.3.0. A local 0.3.1 candidate makes explicit no-vocals intent a hard constraint and adds automatic Makaron-original fallback for remote video soundtracks. It has not been deployed, pushed, or published.
+Production is `makaron-music-library-cli` version 0.3.1 on GitHub `main` and npm `latest`. Worker version `7b1ac649-0a2d-4d99-be28-767c4f3a3642` makes explicit no-vocals intent a hard constraint and adds automatic Makaron-original fallback for remote video soundtracks. The Tencent relay and R2 catalog are unchanged.
 
 ## Current architecture
 

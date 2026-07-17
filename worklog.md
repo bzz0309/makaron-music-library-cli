@@ -90,4 +90,6 @@
 - Started 0.3.1 with explicit no-vocals intent as a hard `no_vocals` tag requirement in both CLI and Worker.
 - Zero verified matches now produce `decision.action: generate-original` instead of substituting a normal BGM.
 - `soundtrack-remote` now uses authenticated Makaron to generate an original replacement, downloads the result, and continues mixing automatically.
-- No Worker deployment, GitHub push, or npm publication has been performed for 0.3.1.
+- Deployed Worker version `7b1ac649-0a2d-4d99-be28-767c4f3a3642` and verified both the Tencent relay and direct Cloudflare endpoint return zero tracks plus `decision.action: generate-original` for an explicit no-vocals beauty request.
+- Pushed the 0.3.1 implementation to GitHub `main` and published `makaron-music-library-cli@0.3.1` to npm `latest` after security-key authentication.
+- Verified the public package from a clean temporary directory: version resolution and the OpenClaw `setup --dry-run` Skill installation plan both passed, then revoked the temporary production test credential.
