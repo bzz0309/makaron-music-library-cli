@@ -1,6 +1,6 @@
 # Handoff
 
-The production npm CLI is `makaron-music-library-cli` version 0.2.1. GitHub `main` and npm `latest` now use the Tencent SCF relay as the default Agent endpoint.
+The release candidate is `makaron-music-library-cli` version 0.2.2. Production Worker and Tencent SCF relay now support session-bound self-registration when an Agent platform rotates egress IPs between challenge and verification. Publish GitHub `main` and npm `latest` after the release checks pass.
 
 ## Current architecture
 
@@ -28,7 +28,7 @@ Worker secrets are `SIGNING_SECRET`, `ADMIN_TOKEN`, and `RELAY_SHARED_SECRET`; T
 
 ## Next actions
 
-1. Re-run `npx makaron-music-library-cli setup` in Miaoda and verify registration, search, access, and playback.
+1. Publish 0.2.2, then re-run `npx -y makaron-music-library-cli@0.2.2 setup --agent openclaw` in Miaoda and verify registration, search, access, and playback.
 2. Do not sync all 4,291 local rows until their audio is uploaded.
 
 Cloudflare D1 database `makaron-music-library` contains 934 tracks and private R2 contains the uploaded collection. The Tencent endpoint is `https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com`. Live health, self-registration, K-pop search, signed access URL rewriting, and a 1KB Range read all pass through it. The local source now contains 4,291 tracks, so only the filtered 934-track manifest may receive metadata-only updates until additional audio uploads are explicitly approved.

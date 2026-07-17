@@ -13,6 +13,7 @@ const upstreamOrigin = `http://127.0.0.1:${upstreamPort}`;
 const relayOrigin = `http://127.0.0.1:${relayPort}`;
 const relaySecret = 'relay-smoke-secret';
 const clientIp = '203.0.113.9';
+const registrationSession = 'relay_smoke_registration_session_123456789';
 let relayHeaders;
 
 const upstream = http.createServer(async (request, response) => {
@@ -64,12 +65,18 @@ try {
   await waitForRelay();
   const registration = await fetch(`${relayOrigin}/v1/register`, {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-forwarded-for': clientIp },
+    headers: {
+      'content-type': 'application/json',
+      'x-forwarded-for': clientIp,
+      'x-musiclib-registration-session': registrationSession,
+    },
     body: '{}',
   });
   assert.equal(registration.status, 200);
   assert.equal(relayHeaders['x-musiclib-relay-origin'], clientIp);
   assert.equal(relayHeaders['x-musiclib-relay-signature'], crypto.createHmac('sha256', relaySecret).update(clientIp).digest('hex'));
+  assert.equal(relayHeaders['x-musiclib-registration-session'], registrationSession);
+  assert.equal(relayHeaders['x-musiclib-registration-session-signature'], crypto.createHmac('sha256', relaySecret).update(`registration-session:${registrationSession}`).digest('hex'));
 
   const access = await fetch(`${relayOrigin}/v1/tracks/trk_1/access`, {
     method: 'POST',

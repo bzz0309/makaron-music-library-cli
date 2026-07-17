@@ -16,6 +16,7 @@ const nonce = 'registration-smoke-nonce';
 const issuedToken = 'ml_live_registration_smoke_secret';
 let challengeRequests = 0;
 let verifyRequests = 0;
+let registrationSession = null;
 
 function expectedSolution() {
   for (let solution = 0; ; solution += 1) {
@@ -30,11 +31,14 @@ const server = http.createServer(async (request, response) => {
   response.setHeader('content-type', 'application/json');
   if (request.url === '/v1/register') {
     challengeRequests += 1;
+    registrationSession = request.headers['x-musiclib-registration-session'];
+    assert.match(registrationSession, /^[A-Za-z0-9_-]{32,128}$/);
     response.end(JSON.stringify({ ok: true, challenge_id: 'challenge-1', challenge: { algorithm: 'sha256-prefix', nonce, difficulty: 2 } }));
     return;
   }
   if (request.url === '/v1/register/verify') {
     verifyRequests += 1;
+    assert.equal(request.headers['x-musiclib-registration-session'], registrationSession);
     assert.equal(body.solution, expectedSolution());
     response.statusCode = 201;
     response.end(JSON.stringify({ ok: true, token_id: 'agt_smoke', api_token: issuedToken, scopes: ['search', 'recommend', 'access'], quotas: { search_per_day: 200 } }));

@@ -46,6 +46,11 @@ function relayProof(origin) {
   return crypto.createHmac('sha256', RELAY_SECRET).update(origin).digest('hex');
 }
 
+function registrationSession(request) {
+  const value = String(request.headers['x-musiclib-registration-session'] || '');
+  return /^[A-Za-z0-9_-]{32,128}$/.test(value) ? value : null;
+}
+
 function publicOrigin(request) {
   if (process.env.MUSICLIB_PUBLIC_BASE_URL) return new URL(process.env.MUSICLIB_PUBLIC_BASE_URL).origin;
   const host = firstHeaderValue(request.headers['x-forwarded-host']) || firstHeaderValue(request.headers.host);
@@ -75,6 +80,11 @@ function upstreamHeaders(request) {
   const origin = clientOrigin(request);
   headers.set('x-musiclib-relay-origin', origin);
   headers.set('x-musiclib-relay-signature', relayProof(origin));
+  const session = registrationSession(request);
+  if (session) {
+    headers.set('x-musiclib-registration-session', session);
+    headers.set('x-musiclib-registration-session-signature', relayProof(`registration-session:${session}`));
+  }
   return headers;
 }
 

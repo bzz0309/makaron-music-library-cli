@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const VERSION = '0.2.1';
+const VERSION = '0.2.2';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
 const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
@@ -239,13 +239,17 @@ async function registerAgent(options) {
   if (apiToken() && !options.force) {
     return { ok: true, registered: false, reused: true, auth_file: fs.existsSync(AUTH_FILE) ? AUTH_FILE : null, token_source: process.env.MUSICLIB_API_TOKEN ? 'environment' : 'auth-file' };
   }
+  const registrationSession = crypto.randomBytes(32).toString('base64url');
+  const registrationHeaders = { 'x-musiclib-registration-session': registrationSession };
   const challenge = await publicApiRequest(options, '/register', {
     method: 'POST',
+    headers: registrationHeaders,
     body: JSON.stringify({ agent_name: options.agent || 'generic-agent', client: PACKAGE, client_version: VERSION }),
   });
   const solution = solveChallenge(challenge.challenge);
   const issued = await publicApiRequest(options, '/register/verify', {
     method: 'POST',
+    headers: registrationHeaders,
     body: JSON.stringify({
       challenge_id: challenge.challenge_id,
       solution,

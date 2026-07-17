@@ -163,7 +163,7 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 - `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
 - `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
-版本 0.2.1 默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
+版本 0.2.2 默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。注册挑战与验证使用中继签名的一次性 Agent 会话标识，即使妙搭两次请求使用不同出口 IP 也能完成注册。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
 
 ## 妙搭与中国网络入口
 

@@ -59,3 +59,11 @@
 - Corrected Tencent client-origin handling to prefer `X-Forwarded-For` after a real registration exposed unstable `X-Real-IP` values.
 - Passed live health, Agent self-registration, K-pop search, signed access URL rewriting, and a 1KB `206` Range read.
 - Published version 0.2.1 to GitHub `main` and public npm `latest` after owner approval; the npm CLI reported a successful `+ makaron-music-library-cli@0.2.1` release.
+
+## Miaoda rotating-origin registration fix — 2026-07-17
+
+- Reproduced Miaoda's `REGISTRATION_ORIGIN_CHANGED`: challenge and verification can leave the sandbox through different egress IPs.
+- Added a random per-registration Agent session, signed only by the trusted Tencent relay; kept network-origin throttling independent from session binding.
+- Applied D1 migration `0003_registration_session.sql`, deployed Worker version `7ebe04a6-ee1e-47d9-b4b9-88b847f2604a`, and updated the Tencent SCF relay.
+- Passed local CLI, Worker, relay, and registration smoke tests, including different simulated relay origins with one signed Agent session.
+- Passed a production canary through Tencent: automatic self-registration, K-pop search, and short-lived audio access all succeeded without an owner-provided Token.

@@ -184,8 +184,16 @@ async function registrationIdentity(request, env) {
     : request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   return hmac(env.SIGNING_SECRET, `registration-ip:${address}`);
 }
+async function registrationSessionIdentity(request, env, fallback) {
+  const session = request.headers.get('x-musiclib-registration-session') || '';
+  const signature = request.headers.get('x-musiclib-registration-session-signature') || '';
+  const trustedSession = /^[A-Za-z0-9_-]{32,128}$/.test(session) && env.RELAY_SHARED_SECRET
+    && await validSignature(env.RELAY_SHARED_SECRET, `registration-session:${session}`, signature);
+  return trustedSession ? hmac(env.SIGNING_SECRET, `registration-session:${session}`) : fallback;
+}
 async function createRegistrationChallenge(request, env) {
   const ipHash = await registrationIdentity(request, env);
+  const sessionHash = await registrationSessionIdentity(request, env, ipHash);
   const recent = await env.DB.prepare(
     "SELECT COUNT(*) AS count FROM registration_challenges WHERE ip_hash = ? AND created_at >= datetime('now', '-1 hour')",
   ).bind(ipHash).first();
@@ -196,8 +204,8 @@ async function createRegistrationChallenge(request, env) {
   const difficulty = Math.max(2, Math.min(Number(env.REGISTRATION_DIFFICULTY || 4), 6));
   const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString();
   await env.DB.prepare(
-    'INSERT INTO registration_challenges (id, nonce, difficulty, ip_hash, expires_at) VALUES (?, ?, ?, ?, ?)',
-  ).bind(id, nonce, difficulty, ipHash, expiresAt).run();
+    'INSERT INTO registration_challenges (id, nonce, difficulty, ip_hash, session_hash, expires_at) VALUES (?, ?, ?, ?, ?, ?)',
+  ).bind(id, nonce, difficulty, ipHash, sessionHash, expiresAt).run();
   return json({
     ok: true,
     challenge_id: id,
@@ -211,11 +219,12 @@ async function verifyRegistration(request, env) {
   const solution = String(body.solution || '');
   if (!challengeId || !/^\d{1,10}$/.test(solution)) return error('INVALID_REGISTRATION_PROOF', 'A valid challenge ID and numeric solution are required.');
   const challenge = await env.DB.prepare(
-    'SELECT id, nonce, difficulty, ip_hash, expires_at, used_at FROM registration_challenges WHERE id = ? LIMIT 1',
+    'SELECT id, nonce, difficulty, ip_hash, session_hash, expires_at, used_at FROM registration_challenges WHERE id = ? LIMIT 1',
   ).bind(challengeId).first();
   if (!challenge || challenge.used_at || Date.parse(challenge.expires_at) <= Date.now()) return error('REGISTRATION_CHALLENGE_EXPIRED', 'The registration challenge is invalid, expired, or already used.', 400);
   const ipHash = await registrationIdentity(request, env);
-  if (ipHash !== challenge.ip_hash) return error('REGISTRATION_ORIGIN_CHANGED', 'Complete registration from the same network origin.', 400);
+  const sessionHash = await registrationSessionIdentity(request, env, ipHash);
+  if (sessionHash !== (challenge.session_hash || challenge.ip_hash)) return error('REGISTRATION_ORIGIN_CHANGED', 'Complete registration from the same Agent session.', 400);
   const digest = await sha256(`${challenge.nonce}:${solution}`);
   if (!digest.startsWith('0'.repeat(Number(challenge.difficulty)))) return error('INVALID_REGISTRATION_PROOF', 'The registration proof is incorrect.', 400);
   const consumed = await env.DB.prepare(

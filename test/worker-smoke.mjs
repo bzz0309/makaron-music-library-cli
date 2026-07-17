@@ -57,7 +57,7 @@ class FakeStatement {
   }
   async run() {
     if (this.sql.startsWith('INSERT INTO registration_challenges')) {
-      challenges.push({ id: this.params[0], nonce: this.params[1], difficulty: this.params[2], ip_hash: this.params[3], expires_at: this.params[4], used_at: null });
+      challenges.push({ id: this.params[0], nonce: this.params[1], difficulty: this.params[2], ip_hash: this.params[3], session_hash: this.params[4], expires_at: this.params[5], used_at: null });
       return { meta: { changes: 1 } };
     }
     if (this.sql.startsWith('UPDATE registration_challenges')) {
@@ -156,13 +156,19 @@ assert.equal(agentTokens[0].token_hash, crypto.createHash('sha256').update(regis
 assert.equal(agentTokens[0].token_hash.includes(registrationBody.api_token), false);
 
 const relayOrigin = '198.51.100.22';
+const relayVerifyOrigin = '198.51.100.23';
+const relaySession = 'relay_registration_session_1234567890abcdef';
 const relaySignature = crypto.createHmac('sha256', env.RELAY_SHARED_SECRET).update(relayOrigin).digest('hex');
+const relayVerifySignature = crypto.createHmac('sha256', env.RELAY_SHARED_SECRET).update(relayVerifyOrigin).digest('hex');
+const relaySessionSignature = crypto.createHmac('sha256', env.RELAY_SHARED_SECRET).update(`registration-session:${relaySession}`).digest('hex');
 const relayChallengeResponse = await worker.fetch(request('/v1/register', {
   method: 'POST',
   headers: {
     'cf-connecting-ip': '192.0.2.10',
     'x-musiclib-relay-origin': relayOrigin,
     'x-musiclib-relay-signature': relaySignature,
+    'x-musiclib-registration-session': relaySession,
+    'x-musiclib-registration-session-signature': relaySessionSignature,
   },
   body: '{}',
 }), env);
@@ -172,8 +178,10 @@ const relayRegistrationResponse = await worker.fetch(request('/v1/register/verif
   headers: {
     'content-type': 'application/json',
     'cf-connecting-ip': '192.0.2.11',
-    'x-musiclib-relay-origin': relayOrigin,
-    'x-musiclib-relay-signature': relaySignature,
+    'x-musiclib-relay-origin': relayVerifyOrigin,
+    'x-musiclib-relay-signature': relayVerifySignature,
+    'x-musiclib-registration-session': relaySession,
+    'x-musiclib-registration-session-signature': relaySessionSignature,
   },
   body: JSON.stringify({ challenge_id: relayChallenge.challenge_id, solution: solve(relayChallenge.challenge) }),
 }), env);
