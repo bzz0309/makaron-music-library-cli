@@ -35,6 +35,8 @@ For strongly typed scenes, distinguish retrieval from suitability. Plain search 
 
 Natural language is the public contract; commands are an internal implementation detail. Infer known scenes independently in the CLI and central service, apply the same constraints to both search and recommendation, and return the inferred scene plus matched evidence. This keeps results correct even when an Agent chooses a less-specific internal command.
 
+Separate preferences from hard constraints. A scene profile may prefer instrumental music, but only explicit user wording should require `no_vocals`. Require all hard tags simultaneously, never treat `bgm` as evidence of no vocals, and return no library match rather than weakening the request. When Makaron is authenticated, generate an original replacement and continue the media workflow; otherwise return the generation prompt with a clear authentication requirement.
+
 ## Rights remain explicit
 
 Use sidecar `<audio>.music.json` files for tags and rights fields. Possession is not evidence of commercial permission; unknown rights must trigger review or original generation.

@@ -1,6 +1,6 @@
 # Handoff
 
-Production is `makaron-music-library-cli` version 0.3.0 on GitHub `main` and npm `latest`. The production Worker, Tencent relay path, public package, Agent-side CDN soundtrack assembly, and natural-language scene inference are live. K-pop constraints apply even when an Agent chooses plain search.
+Production remains `makaron-music-library-cli` version 0.3.0. A local 0.3.1 candidate makes explicit no-vocals intent a hard constraint and adds automatic Makaron-original fallback for remote video soundtracks. It has not been deployed, pushed, or published.
 
 ## Current architecture
 

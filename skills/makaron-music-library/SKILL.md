@@ -19,12 +19,13 @@ Read central-library access from the private auth file or, when explicitly confi
 2. Search by title, artist, or exact metadata with `musiclib search`; do not add `--local`. For scene suitability, prefer `recommend` and pass the user's original wording through `--request`. Do not require the user to name a scene.
 3. Use `musiclib brief --request` when another Agent needs structured music intelligence without selecting a song. Select `generic`, `makaron`, `video_editor`, or `short_video_agent` with `--adapter`.
 4. Use `musiclib recommend --request` with the user's natural-language request. Known K-pop and e-commerce scenes are inferred automatically; explicit `--scene` is an internal optimization, never a user requirement. For inferred `kpop-stage`, accept only results with a `kpop` tag and `scene:kpop` in `match.matched`.
-5. Read `decision` and rights metadata. When approved access is needed, call `musiclib access --track TRACK_ID` and use the returned URL before `expires_at`.
-6. Use `musiclib generate` when no suitable result exists, rights are unclear, or the user asks for original music.
-7. Use `--local` only when operating the owner's filesystem. Before commercial delivery, verify license and `commercial_use`; never infer rights from possession.
-8. When given a direct public HTTP/HTTPS video URL, use `musiclib soundtrack-remote` to download, recommend, access, fade, and mix locally. Use `--allow-unknown-rights` only after the user authorizes a non-commercial test. Never overwrite an existing output unless the user explicitly asks.
-9. Use local `musiclib soundtrack` for an owner-side local library and video.
-9. When the owner explicitly asks to publish an indexed library, run `musiclib cloud-sync --dry-run` first. Upload only after the owner confirms the reported track and byte counts.
+5. Treat explicit instrumental intent (`无人声`, `纯音乐`, `无歌词`, `instrumental`, `no vocals`) as a hard constraint. Accept only tracks tagged `no_vocals`; never infer instrumental status from `bgm`, a title, or the absence of artist metadata.
+6. Read `decision` and rights metadata. When approved access is needed, call `musiclib access --track TRACK_ID` and use the returned URL before `expires_at`.
+7. When `decision.action` is `generate-original`, call `musiclib generate` using `generation_prompt`. For `soundtrack-remote`, allow the command to generate through authenticated Makaron and continue mixing automatically.
+8. Use `--local` only when operating the owner's filesystem. Before commercial delivery, verify license and `commercial_use`; never infer rights from possession.
+9. When given a direct public HTTP/HTTPS video URL, use `musiclib soundtrack-remote` to download, recommend, access, fade, and mix locally. Use `--allow-unknown-rights` only after the user authorizes a non-commercial test. Never overwrite an existing output unless the user explicitly asks.
+10. Use local `musiclib soundtrack` for an owner-side local library and video.
+11. When the owner explicitly asks to publish an indexed library, run `musiclib cloud-sync --dry-run` first. Upload only after the owner confirms the reported track and byte counts.
 
 ## Commands
 
@@ -122,7 +123,8 @@ Use `--dry-run` on `generate`, `soundtrack`, or `soundtrack-remote` before spend
 
 - Prefer JSON fields over prose: `recommendation`, `tracks`, `url`, `expires_at`, `run_id`, `outputs`, and `output`.
 - Never expect or expose a remote track's server filesystem path.
-- Return `NO_MATCHING_TRACK` as a prompt to broaden the brief or generate original music.
+- Return a zero-count result with `decision.action: generate-original` when hard constraints have no verified library match; do not substitute a weaker track.
+- Return `ORIGINAL_GENERATION_AUTH_REQUIRED` as a request to configure Makaron authentication, not as a request to relax the user's no-vocals constraint.
 - Return `RIGHTS_REVIEW_REQUIRED` without mixing when the selected track lacks verified usage rights; never silently add `--allow-unknown-rights`.
 - Return `DAILY_QUOTA_EXCEEDED` as a request to wait for the next quota window or contact the library owner; do not repeatedly self-register to evade limits.
 - Return `TRACK_NOT_LOCAL` to the library owner, not as a request for an external Agent to access Baidu Netdisk.

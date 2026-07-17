@@ -7,6 +7,7 @@ import { spawn, spawnSync } from 'node:child_process';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const cli = path.join(root, 'bin', 'musiclib.mjs');
+const fakeMakaron = path.join(root, 'test', 'fake-makaron.mjs');
 const temp = fs.mkdtempSync(path.join(os.tmpdir(), 'musiclib-remote-smoke-'));
 const library = path.join(temp, 'library');
 const source = path.join(temp, 'music');
@@ -74,6 +75,21 @@ try {
   assert.equal(mixed.track.id, searched.tracks[0].id);
   assert.equal(mixed.mix.original_audio_preserved, true);
   assert.equal(fs.readFileSync(mixedOutput, 'utf8'), 'mixed video fixture');
+
+  const generatedOutput = path.join(temp, 'generated-mixed.mp4');
+  const generatedMixed = call([
+    'soundtrack-remote', '--video-url', access.url, '--request', 'K-pop 女团舞台，必须无人声纯音乐', '--output', generatedOutput,
+  ], {
+    ...remoteEnv,
+    PATH: `${fakeBin}:${process.env.PATH}`,
+    MAKARON_CLI_COMMAND: `${process.execPath} ${fakeMakaron}`,
+    MAKARON_FAKE_AUDIO_URL: access.url,
+  });
+  assert.equal(generatedMixed.ok, true);
+  assert.equal(generatedMixed.decision.action, 'use-generated-original');
+  assert.equal(generatedMixed.track.source, 'makaron-generated');
+  assert.equal(generatedMixed.generation.provider, 'makaron');
+  assert.equal(fs.readFileSync(generatedOutput, 'utf8'), 'mixed video fixture');
 
   const unauthorized = call(['search', '--query', 'K-pop'], { MUSICLIB_API_URL: apiUrl, MUSICLIB_API_TOKEN: 'wrong' }, 1);
   assert.equal(unauthorized.error.code, 'UNAUTHORIZED');

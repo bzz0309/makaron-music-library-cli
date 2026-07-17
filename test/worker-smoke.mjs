@@ -264,6 +264,17 @@ assert.equal(naturalBody.scene_inferred, true);
 assert.equal(naturalBody.recommendation.id, 'trk_kpop');
 assert.ok(naturalBody.tracks.every((track) => track.tags.includes('kpop')));
 
+const impossibleNoVocals = await worker.fetch(authorized('/v1/recommend', {
+  method: 'POST',
+  headers: { 'content-type': 'application/json' },
+  body: JSON.stringify({ request: 'K-pop 女团舞台，必须无人声、纯音乐', duration: 20 }),
+}), env);
+const impossibleNoVocalsBody = await payload(impossibleNoVocals);
+assert.equal(impossibleNoVocalsBody.scene, 'kpop-stage');
+assert.equal(impossibleNoVocalsBody.count, 0);
+assert.equal(impossibleNoVocalsBody.recommendation, null);
+assert.equal(impossibleNoVocalsBody.decision.action, 'generate-original');
+
 const ecommerce = await worker.fetch(authorized('/v1/recommend', {
   method: 'POST',
   headers: { 'content-type': 'application/json' },

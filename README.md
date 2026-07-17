@@ -166,6 +166,8 @@ musiclib soundtrack-remote \
 
 当曲目版权字段未验证时，CLI 会返回 `RIGHTS_REVIEW_REQUIRED`。只有在用户确认具有使用权的非商业测试中，才传入 `--allow-unknown-rights`。CLI 优先使用系统 `ffmpeg` / `ffprobe`，未安装时自动使用 npm 包提供的当前平台二进制。
 
+版本 0.3.1 将用户明确说出的“无人声、纯音乐、无歌词、instrumental”视为硬条件。只有存在 `no_vocals` 标签的曲目才能返回；`bgm` 标签不能代替无人声证据。没有可靠候选时，推荐结果返回 `generate-original`；`soundtrack-remote` 会在 Makaron 已认证时自动生成原创替代音乐并继续混音。
+
 需要 `ffprobe` 读取完整媒体元数据，`ffmpeg` 分析视频和混音；macOS 可用 `afinfo` 作为音频时长后备。Makaron 生成需要 `MAKARON_API_KEY` 或 makaron-cli 已保存的认证。
 
 ## API
@@ -180,7 +182,7 @@ musiclib soundtrack-remote \
 - `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
 - `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
-版本 0.3.0 在 Agent 本地执行公开视频下载和混音，视频不会上传到曲库服务器。默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。注册挑战与验证使用中继签名的一次性 Agent 会话标识，即使妙搭两次请求使用不同出口 IP 也能完成注册。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。
+版本 0.3.x 在 Agent 本地执行公开视频下载和混音，视频不会上传到曲库服务器。默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。注册挑战与验证使用中继签名的一次性 Agent 会话标识，即使妙搭两次请求使用不同出口 IP 也能完成注册。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。
 
 ## 妙搭与中国网络入口
 

@@ -11,7 +11,7 @@ import { pipeline } from 'node:stream/promises';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const VERSION = '0.3.0';
+const VERSION = '0.3.1';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
 const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
@@ -162,6 +162,9 @@ function run(command, args, timeout = 900000) {
 function providerCommand() {
   if (process.env.MAKARON_CLI_COMMAND) return process.env.MAKARON_CLI_COMMAND.trim().split(/\s+/);
   return ['npx', '-y', `makaron-cli@${process.env.MAKARON_CLI_VERSION || MAKARON_VERSION}`];
+}
+function makaronAuthAvailable() {
+  return Boolean(process.env.MAKARON_API_KEY || process.env.MAKARON_CLI_COMMAND || fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json')));
 }
 
 function intelligenceRoot() { return fileURLToPath(new URL('../vendor/music-prompt-library', import.meta.url)); }
@@ -456,10 +459,10 @@ function scoreTrack(track, query, wantedDuration, profile = null) {
 }
 function search(root, query, options = {}) {
   const limit = Number(options.limit || 10); const duration = Number(options.duration || 0); const profile = sceneProfile(options.scene);
-  const requiredTags = SCENE_REQUIRED_TAGS[profile?.id] || [];
+  const requiredTags = unique([...(SCENE_REQUIRED_TAGS[profile?.id] || []), ...(options.required_tags || []), ...(conceptsFor(query).includes('no_vocals') && !options.required_tags ? ['no_vocals'] : [])]);
   return loadTracks(root)
     .filter((track) => !options['commercial-only'] || track.commercial_use === true)
-    .filter((track) => !requiredTags.length || requiredTags.some((tag) => track.tags?.includes(tag)))
+    .filter((track) => !requiredTags.length || requiredTags.every((tag) => track.tags?.includes(tag)))
     .map((track) => ({ ...track, match: scoreTrack(track, query, duration, profile) }))
     .filter((track) => !query || track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
@@ -482,7 +485,9 @@ function recommendLocal(root, options) {
   const duration = Number(options.duration || 0);
   const intelligence = intelligenceQuery(intelligenceInput(options, request, duration), options.adapter || 'generic');
   const localQuery = intelligenceSearchText(intelligence, request);
-  const tracks = search(root, localQuery, { ...options, duration, limit: options.limit || 5 }).map(publicTrack);
+  const explicitRequest = unique([options.request, options.brief]).join('. ');
+  const requiredTags = conceptsFor(explicitRequest).includes('no_vocals') ? ['no_vocals'] : [];
+  const tracks = search(root, localQuery, { ...options, required_tags: requiredTags, duration, limit: options.limit || 5 }).map(publicTrack);
   const recommendation = tracks[0] || null;
   const generation_prompt = [intelligencePrompt(intelligence), intelligence.arrangement_notes || intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
   return { ok: true, profile_id: intelligence.profile_id, intelligence, request, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks };
@@ -695,7 +700,7 @@ async function soundtrackRemote(options) {
     const video = path.join(temp, 'source-video');
     const videoDownload = await downloadRemoteMedia(videoUrl, video, plan.max_video_mb * 1024 * 1024, 'Video');
     const duration = probe(video)?.duration_seconds || Number(options.duration || 0) || undefined;
-    let analysis = null; let track = null; let decision = null; let access = null;
+    let analysis = null; let track = null; let decision = null; let access = null; let generation = null; let audioUrl = null;
     if (options.track) {
       access = await apiRequest(options, `/tracks/${encodeURIComponent(options.track)}/access`, { method: 'POST', body: '{}' });
       track = access.track; decision = recommendationDecision(track);
@@ -709,18 +714,31 @@ async function soundtrackRemote(options) {
       };
       const recommended = await apiRequest(options, '/recommend', { method: 'POST', body: JSON.stringify(requestBody) });
       track = recommended.recommendation; decision = recommended.decision; analysis = analysis || recommended.intelligence || null;
-      if (!track) fail('NO_MATCHING_TRACK', 'No suitable central-library track was found; broaden the brief or generate original music.');
+      if (!track) {
+        const prompt = recommended.generation_prompt || intelligencePrompt(recommended.intelligence) || unique([options.request, options.brief, analysis?.brief]).join('. ');
+        if (!makaronAuthAvailable()) fail('ORIGINAL_GENERATION_AUTH_REQUIRED', 'No verified library track matched the request. Configure Makaron authentication so the Agent can generate an original replacement.', false, { generation_prompt: prompt });
+        const submitted = submitGeneration(prompt, options); const completed = waitFor(submitted.run_id);
+        const generatedAudio = completed.outputs.find((item) => item.type === 'audio' && item.url);
+        if (!generatedAudio) fail('ORIGINAL_GENERATION_FAILED', 'Makaron completed without a usable audio result.', true, { run_id: submitted.run_id });
+        generation = { provider: 'makaron', prompt, ...submitted, status: completed.status, output: generatedAudio };
+        audioUrl = remoteMediaUrl(generatedAudio.url, 'Generated audio URL');
+        track = { schema_version: '1.0', id: `generated_${submitted.run_id}`, title: 'Makaron original music', artist: 'Makaron', source: 'makaron-generated', duration_seconds: duration || null, tags: conceptsFor(prompt), description: prompt, license: 'provider-generated', commercial_use: null };
+        decision = { action: 'use-generated-original', publish_ready: false, reason: 'No verified library track matched; Makaron generated an original replacement. Confirm provider usage rights before commercial publication.' };
+      }
     }
-    if (!options['allow-unknown-rights'] && decision?.publish_ready !== true) {
+    if (!generation && !options['allow-unknown-rights'] && decision?.publish_ready !== true) {
       fail('RIGHTS_REVIEW_REQUIRED', 'The selected track is not verified for commercial use. Review its rights or pass --allow-unknown-rights for an authorized non-commercial test.', false, { track, decision });
     }
-    access ||= await apiRequest(options, `/tracks/${encodeURIComponent(track.id)}/access`, { method: 'POST', body: '{}' });
-    const audioUrl = remoteMediaUrl(access.url, 'Audio URL'); const audio = path.join(temp, 'source-audio');
-    const audioDownload = await downloadRemoteMedia(audioUrl, audio, plan.max_audio_mb * 1024 * 1024, 'Audio', { range_fallback: true });
+    if (!audioUrl) {
+      access ||= await apiRequest(options, `/tracks/${encodeURIComponent(track.id)}/access`, { method: 'POST', body: '{}' });
+      audioUrl = remoteMediaUrl(access.url, 'Audio URL');
+    }
+    const audio = path.join(temp, 'source-audio');
+    const audioDownload = await downloadRemoteMedia(audioUrl, audio, plan.max_audio_mb * 1024 * 1024, 'Audio', { range_fallback: Boolean(access) });
     fs.mkdirSync(path.dirname(output), { recursive: true });
     const mixOptions = { ...options, 'mix-original': !options['replace-audio'], 'music-volume': plan.music_volume, 'original-volume': plan.original_volume, 'fade-seconds': plan.fade_seconds };
     const created = addSoundtrack(video, audio, output, mixOptions);
-    return { ok: true, output: created, track, decision, duration_seconds: duration || null, analysis, mix: { original_audio_preserved: plan.mix_original, music_volume: plan.music_volume, original_volume: plan.original_volume, fade_seconds: plan.fade_seconds }, downloads: { video_bytes: videoDownload.bytes, audio_bytes: audioDownload.bytes } };
+    return { ok: true, output: created, track, decision, generation, duration_seconds: duration || null, analysis, mix: { original_audio_preserved: plan.mix_original, music_volume: plan.music_volume, original_volume: plan.original_volume, fade_seconds: plan.fade_seconds }, downloads: { video_bytes: videoDownload.bytes, audio_bytes: audioDownload.bytes } };
   } finally { fs.rmSync(temp, { recursive: true, force: true }); }
 }
 
@@ -791,7 +809,7 @@ async function main() {
     const authFile = fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json'));
     const profiles = intelligenceProfiles();
     const musiclibAuthFile = fs.existsSync(AUTH_FILE);
-    const result = { ok: true, mode: useLocal(options) ? 'local' : 'remote', remote: { api_url: apiUrlFor(options), token_present: Boolean(apiToken()), configured: Boolean(apiUrlFor(options)), auth_file_present: musiclibAuthFile, token_source: process.env.MUSICLIB_API_TOKEN ? 'environment' : musiclibAuthFile ? 'auth-file' : null }, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    const result = { ok: true, mode: useLocal(options) ? 'local' : 'remote', remote: { api_url: apiUrlFor(options), token_present: Boolean(apiToken()), configured: Boolean(apiUrlFor(options)), auth_file_present: musiclibAuthFile, token_source: process.env.MUSICLIB_API_TOKEN ? 'environment' : musiclibAuthFile ? 'auth-file' : null }, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: makaronAuthAvailable(), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
     if (options.remote || (options.live && apiUrlFor(options))) result.remote.health = await apiRequest(options, '/health');
     if (options.live) { providerRun(['list'], 60000); result.live_check = true; }
     return emit(redact(result));
@@ -853,7 +871,9 @@ async function main() {
     const duration = video ? probe(video)?.duration_seconds : Number(options.duration || 0);
     const input = intelligenceInput(options, request, duration); const intelligence = intelligenceQuery(input, options.adapter || 'generic');
     const localQuery = intelligenceSearchText(intelligence, request);
-    const tracks = search(root, localQuery, { ...options, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
+    const explicitRequest = unique([options.request, options.brief]).join('. ');
+    const requiredTags = conceptsFor(explicitRequest).includes('no_vocals') ? ['no_vocals'] : [];
+    const tracks = search(root, localQuery, { ...options, required_tags: requiredTags, duration, limit: options.limit || 5 }); const recommendation = tracks[0] || null;
     const generation_prompt = [intelligencePrompt(intelligence), intelligence.arrangement_notes || intelligence.seed_audio?.arrangement_notes, intelligence.seed_audio?.negative_prompt].filter(Boolean).join(' ');
     return emit({ ok: true, profile_id: intelligence.profile_id, intelligence, scene: analysis.profile || null, analysis, request, video, duration_seconds: duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt, tracks });
   }

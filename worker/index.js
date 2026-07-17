@@ -105,10 +105,10 @@ async function searchTracks(env, query, options = {}) {
     const preferred = await env.DB.prepare(`SELECT * FROM tracks WHERE ${preferredFilters.join(' AND ')} ORDER BY ${order} DESC LIMIT 250`).bind(...tagParams, ...tagParams).all();
     rows = [...new Map([...(preferred.results || []), ...rows].map((row) => [row.id, row])).values()];
   }
-  const requiredTags = SCENE_REQUIRED_TAGS[options.scene] || [];
+  const requiredTags = unique([...(SCENE_REQUIRED_TAGS[options.scene] || []), ...(options.required_tags || [])]);
   return rows
     .map((row) => ({ ...safeTrack(row), match: score(row, terms, options.scene) }))
-    .filter((track) => !requiredTags.length || requiredTags.some((tag) => track.tags.includes(tag)))
+    .filter((track) => !requiredTags.length || requiredTags.every((tag) => track.tags.includes(tag)))
     .filter((track) => track.match.score > 0)
     .sort((a, b) => b.match.score - a.match.score || a.title.localeCompare(b.title))
     .slice(0, Math.min(Number(options.limit || 10), 50));
@@ -375,7 +375,7 @@ export default {
         if (authorization.response) return authorization.response;
         const query = url.searchParams.get('query'); if (!query) return error('MISSING_REQUIRED_OPTION', 'Missing query.');
         const explicitScene = url.searchParams.get('scene') || null; const scene = explicitScene || inferScene(query);
-        const tracks = await searchTracks(env, query, { limit: url.searchParams.get('limit'), commercial_only: url.searchParams.get('commercial_only') === 'true', scene: scene || undefined });
+        const tracks = await searchTracks(env, query, { limit: url.searchParams.get('limit'), commercial_only: url.searchParams.get('commercial_only') === 'true', scene: scene || undefined, required_tags: conceptsFor(query).includes('no_vocals') ? ['no_vocals'] : [] });
         return json({ ok: true, query, scene, scene_inferred: Boolean(scene && !explicitScene), count: tracks.length, tracks, quota: authorization.quota });
       }
       if (request.method === 'POST' && url.pathname === '/v1/recommend') {
@@ -390,7 +390,8 @@ export default {
         const intelligence = queryMusic(input, body.adapter || 'generic');
         const attributes = Object.values(intelligence.matched_attributes || {}).flatMap((value) => Array.isArray(value) ? value : value && typeof value === 'object' ? Object.values(value) : [value]);
         const localQuery = unique([requestText, intelligence.profile_id, musicPrompt(intelligence), ...attributes.map(String)]).join(' ');
-        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: scene || undefined });
+        const explicitRequest = unique([body.request, body.brief]).join('. ');
+        const tracks = await searchTracks(env, localQuery, { limit: body.limit || 5, commercial_only: body['commercial-only'], scene: scene || undefined, required_tags: conceptsFor(explicitRequest).includes('no_vocals') ? ['no_vocals'] : [] });
         const recommendation = tracks[0] || null;
         return json({ ok: true, profile_id: intelligence.profile_id, intelligence, request: requestText, scene, scene_inferred: Boolean(scene && !explicitScene), duration_seconds: input.duration || null, count: tracks.length, recommendation, decision: recommendationDecision(recommendation), generation_prompt: musicPrompt(intelligence), tracks, quota: authorization.quota });
       }

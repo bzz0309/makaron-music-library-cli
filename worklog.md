@@ -83,3 +83,11 @@
 - Revised the interface boundary after user review: ordinary users provide only natural language; both CLI and Worker now infer K-pop/e-commerce scenes for search, recommendation, and remote soundtrack requests.
 - Added server-side K-pop hard filtering and returned `scene`, `scene_inferred`, and `match.scene` evidence so an Agent cannot rank generic dance/pop above tagged K-pop merely by choosing plain search.
 - Verified the public package from a clean cache: automatic registration, natural-language K-pop search, bundled ffmpeg/ffprobe detection, and natural-language e-commerce soundtrack dry-run all passed. Revoked both production and public-package release-smoke credentials.
+
+## Verified instrumental fallback candidate — 2026-07-17
+
+- Audited all 934 production tracks and the 4,291-track local index: neither contains a verified `no_vocals` tag or filename-level instrumental evidence; 82 production tracks tagged `bgm` cannot be assumed instrumental.
+- Started 0.3.1 with explicit no-vocals intent as a hard `no_vocals` tag requirement in both CLI and Worker.
+- Zero verified matches now produce `decision.action: generate-original` instead of substituting a normal BGM.
+- `soundtrack-remote` now uses authenticated Makaron to generate an original replacement, downloads the result, and continues mixing automatically.
+- No Worker deployment, GitHub push, or npm publication has been performed for 0.3.1.

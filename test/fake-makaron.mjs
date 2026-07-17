@@ -12,7 +12,7 @@ if (args[0] === 'chat') {
 } else if (args[0] === 'responses' && args[1] === 'get' && args.includes('--pick')) {
   console.log('gentle healing Japanese acoustic music, light guitar and piano, no vocals');
 } else if (args[0] === 'responses' && args[1] === 'get') {
-  console.log(JSON.stringify({ status: 'completed', output: [{ id: 'audio_1', type: 'music', url: 'https://example.invalid/music.mp3', status: 'completed' }] }));
+  console.log(JSON.stringify({ status: 'completed', output: [{ id: 'audio_1', type: 'music', url: process.env.MAKARON_FAKE_AUDIO_URL || 'https://example.invalid/music.mp3', status: 'completed' }] }));
 } else if (args[0] === 'list') {
   console.log(JSON.stringify({ ok: true }));
 } else {
