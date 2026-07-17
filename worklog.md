@@ -67,3 +67,5 @@
 - Applied D1 migration `0003_registration_session.sql`, deployed Worker version `7ebe04a6-ee1e-47d9-b4b9-88b847f2604a`, and updated the Tencent SCF relay.
 - Passed local CLI, Worker, relay, and registration smoke tests, including different simulated relay origins with one signed Agent session.
 - Passed a production canary through Tencent: automatic self-registration, K-pop search, and short-lived audio access all succeeded without an owner-provided Token.
+- Published `makaron-music-library-cli@0.2.2` to GitHub `main` and public npm `latest` after owner approval.
+- Verified the public package from an empty directory: version, OpenClaw setup dry-run, and live self-registration passed; revoked the release-smoke credential afterward.
