@@ -8,10 +8,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
 const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
+const AUTH_FILE = path.join(os.homedir(), '.musiclib', 'auth.json');
+const DEFAULT_API_URL = 'https://makaron-music-library-api.bzz0309.workers.dev';
 const API_VERSION = 'v1';
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.aiff', '.aif']);
 const CONCEPTS = {
@@ -70,9 +72,17 @@ function now() { return new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'); }
 function emit(value) { process.stdout.write(`${JSON.stringify(value, null, 2)}\n`); }
 function fail(code, message, retryable = false, details = {}) { throw new CliError(code, message, retryable, details); }
 function readJson(file) { try { return JSON.parse(fs.readFileSync(file, 'utf8')); } catch (error) { fail('INVALID_JSON', `Cannot read ${file}: ${error.message}`); } }
-function writeJson(file, value) { fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`); }
+function writeJson(file, value, mode) {
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, mode ? { mode } : undefined);
+  if (mode) fs.chmodSync(file, mode);
+}
 function redact(value) {
-  if (typeof value === 'string') return value.replace(/mk_(?:live|test)?_?[A-Za-z0-9_-]{8,}/g, '[REDACTED_MAKARON_KEY]');
+  if (typeof value === 'string') {
+    return value
+      .replace(/mk_(?:live|test)?_?[A-Za-z0-9_-]{8,}/g, '[REDACTED_MAKARON_KEY]')
+      .replace(/ml_(?:live|test)_?[A-Za-z0-9_-]{8,}/g, '[REDACTED_MUSICLIB_TOKEN]');
+  }
   if (Array.isArray(value)) return value.map(redact);
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, redact(item)]));
   return value;
@@ -82,11 +92,12 @@ function unique(values) { return [...new Set(values.filter(Boolean))]; }
 function splitList(value) { return unique(String(value || '').split(',').map((item) => item.trim().toLowerCase())); }
 function rootFor(options) { return path.resolve(options.library || process.env.MUSICLIB_LIBRARY || path.join(os.homedir(), '.musiclib')); }
 function loadConfig() { return fs.existsSync(CONFIG_FILE) ? readJson(CONFIG_FILE) : {}; }
+function loadAuth() { return fs.existsSync(AUTH_FILE) ? readJson(AUTH_FILE) : {}; }
 function apiUrlFor(options) {
   const value = options['api-url'] || process.env.MUSICLIB_API_URL || loadConfig().api_url;
   return value ? String(value).replace(/\/+$/, '') : null;
 }
-function apiToken() { return process.env.MUSICLIB_API_TOKEN || null; }
+function apiToken() { return process.env.MUSICLIB_API_TOKEN || loadAuth().api_token || null; }
 function useLocal(options) { return Boolean(options.local || options.library || process.env.MUSICLIB_MODE === 'local'); }
 function manifestFile(root) { return path.join(root, 'library.json'); }
 function tracksFile(root) { return path.join(root, 'tracks.json'); }
@@ -194,6 +205,72 @@ async function apiRequest(options, endpoint, init = {}) {
   }
   if (!payload) fail('REMOTE_INVALID_RESPONSE', 'Central music library returned invalid JSON', true);
   return payload;
+}
+async function publicApiRequest(options, endpoint, init = {}) {
+  const apiUrl = apiUrlFor(options);
+  if (!apiUrl) fail('REMOTE_NOT_CONFIGURED', 'No central music library is configured. Run setup or config first.');
+  const headers = { accept: 'application/json', ...(init.body ? { 'content-type': 'application/json' } : {}), ...init.headers };
+  let response;
+  try { response = await fetch(`${apiUrl}/${API_VERSION}${endpoint}`, { ...init, headers }); }
+  catch (error) { fail('REMOTE_UNREACHABLE', `Cannot reach central music library: ${error.message}`, true, { api_url: apiUrl }); }
+  const text = await response.text();
+  let payload = null;
+  try { payload = text ? JSON.parse(text) : {}; } catch {}
+  if (!response.ok) {
+    const remoteError = payload?.error || {};
+    fail(remoteError.code || 'REMOTE_REQUEST_FAILED', remoteError.message || `Central music library returned HTTP ${response.status}`, response.status >= 500, { status: response.status });
+  }
+  if (!payload) fail('REMOTE_INVALID_RESPONSE', 'Central music library returned invalid JSON', true);
+  return payload;
+}
+function solveChallenge(challenge) {
+  if (challenge?.algorithm !== 'sha256-prefix' || !challenge.nonce || !Number.isInteger(challenge.difficulty)) {
+    fail('UNSUPPORTED_REGISTRATION_CHALLENGE', 'The central library returned an unsupported registration challenge.');
+  }
+  if (challenge.difficulty < 1 || challenge.difficulty > 6) fail('UNSAFE_REGISTRATION_CHALLENGE', 'Registration challenge difficulty is outside the supported range.');
+  const prefix = '0'.repeat(challenge.difficulty);
+  for (let solution = 0; solution < 50_000_000; solution += 1) {
+    const digest = crypto.createHash('sha256').update(`${challenge.nonce}:${solution}`).digest('hex');
+    if (digest.startsWith(prefix)) return String(solution);
+  }
+  fail('REGISTRATION_CHALLENGE_FAILED', 'Could not solve the registration challenge.', true);
+}
+async function registerAgent(options) {
+  if (apiToken() && !options.force) {
+    return { ok: true, registered: false, reused: true, auth_file: fs.existsSync(AUTH_FILE) ? AUTH_FILE : null, token_source: process.env.MUSICLIB_API_TOKEN ? 'environment' : 'auth-file' };
+  }
+  const challenge = await publicApiRequest(options, '/register', {
+    method: 'POST',
+    body: JSON.stringify({ agent_name: options.agent || 'generic-agent', client: PACKAGE, client_version: VERSION }),
+  });
+  const solution = solveChallenge(challenge.challenge);
+  const issued = await publicApiRequest(options, '/register/verify', {
+    method: 'POST',
+    body: JSON.stringify({
+      challenge_id: challenge.challenge_id,
+      solution,
+      agent_name: options.agent || 'generic-agent',
+      client: PACKAGE,
+      client_version: VERSION,
+    }),
+  });
+  if (!issued.api_token || !issued.token_id) fail('REGISTRATION_INVALID_RESPONSE', 'Registration succeeded without a usable Agent credential.', true);
+  writeJson(AUTH_FILE, {
+    api_token: issued.api_token,
+    token_id: issued.token_id,
+    scopes: issued.scopes || [],
+    api_url: apiUrlFor(options),
+    created_at: issued.created_at || now(),
+  }, 0o600);
+  return {
+    ok: true,
+    registered: true,
+    token_id: issued.token_id,
+    scopes: issued.scopes || [],
+    quotas: issued.quotas || null,
+    auth_file: AUTH_FILE,
+    token_source: 'auth-file',
+  };
 }
 function publicTrack(track) {
   const { path: ignoredPath, ...safe } = track;
@@ -513,29 +590,45 @@ function installSkill(options) {
   return { ok: true, installed: true, skill: 'makaron-music-library' };
 }
 function configure(options) {
-  const apiUrl = required(options, 'api-url').replace(/\/+$/, '');
+  const apiUrl = String(options['api-url'] || DEFAULT_API_URL).replace(/\/+$/, '');
   if (!/^https?:\/\//i.test(apiUrl)) fail('INVALID_API_URL', 'The central API URL must begin with https:// or http://.');
   const config = { ...loadConfig(), api_url: apiUrl, updated_at: now() };
   if (!options['dry-run']) writeJson(CONFIG_FILE, config);
-  return { ok: true, dry_run: Boolean(options['dry-run']), config_file: CONFIG_FILE, api_url: apiUrl, token_source: 'MUSICLIB_API_TOKEN' };
+  return { ok: true, dry_run: Boolean(options['dry-run']), config_file: CONFIG_FILE, api_url: apiUrl, token_source: 'environment-or-auth-file' };
 }
-function setup(options) {
+async function setup(options) {
   const installArgs = ['install', '-g', `${PACKAGE}@${VERSION}`];
-  const remote_config = options['api-url'] ? configure(options) : { configured: false, note: 'Pass --api-url or set MUSICLIB_API_URL before remote search.' };
-  if (options['dry-run']) return { ok: true, dry_run: true, global_install: ['npm', ...installArgs], skill_install: installSkill({ ...options, global: true, yes: true }), remote_config };
+  const remote_config = configure(options);
+  if (options['dry-run']) {
+    return {
+      ok: true,
+      dry_run: true,
+      global_install: ['npm', ...installArgs],
+      skill_install: installSkill({ ...options, global: true, yes: true }),
+      remote_config,
+      registration: { automatic: true, endpoint: `${remote_config.api_url}/${API_VERSION}/register` },
+    };
+  }
   const result = spawnSync('npm', installArgs, { stdio: 'inherit' });
   if (result.error || result.status !== 0) fail('GLOBAL_INSTALL_FAILED', `Could not install ${PACKAGE} globally`, true, { exit_code: result.status });
-  return { ...installSkill({ ...options, global: true, yes: true }), remote_config };
+  const skill_install = installSkill({ ...options, global: true, yes: true });
+  const registration = await registerAgent(options);
+  return { ok: true, installed: true, skill_install, remote_config, registration };
 }
 function help() {
-  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup --api-url <central-api-url> [--agent <agent>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  cloud-sync  Upload an indexed owner library to private R2 and D1\n  config      Save the central API URL (tokens remain environment-only)\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nPass --local (or --library) to search/recommend the owner's local index. All command results are JSON.`);
+  console.log(`makaron-music-library-cli ${VERSION}\n\nUsage:\n  npx ${PACKAGE} setup [--agent <agent>] [--api-url <central-api-url>]\n  musiclib <command> [options]\n\nAgent commands (remote by default):\n  register    Self-register this Agent and securely save its credential\n  search      Search the central library by title, artist, tags, or natural language\n  recommend   Use music intelligence and rank central-library tracks\n  access      Create a short-lived audio URL for an authorized track\n  brief       Turn a natural-language request into an agent-ready music brief\n  generate    Generate original music through Makaron\n  wait        Wait for a Makaron music run\n\nOwner/admin commands:\n  cloud-sync  Upload an indexed owner library to private R2 and D1\n  config      Save the central API URL\n  serve       Serve a local index as the authenticated central API\n  init        Initialize a local music library\n  index       Index a local or Baidu Netdisk-synced music folder\n  list        List local indexed tracks\n  export      Copy one local track to an output path\n  soundtrack  Add local music to a video\n  validate    Validate local files and rights metadata\n  doctor      Check remote, Makaron, ffmpeg, and authentication\n\nThe default hosted library is configured automatically. Credentials are read from MUSICLIB_API_TOKEN or ~/.musiclib/auth.json. Pass --local (or --library) for the owner's local index. All command results are JSON.`);
 }
 
 async function main() {
   const [command = 'help', ...rest] = process.argv.slice(2); const options = parseArgs(rest);
   if (command === 'help' || command === '--help' || options.help) return help();
   if (command === '--version' || command === 'version') return console.log(VERSION);
-  if (command === 'setup') return emit(setup(options));
+  if (command === 'setup') return emit(await setup(options));
+  if (command === 'register') {
+    if (options['api-url']) configure(options);
+    else if (!apiUrlFor(options)) configure(options);
+    return emit(await registerAgent(options));
+  }
   if (command === 'install-skill') return emit(installSkill(options));
   if (command === 'cloud-sync') {
     const { syncCloudflare } = await import('./cloudflare-sync.mjs');
@@ -551,7 +644,8 @@ async function main() {
   if (command === 'doctor') {
     const authFile = fs.existsSync(path.join(os.homedir(), '.makaron', 'auth.json'));
     const profiles = intelligenceProfiles();
-    const result = { ok: true, mode: useLocal(options) ? 'local' : 'remote', remote: { api_url: apiUrlFor(options), token_present: Boolean(apiToken()), configured: Boolean(apiUrlFor(options)) }, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
+    const musiclibAuthFile = fs.existsSync(AUTH_FILE);
+    const result = { ok: true, mode: useLocal(options) ? 'local' : 'remote', remote: { api_url: apiUrlFor(options), token_present: Boolean(apiToken()), configured: Boolean(apiUrlFor(options)), auth_file_present: musiclibAuthFile, token_source: process.env.MUSICLIB_API_TOKEN ? 'environment' : musiclibAuthFile ? 'auth-file' : null }, ffmpeg: executable('ffmpeg'), ffprobe: executable('ffprobe'), audio_duration_fallback: fs.existsSync('/usr/bin/afinfo') ? 'afinfo' : null, music_intelligence: { ok: profiles.status === 'ok', version: '0.8.1', profiles: profiles.count }, makaron_command: providerCommand(), makaron_auth: Boolean(process.env.MAKARON_API_KEY || authFile), api_key_env_present: Boolean(process.env.MAKARON_API_KEY), auth_file_present: authFile };
     if (options.remote || (options.live && apiUrlFor(options))) result.remote.health = await apiRequest(options, '/health');
     if (options.live) { providerRun(['list'], 60000); result.live_check = true; }
     return emit(redact(result));

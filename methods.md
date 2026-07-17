@@ -34,3 +34,7 @@ Use sidecar `<audio>.music.json` files for tags and rights fields. Possession is
 ## Intelligence and asset layers
 
 Keep platform-neutral intent understanding separate from real audio. Let the vendored intelligence layer select and explain a Profile, then use its prompt and attributes to rank D1 tracks.
+
+## Self-service Agent credentials
+
+Give each Agent a separate credential instead of distributing one shared secret. Use a short-lived proof-of-work challenge plus origin throttling to make unattended setup possible while slowing bulk registration. Return the raw credential only once, store only its SHA-256 hash in D1, save the client copy with owner-only file permissions, and enforce route-specific daily quotas. Keep legacy operator tokens as a migration path, not the default onboarding flow.
