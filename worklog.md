@@ -48,3 +48,14 @@
 - Applied the production D1 migration and deployed Worker version `040382ec-acbc-4d18-919d-b1c8d5880bd1`.
 - Published `makaron-music-library-cli@0.2.0` to public npm with `latest` after upgrading the publishing client from npm 11.0.0 to 11.6.2 to avoid a broken web-auth polling endpoint.
 - Verified the public package from a clean install with live self-registration and K-pop search; revoked both release-smoke credentials afterward.
+
+## Miaoda-compatible Tencent relay — 2026-07-17
+
+- Confirmed Feishu Miaoda could not reach the `workers.dev` production hostname even though the public Worker was healthy elsewhere.
+- Added a dependency-free Node.js 18 Tencent SCF Web Function in Hong Kong with an allowlist for Agent routes, bounded JSON request bodies, signed client-origin forwarding, access URL rewriting, and streamed HTTP Range responses.
+- Kept administrator upload routes blocked at the relay and kept R2/D1 as the source of truth.
+- Added `RELAY_SHARED_SECRET` to the Worker, deployed trusted relay-origin support, and stored the matching Tencent secret outside the repository.
+- Enabled the account's required CLS service, then deployed the 128MB Web Function at `https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com`.
+- Corrected Tencent client-origin handling to prefer `X-Forwarded-For` after a real registration exposed unstable `X-Real-IP` values.
+- Passed live health, Agent self-registration, K-pop search, signed access URL rewriting, and a 1KB `206` Range read.
+- Prepared version 0.2.1 to make the Tencent endpoint the default for new and re-run setup flows; GitHub and npm publication remain pending owner approval.

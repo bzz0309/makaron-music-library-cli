@@ -38,3 +38,7 @@ Keep platform-neutral intent understanding separate from real audio. Let the ven
 ## Self-service Agent credentials
 
 Give each Agent a separate credential instead of distributing one shared secret. Use a short-lived proof-of-work challenge plus origin throttling to make unattended setup possible while slowing bulk registration. Return the raw credential only once, store only its SHA-256 hash in D1, save the client copy with owner-only file permissions, and enforce route-specific daily quotas. Keep legacy operator tokens as a migration path, not the default onboarding flow.
+
+## China-accessible control and media relay
+
+When an Agent platform cannot reach `workers.dev`, keep R2/D1 and the Worker as the source of truth and add a narrow regional relay instead of duplicating the library. Allowlist exact methods and paths, reject administrator routes and arbitrary targets, sign the forwarded client origin with a shared secret, rewrite only signed audio URLs belonging to the upstream, and stream Range responses without buffering complete tracks. Prefer `X-Forwarded-For` over Tencent's unstable `X-Real-IP` for two-step registration identity.

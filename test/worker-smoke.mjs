@@ -86,6 +86,7 @@ const env = {
   AGENT_TOKENS: 'test-agent-token',
   ADMIN_TOKEN: 'test-admin-token',
   SIGNING_SECRET: 'test-signing-secret',
+  RELAY_SHARED_SECRET: 'test-relay-secret',
   LINK_TTL_SECONDS: '900',
   DAILY_SEARCH_LIMIT: '1',
   DB: { prepare: (sql) => new FakeStatement(sql) },
@@ -153,6 +154,30 @@ const registrationBody = await payload(registrationResponse);
 assert.match(registrationBody.api_token, /^ml_live_/);
 assert.equal(agentTokens[0].token_hash, crypto.createHash('sha256').update(registrationBody.api_token).digest('hex'));
 assert.equal(agentTokens[0].token_hash.includes(registrationBody.api_token), false);
+
+const relayOrigin = '198.51.100.22';
+const relaySignature = crypto.createHmac('sha256', env.RELAY_SHARED_SECRET).update(relayOrigin).digest('hex');
+const relayChallengeResponse = await worker.fetch(request('/v1/register', {
+  method: 'POST',
+  headers: {
+    'cf-connecting-ip': '192.0.2.10',
+    'x-musiclib-relay-origin': relayOrigin,
+    'x-musiclib-relay-signature': relaySignature,
+  },
+  body: '{}',
+}), env);
+const relayChallenge = await payload(relayChallengeResponse);
+const relayRegistrationResponse = await worker.fetch(request('/v1/register/verify', {
+  method: 'POST',
+  headers: {
+    'content-type': 'application/json',
+    'cf-connecting-ip': '192.0.2.11',
+    'x-musiclib-relay-origin': relayOrigin,
+    'x-musiclib-relay-signature': relaySignature,
+  },
+  body: JSON.stringify({ challenge_id: relayChallenge.challenge_id, solution: solve(relayChallenge.challenge) }),
+}), env);
+assert.equal(relayRegistrationResponse.status, 201);
 
 const registeredSearch = await worker.fetch(request('/v1/search?query=kpop', {
   headers: { authorization: `Bearer ${registrationBody.api_token}` },

@@ -8,12 +8,12 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 
-const VERSION = '0.2.0';
+const VERSION = '0.2.1';
 const PACKAGE = 'makaron-music-library-cli';
 const MAKARON_VERSION = '0.13.0';
 const CONFIG_FILE = path.join(os.homedir(), '.musiclib', 'config.json');
 const AUTH_FILE = path.join(os.homedir(), '.musiclib', 'auth.json');
-const DEFAULT_API_URL = 'https://makaron-music-library-api.bzz0309.workers.dev';
+const DEFAULT_API_URL = 'https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com';
 const API_VERSION = 'v1';
 const AUDIO_EXTENSIONS = new Set(['.mp3', '.wav', '.m4a', '.aac', '.flac', '.ogg', '.opus', '.aiff', '.aif']);
 const CONCEPTS = {

@@ -1,0 +1,28 @@
+component: scf
+name: makaron-music-library-relay
+
+inputs:
+  src:
+    src: ./
+    exclude:
+      - serverless.yml
+      - README.md
+  type: web
+  name: makaron-music-library-relay
+  description: China-accessible relay for the Makaron music library Agent API
+  region: ap-hongkong
+  runtime: Nodejs18.15
+  memorySize: 128
+  timeout: 60
+  environment:
+    variables:
+      MUSICLIB_UPSTREAM_URL: https://makaron-music-library-api.bzz0309.workers.dev
+      MUSICLIB_RELAY_SECRET: ${env:MUSICLIB_RELAY_SECRET}
+  events:
+    - http:
+        parameters:
+          netConfig:
+            enableIntranet: true
+            enableExtranet: true
+          qualifier: $DEFAULT
+          authType: NONE

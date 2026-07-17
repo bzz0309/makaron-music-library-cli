@@ -5,7 +5,8 @@
 ## 架构
 
 - npm CLI + 单文件 Agent Skill：安装到任意 Agent 所在电脑。
-- Cloudflare Worker：提供鉴权搜索、推荐和限时音频访问。
+- 腾讯云香港 Web 函数：为妙搭等无法访问 `workers.dev` 的 Agent 提供正式 HTTPS 入口。
+- Cloudflare Worker：提供鉴权搜索、推荐和限时音频访问；腾讯云入口只转发允许的 Agent 路由。
 - D1：保存可检索曲目元数据，不保存本地路径。
 - 私有 R2 Bucket：保存真实音频，外部 Agent 看不到对象地址。
 - 本地 Owner 工具：索引百度网盘同步目录、同步 R2/D1、为本地视频混音。
@@ -19,7 +20,7 @@ npx makaron-music-library-cli setup
 musiclib doctor --remote
 ```
 
-`setup` 会安装 `musiclib` 命令和仅含一个 `SKILL.md` 的 Agent Skill，自动连接默认曲库、完成一次轻量计算挑战，并为当前 Agent 签发独立凭证。凭证以 `0600` 权限写入 `~/.musiclib/auth.json`，不会显示在正常命令输出中，也不会写进 Skill。
+`setup` 会安装 `musiclib` 命令和仅含一个 `SKILL.md` 的 Agent Skill，自动连接妙搭可访问的腾讯云入口、完成一次轻量计算挑战，并为当前 Agent 签发独立凭证。凭证以 `0600` 权限写入 `~/.musiclib/auth.json`，不会显示在正常命令输出中，也不会写进 Skill。
 
 无需曲库管理员逐个发送 `MUSICLIB_API_TOKEN`。需要更换凭证时运行：
 
@@ -162,7 +163,17 @@ musiclib soundtrack --local --video input.mp4 --track TRACK_ID --output output.m
 - `PUT /v1/admin/tracks/:id/audio`：独立管理员鉴权，写入私有 R2。
 - `POST /v1/admin/tracks/batch`：独立管理员鉴权，批量更新 D1。
 
-版本 0.2.0 为每个 Agent 自助签发独立凭证，D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
+版本 0.2.1 默认使用妙搭可访问的腾讯云香港入口，并为每个 Agent 自助签发独立凭证。D1 只保存 SHA-256 哈希，并分别限制每日搜索、推荐和音频访问次数。管理员可在 D1 将 `agent_tokens.status` 改为 `revoked` 以单独吊销凭证。远程视频上传和服务端视频混音属于后续版本。
+
+## 妙搭与中国网络入口
+
+默认 Agent API 为：
+
+```text
+https://1358141432-dnfx3j6t7j.ap-hongkong.tencentscf.com
+```
+
+中转代码位于 `tencent-relay/`，仅允许健康检查、注册、搜索、推荐、限时访问和音频 Range 请求；管理员上传接口和任意 URL 代理均被拒绝。腾讯云与 Worker 通过独立的 `MUSICLIB_RELAY_SECRET` / `RELAY_SHARED_SECRET` 验证注册来源。音频仍保存在私有 R2，只有实际播放的字节经过腾讯云中转并产生相应流量。
 
 ## 版权
 

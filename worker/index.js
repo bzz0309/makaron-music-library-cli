@@ -175,7 +175,13 @@ function registrationQuotas(env) {
   };
 }
 async function registrationIdentity(request, env) {
-  const address = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
+  const relayOrigin = request.headers.get('x-musiclib-relay-origin') || '';
+  const relaySignature = request.headers.get('x-musiclib-relay-signature') || '';
+  const trustedRelay = relayOrigin && env.RELAY_SHARED_SECRET
+    && await validSignature(env.RELAY_SHARED_SECRET, relayOrigin, relaySignature);
+  const address = trustedRelay
+    ? `relay:${relayOrigin}`
+    : request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
   return hmac(env.SIGNING_SECRET, `registration-ip:${address}`);
 }
 async function createRegistrationChallenge(request, env) {
